@@ -25,6 +25,7 @@ A complete game system implementation for the Role & Roll TRPG using d6 dice poo
 2. Click **Game Systems**
 3. Click **Install System**
 4. Paste this Manifest URL:
+
 ```https://raw.githubusercontent.com/nephele-interactive/role-and-roll/main/system.json```
 5. Click **Install**
 6. Create a new world and select **Role & Roll** as the system
@@ -34,15 +35,19 @@ A complete game system implementation for the Role & Roll TRPG using d6 dice poo
 ### Method 2: Manual GitHub Installation
 
 1. Download ZIP from GitHub:
+
 ```https://github.com/nephele-interactive/role-and-roll/archive/refs/heads/main.zip```
 2. Extract the folder
 3. Rename the folder to:
+
 ```role-and-roll```
 4. Move it into your Foundry systems folder:
 
 **Windows**
+
 ```C:\Users<YourName>\AppData\Local\FoundryVTT\Data\systems\role-and-roll```
 **Linux**
+
 ```/home/foundry/.local/share/FoundryVTT/Data/systems/role-and-roll```
 
 ---
