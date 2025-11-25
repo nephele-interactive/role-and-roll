@@ -1,72 +1,57 @@
 // module/documents/actor.mjs
 
 export class RoleAndRollActor extends Actor {
-  
+
   prepareData() {
     super.prepareData();
   }
 
-  prepareBaseData() {
-    // Data preparation specific to the actor type
-  }
+  prepareBaseData() {}
 
   prepareDerivedData() {
-    const actorData = this;
-    const systemData = actorData.system;
-    const flags = actorData.flags.roleandroll || {};
+    if (this.type !== "character") return;
 
-    // Make separate methods for each Actor type
-    this._prepareCharacterData(actorData);
-  }
+    const system = this.system;
 
-  _prepareCharacterData(actorData) {
-    if (actorData.type !== 'character') return;
-
-    const systemData = actorData.system;
-    
-    // Calculate any derived values here if needed
+    // Safe defaults for v13
+    system.health ??= 0;
+    system.mental ??= 0;
+    system.attributes ??= {};
+    system.abilities ??= {};
+    system.skills ??= [];
   }
 
   async rollAttribute(attributeKey) {
-    const attribute = this.system.attributes[attributeKey];
+    const attribute = this.system.attributes?.[attributeKey];
     if (!attribute) return;
 
-    const numDice = attribute.dice;
-    const label = `${this.name} - ${attributeKey.charAt(0).toUpperCase() + attributeKey.slice(1)}`;
-    
-    const result = await game.roleandroll.rollDicePool(numDice, label);
-    
-    // Check if roll succeeded based on succeed checkbox
-    if (result && result.successes > 0 && !attribute.succeed) {
-      ui.notifications.info(`${label}: ${result.successes} successes!`);
-    }
-    
-    return result;
+    const numDice = Number(attribute.dice) || 0;
+    const label = `${this.name} - ${attributeKey}`;
+
+    return await game.roleandroll.rollDicePool(numDice, label);
   }
 
   async rollAbility(category, abilityKey) {
-    const ability = this.system.abilities[category]?.[abilityKey];
+    const ability = this.system.abilities?.[category]?.[abilityKey];
     if (!ability) return;
 
-    const numDice = ability.dice;
+    const numDice = Number(ability.dice) || 0;
     const label = `${this.name} - ${abilityKey}`;
-    
-    const result = await game.roleandroll.rollDicePool(numDice, label);
-    
-    if (result && result.successes > 0 && !ability.succeed) {
-      ui.notifications.info(`${label}: ${result.successes} successes!`);
-    }
-    
-    return result;
+
+    return await game.roleandroll.rollDicePool(numDice, label);
   }
 
   async rollSkill(skillName) {
-    const skill = this.system.skills.find(s => s.name === skillName);
+    const skills = Array.isArray(this.system.skills)
+      ? this.system.skills
+      : Object.values(this.system.skills ?? {});
+
+    const skill = skills.find(s => s.name === skillName);
     if (!skill) return;
 
-    const numDice = skill.dice || 1;
+    const numDice = Number(skill.dice) || 1;
     const label = `${this.name} - ${skillName}`;
-    
+
     return await game.roleandroll.rollDicePool(numDice, label);
   }
 }

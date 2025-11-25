@@ -2,104 +2,119 @@
   "id": "role-and-roll",
   "title": "Role & Roll",
   "description": "Easy to play | TRPG from Thailand by BGN Squad",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
   },
+
   "url": "https://github.com/nephele-interactive/role-and-roll",
   "manifest": "https://raw.githubusercontent.com/nephele-interactive/role-and-roll/main/system.json",
   "download": "https://github.com/nephele-interactive/role-and-roll/releases/download/v1.0.0/role-and-roll-v1.0.0.zip",
+
   "authors": [
     {
       "name": "Nephele Interactive",
       "flags": {}
+    },
+    {
+      "name": "BGN Squad",
+      "flags": {}
     }
   ],
+
   "esmodules": [
     "module/role-and-roll.mjs"
   ],
   "styles": [
     "styles/role-and-roll.css"
   ],
+
   "documentTypes": {
     "Actor": {
       "character": {
+        "label": "Character",
         "htmlFields": [
-          "details.biography.value",
-          "details.biography.public"
+          "system.details.biography"
         ]
       },
       "npc": {
+        "label": "NPC",
         "htmlFields": [
-          "details.biography.value",
-          "details.biography.public"
+          "system.details.biography"
         ]
       }
     },
     "Item": {
-      "weapon": {
+      "ability": {
+        "label": "Ability",
         "htmlFields": [
-          "description.value"
+          "system.description"
         ]
       },
-      "armor": {
+      "equipment": {
+        "label": "Equipment",
         "htmlFields": [
-          "description.value"
+          "system.description"
         ]
       },
       "skill": {
+        "label": "Skill",
         "htmlFields": [
-          "description.value"
+          "system.description"
         ]
       }
     },
     "JournalEntryPage": {
       "rule": {
+        "label": "Rule",
         "htmlFields": [
-          "description.value"
+          "text.content"
         ]
       }
     }
   },
+
   "packs": [
     {
-      "name": "characters",
-      "label": "Sample Characters",
+      "name": "rnr-characters",
+      "label": "Role & Roll Sample Characters",
       "system": "role-and-roll",
       "path": "packs/characters",
       "type": "Actor",
       "private": false
     },
     {
-      "name": "items",
-      "label": "Items",
+      "name": "rnr-items",
+      "label": "Role & Roll Items",
       "system": "role-and-roll",
       "path": "packs/items",
       "type": "Item",
       "private": false
     },
     {
-      "name": "rules",
-      "label": "Rules",
+      "name": "rnr-rules",
+      "label": "Role & Roll Rules",
       "system": "role-and-roll",
       "path": "packs/rules",
       "type": "JournalEntry",
       "private": false
     }
   ],
+
   "packFolders": [
     {
-      "name": "Core Content",
-      "color": "#6b21a8",
+      "name": "Role & Roll",
       "sorting": "m",
+      "color": "#f97316",
       "packs": [
-        "characters",
-        "items",
-        "rules"
+        "rnr-characters",
+        "rnr-items",
+        "rnr-rules"
       ]
     }
   ],
+
   "languages": [
     {
       "lang": "en",
@@ -108,6 +123,7 @@
       "flags": {}
     }
   ],
+
   "media": [
     {
       "type": "cover",
@@ -120,14 +136,19 @@
       "thumbnail": "systems/role-and-roll/ui/official/rnr-thumbnail.jpg"
     }
   ],
+
   "socket": true,
+
   "grid": {
     "distance": 5,
     "units": "m"
   },
+
   "primaryTokenAttribute": "system.health",
   "secondaryTokenAttribute": "system.mental",
-  "background": "systems/role-and-roll/ui/official/rnr-thumbnail.jpg",
+
+  "background": "systems/role-and-roll/ui/official/rnr-background.webp",
+
   "flags": {
     "role-and-roll": {
       "sourceBooks": {
@@ -138,5 +159,6 @@
     "compatibleMigrationVersion": "1.0",
     "hotReload": false
   },
+
   "license": "LICENSE.txt"
 }

@@ -1,32 +1,19 @@
 // module/documents/item.mjs
 
 export class RoleAndRollItem extends Item {
-  
+
   prepareData() {
     super.prepareData();
-  }
+    const system = this.system;
 
-  prepareBaseData() {
-    // Data preparation for items
-  }
-
-  prepareDerivedData() {
-    const itemData = this;
-    const systemData = itemData.system;
-    const flags = itemData.flags.roleandroll || {};
+    system.description ??= "";
+    system.dice ??= 0;
   }
 
   async roll() {
-    const item = this;
+    const dice = Number(this.system.dice) || 1;
+    const label = `${this.name}`;
 
-    // Create a chat message for using the item
-    const chatData = {
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `<h3>${item.name}</h3>`,
-      content: item.system.description || ""
-    };
-
-    ChatMessage.create(chatData);
+    return await game.roleandroll.rollDicePool(dice, label);
   }
 }

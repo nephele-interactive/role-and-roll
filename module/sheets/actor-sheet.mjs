@@ -1,3 +1,5 @@
+// module/sheets/actor-sheet.mjs
+
 export class RoleAndRollActorSheet extends ActorSheet {
 
   static get defaultOptions() {
@@ -6,20 +8,11 @@ export class RoleAndRollActorSheet extends ActorSheet {
       template: "systems/role-and-roll/templates/actor/actor-sheet.hbs",
       width: 920,
       height: 840,
-      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "attributes" }],
-      scrollY: [".sheet-body"],
-      dragDrop: [{ dragSelector: ".item", dropSelector: null }]
+      tabs: [
+        { navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "attributes" }
+      ],
+      scrollY: [".sheet-body"]
     });
-  }
-
-  get template() {
-    return `systems/role-and-roll/templates/actor/actor-sheet.hbs`;
-  }
-
-  _normalizeArray(data) {
-    if (!data) return [];
-    if (Array.isArray(data)) return data;
-    return Object.values(data);
   }
 
   getData() {
@@ -29,25 +22,12 @@ export class RoleAndRollActorSheet extends ActorSheet {
     context.actor = this.actor;
     context.system = actorData.system;
     context.flags = actorData.flags;
-    context.config = CONFIG.ROLEANDROLL || {};
+    context.config = CONFIG.ROLEANDROLL ?? {};
 
-    context.items = actorData.items || [];
-    context.items.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    const skills = actorData.system.skills ?? [];
+    context.skills = Array.isArray(skills) ? skills : Object.values(skills);
 
-    context.skills = this._normalizeArray(actorData.system.skills);
-
-    context.equipment = {
-      left: [],
-      right: [],
-      bottomLeft: [],
-      bottomRight: []
-    };
-
-    for (let item of context.items) {
-      if (["weapon", "armor", "item"].includes(item.type)) {
-        context.equipment.left.push(item);
-      }
-    }
+    context.items = actorData.items?.sort((a, b) => (a.sort || 0) - (b.sort || 0)) ?? [];
 
     return context;
   }
@@ -56,28 +36,19 @@ export class RoleAndRollActorSheet extends ActorSheet {
     super.activateListeners(html);
     if (!this.isEditable) return;
 
-    html.find(".attribute-roll").click(this._onAttributeRoll.bind(this));
-    html.find(".ability-roll").click(this._onAbilityRoll.bind(this));
-    html.find(".dice-control").click(this._onDiceControl.bind(this));
+    html.find(".attribute-roll").click(ev => this._onAttributeRoll(ev));
+    html.find(".ability-roll").click(ev => this._onAbilityRoll(ev));
+    html.find(".dice-control").click(ev => this._onDiceControl(ev));
 
-    html.find(".item-create").click(this._onItemCreate.bind(this));
-    html.find(".item-delete").click(this._onItemDelete.bind(this));
-    html.find(".item-edit").click(this._onItemEdit.bind(this));
-
-    if (this.actor.isOwner) {
-      const handler = ev => this._onDragStart(ev);
-      html.find("li.item").each((i, li) => {
-        if (li.classList.contains("inventory-header")) return;
-        li.setAttribute("draggable", true);
-        li.addEventListener("dragstart", handler, false);
-      });
-    }
+    html.find(".item-create").click(ev => this._onItemCreate(ev));
+    html.find(".item-delete").click(ev => this._onItemDelete(ev));
+    html.find(".item-edit").click(ev => this._onItemEdit(ev));
   }
 
   async _onAttributeRoll(event) {
     event.preventDefault();
-    const attr = event.currentTarget.dataset.attribute;
-    if (attr) await this.actor.rollAttribute(attr);
+    const key = event.currentTarget.dataset.attribute;
+    if (key) await this.actor.rollAttribute(key);
   }
 
   async _onAbilityRoll(event) {
@@ -109,17 +80,16 @@ export class RoleAndRollActorSheet extends ActorSheet {
   }
 
   async _onItemCreate(event) {
-    event.preventDefault();
-    event.stopPropagation();
-
     const type = event.currentTarget.dataset.type;
 
     if (type === "skill") {
-      const skills = this._normalizeArray(foundry.utils.duplicate(this.actor.system.skills));
+      const skills = Array.isArray(this.actor.system.skills)
+        ? foundry.utils.duplicate(this.actor.system.skills)
+        : [];
 
       skills.push({
-        name: `New Skill ${skills.length + 1}`,
-        description: ""
+        name: `Skill ${skills.length + 1}`,
+        dice: 1
       });
 
       await this.actor.update({ "system.skills": skills });
@@ -127,44 +97,33 @@ export class RoleAndRollActorSheet extends ActorSheet {
       return;
     }
 
-    const name = `New ${type.charAt(0).toUpperCase() + type.slice(1)}`;
-    const itemData = {
-      name,
-      type,
-      system: {}
-    };
+    await this.actor.createEmbeddedDocuments("Item", [
+      { name: `New ${type}`, type, system: {} }
+    ]);
 
-    await Item.create(itemData, { parent: this.actor });
     this.render(true);
   }
 
   async _onItemDelete(event) {
-    event.preventDefault();
-    event.stopPropagation();
-
     const skillIndex = event.currentTarget.dataset.index;
 
     if (skillIndex !== undefined) {
-      const skills = this._normalizeArray(foundry.utils.duplicate(this.actor.system.skills));
-
+      const skills = Array.from(this.actor.system.skills ?? []);
       skills.splice(Number(skillIndex), 1);
-
       await this.actor.update({ "system.skills": skills });
       this.render(true);
       return;
     }
 
     const li = event.currentTarget.closest(".item");
-    const item = this.actor.items.get(li?.dataset?.itemId);
-    if (!item) return;
+    const id = li?.dataset?.itemId;
+    if (!id) return;
 
-    await item.delete();
+    await this.actor.deleteEmbeddedDocuments("Item", [id]);
     this.render(true);
   }
 
   async _onItemEdit(event) {
-    event.preventDefault();
-
     const li = event.currentTarget.closest(".item");
     const item = this.actor.items.get(li?.dataset?.itemId);
     if (item) item.sheet.render(true);

@@ -1,41 +1,54 @@
 <form class="{{cssClass}}" autocomplete="off">
+
+  <!-- HEADER -->
   <header class="sheet-header">
-    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100"/>
+    <img class="profile-img"
+         src="{{actor.img}}"
+         data-edit="img"
+         title="{{actor.name}}"
+         height="100"
+         width="100"/>
+
     <div class="header-fields">
-      <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/></h1>
+      <h1 class="charname">
+        <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
+      </h1>
+
       <div class="resources">
         <div class="resource">
           <label>Health</label>
-          <input type="number" name="system.health.value" value="{{system.health.value}}" data-dtype="Number"/>
-          <span> / </span>
-          <input type="number" name="system.health.max" value="{{system.health.max}}" data-dtype="Number"/>
+          <input type="number" name="system.health" value="{{system.health}}" />
         </div>
+
         <div class="resource">
           <label>Mental</label>
-          <input type="number" name="system.mental.value" value="{{system.mental.value}}" data-dtype="Number"/>
-          <span> / </span>
-          <input type="number" name="system.mental.max" value="{{system.mental.max}}" data-dtype="Number"/>
+          <input type="number" name="system.mental" value="{{system.mental}}" />
         </div>
+
         <div class="resource">
           <label>Level</label>
-          <input type="number" name="system.level" value="{{system.level}}" data-dtype="Number"/>
+          <input type="number" name="system.level" value="{{system.level}}" />
         </div>
+
         <div class="resource">
           <label>EXP</label>
-          <input type="number" name="system.exp" value="{{system.exp}}" data-dtype="Number"/>
+          <input type="number" name="system.exp" value="{{system.exp}}" />
         </div>
+
         <div class="resource">
           <label>Will Power</label>
-          <input type="number" name="system.wp" value="{{system.wp}}" data-dtype="Number"/>
+          <input type="number" name="system.wp" value="{{system.wp}}" />
         </div>
+
         <div class="resource">
           <label>Defense</label>
-          <input type="number" name="system.defense" value="{{system.defense}}" data-dtype="Number"/>
+          <input type="number" name="system.defense" value="{{system.defense}}" />
         </div>
       </div>
     </div>
   </header>
 
+  <!-- TABS -->
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item" data-tab="attributes">Attributes</a>
     <a class="item" data-tab="abilities">Abilities</a>
@@ -45,249 +58,154 @@
   </nav>
 
   <section class="sheet-body">
-    <!-- Attributes Tab -->
+
+    <!-- ATTRIBUTES -->
     <div class="tab attributes" data-group="primary" data-tab="attributes">
-      <h3>Body</h3>
+
       {{#each system.attributes as |attr key|}}
-        {{#if (or (eq key "strength") (eq key "dexterity") (eq key "toughness"))}}
-          <div class="attribute flexrow">
-            <label>{{capitalize key}}</label>
-            <div class="dice-pool">
-              <button type="button" class="dice-control" data-action="decrease" data-target="attributes.{{key}}.dice">-</button>
-              <div class="dice-display">
-                <span class="die {{#if (lte 1 attr.dice)}}filled{{/if}}">●</span>
-                <span class="die {{#if (lte 2 attr.dice)}}filled{{/if}}">●</span>
-                <span class="die {{#if (lte 3 attr.dice)}}filled{{/if}}">●</span>
-                <span class="die {{#if (lte 4 attr.dice)}}filled{{/if}}">●</span>
-                <span class="die {{#if (lte 5 attr.dice)}}filled{{/if}}">●</span>
-                <span class="die {{#if (lte 6 attr.dice)}}filled{{/if}}">●</span>
-              </div>
-              <button type="button" class="dice-control" data-action="increase" data-target="attributes.{{key}}.dice">+</button>
-            </div>
-            <input type="checkbox" name="system.attributes.{{key}}.succeed" {{checked attr.succeed}}/>
-            <button type="button" class="attribute-roll" data-attribute="{{key}}">
-              <i class="fas fa-dice-d6"></i> Roll
-            </button>
+      <div class="attribute flexrow">
+        <label>{{capitalize key}}</label>
+
+        <div class="dice-pool">
+          <button type="button" class="dice-control"
+                  data-action="decrease"
+                  data-target="attributes.{{key}}.dice">-</button>
+
+          <div class="dice-display">
+            {{#each (range 1 6) as |i|}}
+              <span class="die {{#if (lte i attr.dice)}}filled{{/if}}">●</span>
+            {{/each}}
           </div>
-        {{/if}}
+
+          <button type="button" class="dice-control"
+                  data-action="increase"
+                  data-target="attributes.{{key}}.dice">+</button>
+        </div>
+
+        <input type="checkbox"
+               name="system.attributes.{{key}}.succeed"
+               {{checked attr.succeed}}/>
+
+        <button type="button"
+                class="attribute-roll"
+                data-attribute="{{key}}">
+          🎲 Roll
+        </button>
+      </div>
       {{/each}}
 
-      <h3>Intelligence & Emotion</h3>
-      {{#each system.attributes as |attr key|}}
-        {{#if (or (eq key "intellect") (eq key "aptitude") (eq key "sanity"))}}
-          <div class="attribute flexrow">
-            <label>{{capitalize key}}</label>
-            <div class="dice-pool">
-              <button type="button" class="dice-control" data-action="decrease" data-target="attributes.{{key}}.dice">-</button>
-              <div class="dice-display">
-                <span class="die {{#if (lte 1 attr.dice)}}filled{{/if}}">●</span>
-                <span class="die {{#if (lte 2 attr.dice)}}filled{{/if}}">●</span>
-                <span class="die {{#if (lte 3 attr.dice)}}filled{{/if}}">●</span>
-                <span class="die {{#if (lte 4 attr.dice)}}filled{{/if}}">●</span>
-                <span class="die {{#if (lte 5 attr.dice)}}filled{{/if}}">●</span>
-                <span class="die {{#if (lte 6 attr.dice)}}filled{{/if}}">●</span>
-              </div>
-              <button type="button" class="dice-control" data-action="increase" data-target="attributes.{{key}}.dice">+</button>
-            </div>
-            <input type="checkbox" name="system.attributes.{{key}}.succeed" {{checked attr.succeed}}/>
-            <button type="button" class="attribute-roll" data-attribute="{{key}}">
-              <i class="fas fa-dice-d6"></i> Roll
-            </button>
-          </div>
-        {{/if}}
-      {{/each}}
-
-      <h3>Personality</h3>
-      {{#each system.attributes as |attr key|}}
-        {{#if (or (eq key "charm") (eq key "rhetoric") (eq key "ego"))}}
-          <div class="attribute flexrow">
-            <label>{{capitalize key}}</label>
-            <div class="dice-pool">
-              <button type="button" class="dice-control" data-action="decrease" data-target="attributes.{{key}}.dice">-</button>
-              <div class="dice-display">
-                <span class="die {{#if (lte 1 attr.dice)}}filled{{/if}}">●</span>
-                <span class="die {{#if (lte 2 attr.dice)}}filled{{/if}}">●</span>
-                <span class="die {{#if (lte 3 attr.dice)}}filled{{/if}}">●</span>
-                <span class="die {{#if (lte 4 attr.dice)}}filled{{/if}}">●</span>
-                <span class="die {{#if (lte 5 attr.dice)}}filled{{/if}}">●</span>
-                <span class="die {{#if (lte 6 attr.dice)}}filled{{/if}}">●</span>
-              </div>
-              <button type="button" class="dice-control" data-action="increase" data-target="attributes.{{key}}.dice">+</button>
-            </div>
-            <input type="checkbox" name="system.attributes.{{key}}.succeed" {{checked attr.succeed}}/>
-            <button type="button" class="attribute-roll" data-attribute="{{key}}">
-              <i class="fas fa-dice-d6"></i> Roll
-            </button>
-          </div>
-        {{/if}}
-      {{/each}}
     </div>
 
-    <!-- Abilities Tab -->
+    <!-- ABILITIES -->
     <div class="tab abilities" data-group="primary" data-tab="abilities">
-      <h3>Academic</h3>
-      {{#each system.abilities.academic as |ability key|}}
-        <div class="ability flexrow">
-          <label>{{capitalize key}}</label>
-          <div class="dice-pool">
-            <button type="button" class="dice-control" data-action="decrease" data-target="abilities.academic.{{key}}.dice">-</button>
-            <div class="dice-display">
-              <span class="die {{#if (lte 1 ability.dice)}}filled{{/if}}">●</span>
-              <span class="die {{#if (lte 2 ability.dice)}}filled{{/if}}">●</span>
-              <span class="die {{#if (lte 3 ability.dice)}}filled{{/if}}">●</span>
-              <span class="die {{#if (lte 4 ability.dice)}}filled{{/if}}">●</span>
-              <span class="die {{#if (lte 5 ability.dice)}}filled{{/if}}">●</span>
-              <span class="die {{#if (lte 6 ability.dice)}}filled{{/if}}">●</span>
-            </div>
-            <button type="button" class="dice-control" data-action="increase" data-target="abilities.academic.{{key}}.dice">+</button>
+
+      {{#each system.abilities as |group cat|}}
+      <h3>{{capitalize cat}}</h3>
+
+      {{#each group as |ability key|}}
+      <div class="ability flexrow">
+        <label>{{capitalize key}}</label>
+
+        <div class="dice-pool">
+          <button type="button" class="dice-control"
+                  data-action="decrease"
+                  data-target="abilities.{{cat}}.{{key}}.dice">-</button>
+
+          <div class="dice-display">
+            {{#each (range 1 6) as |i|}}
+              <span class="die {{#if (lte i ability.dice)}}filled{{/if}}">●</span>
+            {{/each}}
           </div>
-          <input type="checkbox" name="system.abilities.academic.{{key}}.succeed" {{checked ability.succeed}}/>
-          <button type="button" class="ability-roll" data-category="academic" data-ability="{{key}}">
-            <i class="fas fa-dice-d6"></i> Roll
-          </button>
+
+          <button type="button" class="dice-control"
+                  data-action="increase"
+                  data-target="abilities.{{cat}}.{{key}}.dice">+</button>
         </div>
+
+        <input type="checkbox"
+               name="system.abilities.{{cat}}.{{key}}.succeed"
+               {{checked ability.succeed}}/>
+
+        <button type="button"
+                class="ability-roll"
+                data-category="{{cat}}"
+                data-ability="{{key}}">
+          🎲 Roll
+        </button>
+      </div>
       {{/each}}
 
-      <h3>Intuition and Training</h3>
-      {{#each system.abilities.intuition as |ability key|}}
-        <div class="ability flexrow">
-          <label>{{capitalize key}}</label>
-          <div class="dice-pool">
-            <button type="button" class="dice-control" data-action="decrease" data-target="abilities.intuition.{{key}}.dice">-</button>
-            <div class="dice-display">
-              <span class="die {{#if (lte 1 ability.dice)}}filled{{/if}}">●</span>
-              <span class="die {{#if (lte 2 ability.dice)}}filled{{/if}}">●</span>
-              <span class="die {{#if (lte 3 ability.dice)}}filled{{/if}}">●</span>
-              <span class="die {{#if (lte 4 ability.dice)}}filled{{/if}}">●</span>
-              <span class="die {{#if (lte 5 ability.dice)}}filled{{/if}}">●</span>
-              <span class="die {{#if (lte 6 ability.dice)}}filled{{/if}}">●</span>
-            </div>
-            <button type="button" class="dice-control" data-action="increase" data-target="abilities.intuition.{{key}}.dice">+</button>
-          </div>
-          <input type="checkbox" name="system.abilities.intuition.{{key}}.succeed" {{checked ability.succeed}}/>
-          <button type="button" class="ability-roll" data-category="intuition" data-ability="{{key}}">
-            <i class="fas fa-dice-d6"></i> Roll
-          </button>
-        </div>
       {{/each}}
 
-      <h3>Physical Skills</h3>
-      {{#each system.abilities.physical as |ability key|}}
-        <div class="ability flexrow">
-          <label>{{capitalize key}}</label>
-          <div class="dice-pool">
-            <button type="button" class="dice-control" data-action="decrease" data-target="abilities.physical.{{key}}.dice">-</button>
-            <div class="dice-display">
-              <span class="die {{#if (lte 1 ability.dice)}}filled{{/if}}">●</span>
-              <span class="die {{#if (lte 2 ability.dice)}}filled{{/if}}">●</span>
-              <span class="die {{#if (lte 3 ability.dice)}}filled{{/if}}">●</span>
-              <span class="die {{#if (lte 4 ability.dice)}}filled{{/if}}">●</span>
-              <span class="die {{#if (lte 5 ability.dice)}}filled{{/if}}">●</span>
-              <span class="die {{#if (lte 6 ability.dice)}}filled{{/if}}">●</span>
-            </div>
-            <button type="button" class="dice-control" data-action="increase" data-target="abilities.physical.{{key}}.dice">+</button>
-          </div>
-          <input type="checkbox" name="system.abilities.physical.{{key}}.succeed" {{checked ability.succeed}}/>
-          <button type="button" class="ability-roll" data-category="physical" data-ability="{{key}}">
-            <i class="fas fa-dice-d6"></i> Roll
-          </button>
-        </div>
-      {{/each}}
     </div>
 
-    <!-- Skills Tab -->
+    <!-- SKILLS -->
     <div class="tab skills" data-group="primary" data-tab="skills">
+
       <div class="items-header">
         <div class="item-name">Skill Name</div>
         <div class="item-controls">
-          <a class="item-control item-create" data-type="skill" title="Create Skill">
-            <i class="fas fa-plus"></i> Add Skill
+          <a class="item-control item-create" data-type="skill">
+            ➕ Add Skill
           </a>
         </div>
       </div>
 
       <ol class="items-list">
         {{#each skills as |skill idx|}}
-          <li class="item skill-item">
-            <div class="item-name">
-              <input type="text" name="system.skills.{{idx}}.name" value="{{skill.name}}" placeholder="Skill name"/>
-            </div>
-            <div class="item-description">
-              <textarea name="system.skills.{{idx}}.description" placeholder="Description">{{skill.description}}</textarea>
-            </div>
-            <div class="item-controls">
-              <a class="item-control item-delete" data-index="{{idx}}" title="Delete Skill">
-                <i class="fas fa-trash"></i>
-              </a>
-            </div>
-          </li>
+        <li class="item skill-item">
+
+          <input type="text"
+                 name="system.skills.{{idx}}.name"
+                 value="{{skill.name}}"
+                 placeholder="Skill name"/>
+
+          <textarea name="system.skills.{{idx}}.description">{{skill.description}}</textarea>
+
+          <a class="item-control item-delete" data-index="{{idx}}">
+            🗑️
+          </a>
+        </li>
         {{/each}}
       </ol>
+
     </div>
 
-    <!-- Equipment Tab -->
+    <!-- EQUIPMENT -->
     <div class="tab equipment" data-group="primary" data-tab="equipment">
+
       <div class="items-header">
         <div class="item-name">Equipment</div>
         <div class="item-controls">
-          <a class="item-control item-create" data-type="item" title="Create Item">
-            <i class="fas fa-plus"></i> Add Item
+          <a class="item-control item-create" data-type="item">
+            ➕ Add Item
           </a>
         </div>
       </div>
 
       <ol class="items-list">
         {{#each items as |item id|}}
-          <li class="item" data-item-id="{{item._id}}">
-            <div class="item-image">
-              <img src="{{item.img}}" title="{{item.name}}" width="32" height="32"/>
-            </div>
-            <div class="item-name">{{item.name}}</div>
-            <div class="item-controls">
-              <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
-              <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
-            </div>
-          </li>
+        <li class="item" data-item-id="{{item._id}}">
+          <img src="{{item.img}}" width="32" height="32"/>
+          <span>{{item.name}}</span>
+          <a class="item-control item-edit">✏️</a>
+          <a class="item-control item-delete">🗑️</a>
+        </li>
         {{/each}}
       </ol>
+
     </div>
 
-    <!-- Biography Tab -->
+    <!-- BIOGRAPHY -->
     <div class="tab biography" data-group="primary" data-tab="biography">
-      <div class="form-group">
-        <label>Bio / Image</label>
-        <textarea name="system.bio" rows="4">{{system.bio}}</textarea>
-      </div>
-      
-      <div class="form-group">
-        <label>Source of Will Power</label>
-        <textarea name="system.sourceOfWillPower" rows="2">{{system.sourceOfWillPower}}</textarea>
-      </div>
-
-      <div class="form-group">
-        <label>Buff</label>
-        <textarea name="system.buff" rows="3">{{system.buff}}</textarea>
-      </div>
-
-      <div class="form-group">
-        <label>Debuff</label>
-        <textarea name="system.debuff" rows="3">{{system.debuff}}</textarea>
-      </div>
-
-      <div class="form-group">
-        <label>Injuries and Disorders</label>
-        <textarea name="system.injuries" rows="2">{{system.injuries}}</textarea>
-      </div>
-
-      <div class="form-group">
-        <label>Flaw</label>
-        <textarea name="system.flaw" rows="2">{{system.flaw}}</textarea>
-      </div>
-
-      <div class="form-group">
-        <label>Psychiatric Disorder</label>
-        <textarea name="system.psychiatricDisorder" rows="2">{{system.psychiatricDisorder}}</textarea>
-      </div>
+      <textarea name="system.bio">{{system.bio}}</textarea>
+      <textarea name="system.sourceOfWillPower">{{system.sourceOfWillPower}}</textarea>
+      <textarea name="system.buff">{{system.buff}}</textarea>
+      <textarea name="system.debuff">{{system.debuff}}</textarea>
+      <textarea name="system.injuries">{{system.injuries}}</textarea>
+      <textarea name="system.flaw">{{system.flaw}}</textarea>
+      <textarea name="system.psychiatricDisorder">{{system.psychiatricDisorder}}</textarea>
     </div>
+
   </section>
 </form>
