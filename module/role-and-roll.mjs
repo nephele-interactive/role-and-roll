@@ -145,8 +145,8 @@ export async function rollDicePool(numDice, label = "Dice Pool") {
 
     if (show3D) await game.dice3d.showForRoll(roll, game.user, true);
   }
-
-  const safeLabel = Handlebars.helpers.capitalize(label);
+      
+  const safeLabel = Handlebars.helpers.capitalize(label).replaceAll("strength", "Strength").replaceAll("dexterity", "Dexterity").replaceAll("toughness", "Toughness").replaceAll("intellect", "Intellect").replaceAll("aptitude", "Aptitude").replaceAll("sanity", "Sanity").replaceAll("charm", "Charm").replaceAll("rhetoric", "Rhetoric").replaceAll("ego", "Ego").replaceAll("generalEducation", "General education").replaceAll("search", "Search").replaceAll("history", "History").replaceAll("art", "Art").replaceAll("medicine", "Medicine").replaceAll("herb", "Herb").replaceAll("firstAid", "First aid").replaceAll("law", "Law").replaceAll("electronic", "Electronic").replaceAll("mechanical", "Mechanical").replaceAll("craft", "craft").replaceAll("occult", "Occult").replaceAll("perception", "Perception").replaceAll("hideSneak", "Hide & Sneek").replaceAll("persuade", "Persuade").replaceAll("consider", "Consider").replaceAll("empathy", "Empathy").replaceAll("bet", "Bet").replaceAll("senseOfLie", "Sense of lie").replaceAll("intimidate", "Intimidate").replaceAll("survival", "Survival").replaceAll("climb", "Climb").replaceAll("stealth", "Stealth").replaceAll("break", "Brawl").replaceAll("weapons", "Weapons").replaceAll("swordPlay", "Sword play").replaceAll("throwing", "Throwing").replaceAll("shootingWeapons", "Shooting weapons").replaceAll("reflex", "Reflex").replaceAll("agility", "Agility").replaceAll("athlete", "Athlete");
 
   // Chat output
   await ChatMessage.create({
