@@ -1,0 +1,153 @@
+{
+  "id": "role-and-roll",
+  "title": "Role & Roll",
+  "description": "Easy to play | TRPG from Thailand by BGN Squad",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "12",
+    "verified": "13"
+  },
+  "url": "",
+  "manifest": "",
+  "download": "",
+  "authors": [
+    {
+      "name": "Nephele Interactive",
+      "flags": {}
+    }
+  ],
+  "esmodules": [
+    "module/role-and-roll.mjs"
+  ],
+  "styles": [
+    "styles/role-and-roll.css"
+  ],
+
+  "documentTypes": {
+    "Actor": {
+      "character": {
+        "htmlFields": [
+          "details.biography.value",
+          "details.biography.public"
+        ]
+      },
+      "npc": {
+        "htmlFields": [
+          "details.biography.value",
+          "details.biography.public"
+        ]
+      }
+    },
+    "Item": {
+      "weapon": {
+        "htmlFields": [
+          "description.value"
+        ]
+      },
+      "armor": {
+        "htmlFields": [
+          "description.value"
+        ]
+      },
+      "skill": {
+        "htmlFields": [
+          "description.value"
+        ]
+      }
+    },
+    "JournalEntryPage": {
+      "rule": {
+        "htmlFields": [
+          "description.value"
+        ]
+      }
+    }
+  },
+
+  "packs": [
+    {
+      "name": "characters",
+      "label": "Sample Characters",
+      "system": "role-and-roll",
+      "path": "packs/characters",
+      "type": "Actor",
+      "private": false
+    },
+    {
+      "name": "items",
+      "label": "Items",
+      "system": "role-and-roll",
+      "path": "packs/items",
+      "type": "Item",
+      "private": false
+    },
+    {
+      "name": "rules",
+      "label": "Rules",
+      "system": "role-and-roll",
+      "path": "packs/rules",
+      "type": "JournalEntry",
+      "private": false
+    }
+  ],
+
+  "packFolders": [
+    {
+      "name": "Core Content",
+      "color": "#6b21a8",
+      "sorting": "m",
+      "packs": [
+        "characters",
+        "items",
+        "rules"
+      ]
+    }
+  ],
+
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json",
+      "flags": {}
+    }
+  ],
+
+  "media": [
+    {
+      "type": "cover",
+      "loop": false,
+      "flags": {}
+    },
+    {
+      "type": "setup",
+      "url": "systems/role-and-roll/ui/official/rnr-thumbnail.jpg",
+      "thumbnail": "systems/role-and-roll/ui/official/rnr-thumbnail.jpg"
+    }
+  ],
+
+  "socket": true,
+
+  "grid": {
+    "distance": 5,
+    "units": "m"
+  },
+
+  "primaryTokenAttribute": "system.health",
+  "secondaryTokenAttribute": "system.mental",
+
+  "background": "systems/role-and-roll/ui/official/rnr-thumbnail.jpg",
+
+  "flags": {
+    "role-and-roll": {
+      "sourceBooks": {
+        "Core Rules": "SOURCE.BOOK.CORE"
+      }
+    },
+    "needsMigrationVersion": "1.0.0",
+    "compatibleMigrationVersion": "1.0",
+    "hotReload": false
+  },
+
+  "license": "LICENSE.txt"
+}

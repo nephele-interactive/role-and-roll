@@ -1,0 +1,69 @@
+<form class="{{cssClass}} flexcol" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" height="64" width="64"/>
+    <div class="header-fields">
+      <h1 class="charname">
+        <input name="name" type="text" value="{{item.name}}" placeholder="Item Name"/>
+      </h1>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="description">Description</a>
+    <a class="item" data-tab="details">Details</a>
+  </nav>
+
+  <section class="sheet-body">
+    <!-- Description Tab -->
+    <div class="tab description" data-group="primary" data-tab="description">
+      <div class="form-group">
+        <label>Description</label>
+        <textarea name="system.description" rows="10">{{system.description}}</textarea>
+      </div>
+    </div>
+
+    <!-- Details Tab -->
+    <div class="tab details" data-group="primary" data-tab="details">
+      <div class="form-group">
+        <label>Quantity</label>
+        <input type="number" name="system.quantity" value="{{system.quantity}}" data-dtype="Number"/>
+      </div>
+
+      <div class="form-group">
+        <label>Weight</label>
+        <input type="number" name="system.weight" value="{{system.weight}}" data-dtype="Number" step="0.1"/>
+      </div>
+
+      {{#if (eq item.type "weapon")}}
+        <div class="form-group">
+          <label>Damage</label>
+          <input type="text" name="system.damage" value="{{system.damage}}"/>
+        </div>
+
+        <div class="form-group">
+          <label>Range</label>
+          <input type="text" name="system.range" value="{{system.range}}"/>
+        </div>
+      {{/if}}
+
+      {{#if (eq item.type "armor")}}
+        <div class="form-group">
+          <label>Defense</label>
+          <input type="number" name="system.defense" value="{{system.defense}}" data-dtype="Number"/>
+        </div>
+      {{/if}}
+
+      {{#if (or (eq item.type "skill") (eq item.type "ability"))}}
+        <div class="form-group">
+          <label>Level</label>
+          <input type="number" name="system.level" value="{{system.level}}" data-dtype="Number"/>
+        </div>
+
+        <div class="form-group">
+          <label>Dice Pool</label>
+          <input type="number" name="system.dice" value="{{system.dice}}" data-dtype="Number"/>
+        </div>
+      {{/if}}
+    </div>
+  </section>
+</form>

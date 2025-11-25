@@ -1,0 +1,60 @@
+{
+  "ROLEANDROLL": {
+    "SheetLabels": {
+      "Actor": "Role & Roll Character Sheet",
+      "Item": "Role & Roll Item Sheet"
+    },
+    "Attributes": {
+      "Strength": "Strength",
+      "Dexterity": "Dexterity",
+      "Toughness": "Toughness",
+      "Intellect": "Intellect",
+      "Aptitude": "Aptitude",
+      "Sanity": "Sanity",
+      "Charm": "Charm",
+      "Rhetoric": "Rhetoric",
+      "Ego": "Ego"
+    },
+    "Abilities": {
+      "Academic": "Academic",
+      "Intuition": "Intuition and Training",
+      "Physical": "Physical Skills"
+    },
+    "Tabs": {
+      "Attributes": "Attributes",
+      "Abilities": "Abilities",
+      "Skills": "Skills",
+      "Equipment": "Equipment",
+      "Biography": "Biography"
+    },
+    "Labels": {
+      "Health": "Health",
+      "Mental": "Mental",
+      "Level": "Level",
+      "Exp": "EXP",
+      "Defense": "Defense",
+      "WP": "WP",
+      "Dice": "Dice",
+      "Succeed": "Succeed",
+      "Roll": "Roll",
+      "Name": "Name",
+      "Description": "Description",
+      "Quantity": "Quantity",
+      "Weight": "Weight",
+      "Damage": "Damage",
+      "Range": "Range",
+      "Bio": "Bio / Image",
+      "SourceOfWillPower": "Source of Will Power",
+      "Buff": "Buff",
+      "Debuff": "Debuff",
+      "Injuries": "Injuries and Disorders",
+      "Flaw": "Flaw",
+      "PsychiatricDisorder": "Psychiatric Disorder"
+    },
+    "Rolls": {
+      "Successes": "Successes",
+      "Criticals": "Criticals",
+      "DiceResults": "Dice"
+    }
+  }
+}

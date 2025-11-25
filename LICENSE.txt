@@ -1,0 +1,28 @@
+Role & Roll - Tabletop Roleplaying Game System
+
+Copyright (c) 2025 BGN Squad
+
+This work, “Role & Roll”, is an original tabletop roleplaying game system created by BGN Squad.
+
+The Foundry Virtual Tabletop (FoundryVTT) implementation of Role & Roll was developed
+and published by Nephele Interactive.
+
+Permission is hereby granted to any person to use this system for personal and
+commercial gameplay purposes, including running paid or professional game sessions,
+livestreams, and public events.
+
+You may:
+- Use this system in free or paid game sessions
+- Livestream or record gameplay
+- Share this system freely for non-commercial distribution
+
+You may NOT:
+- Sell this system itself as a product
+- Claim authorship of the system
+- Redistribute this system or modified versions as a paid product
+- Bundle the system with other paid materials without written permission
+  from BGN Squad or Nephele Interactive
+
+All rights reserved by BGN Squad and Nephele Interactive.
+
+THIS WORK IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
