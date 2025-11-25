@@ -27,6 +27,15 @@ Hooks.once("init", function () {
   const safeCapitalize = (str) => {
     if (!str || typeof str !== "string") return "";
     const map = {
+      strength: "Strength",
+      dexterity: "Dexterity",
+      toughness: "Toughness",
+      intellect: "Intellect",
+      aptitude: "Aptitude",
+      sanity: "Sanity",
+      charm: "Charm",
+      rhetoric: "Rhetoric",
+      ego: "Ego",
       generalEducation: "General education",
       firstAid: "First aid",
       law: "Law",
@@ -148,8 +157,8 @@ export async function rollDicePool(numDice, label = "Dice Pool") {
         <div class="dice-results">
           <strong>Rolled ${results.length} dice:</strong>
           ${results
-            .map(r => (r === 1 ? "•" : r === 6 ? "R" : "0"))
-            .join(" ")}
+        .map(r => (r === 1 ? "•" : r === 6 ? "R" : "0"))
+        .join(" ")}
         </div>
         <div class="success-count">
           <strong>Successes:</strong> ${successes}
