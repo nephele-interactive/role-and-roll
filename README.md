@@ -40,15 +40,15 @@ A complete game system implementation for the Role & Roll TRPG using d6 dice poo
 ```https://github.com/nephele-interactive/role-and-roll/archive/refs/heads/main.zip```
 
 2. Extract the folder
-3. Rename the folder to:
-
-```role-and-roll```
+3. Rename the folder to: ```role-and-roll```
 
 4. Move it into your Foundry systems folder:
 
 **Windows**
 
 ```C:\Users<YourName>\AppData\Local\FoundryVTT\Data\systems\role-and-roll```
+
+
 **Linux**
 
 ```/home/foundry/.local/share/FoundryVTT/Data/systems/role-and-roll```
