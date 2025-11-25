@@ -214,11 +214,8 @@
 }
 
 /* ================= SAFE FIXES ================= */
-/* DO NOT TOUCH FOUNDRY CORE UI */
-.window-app:not(.role-and-roll),
-.app:not(.role-and-roll),
-body {
-  all: revert;
+body:not(.role-and-roll) * {
+  box-sizing: border-box;
 }
 
 .role-and-roll input[type="checkbox"] {
