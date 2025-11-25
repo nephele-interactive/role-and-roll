@@ -46,7 +46,7 @@ A complete game system implementation for the Role & Roll TRPG using d6 dice poo
 
 **Windows**
 
-```C:\Users<YourName>\AppData\Local\FoundryVTT\Data\systems\role-and-roll```
+```C:\Users\<YourName>\AppData\Local\FoundryVTT\Data\systems\role-and-roll```
 
 
 **Linux**
