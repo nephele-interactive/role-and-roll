@@ -7,9 +7,9 @@
     "minimum": "12",
     "verified": "13"
   },
-  "url": "",
-  "manifest": "",
-  "download": "",
+  "url": "https://github.com/nephele-interactive/role-and-roll",
+  "manifest": "https://raw.githubusercontent.com/nephele-interactive/role-and-roll/main/system.json",
+  "download": "https://github.com/nephele-interactive/role-and-roll/releases/download/v1.0.0/role-and-roll-v1.0.0.zip",
   "authors": [
     {
       "name": "Nephele Interactive",
@@ -22,7 +22,6 @@
   "styles": [
     "styles/role-and-roll.css"
   ],
-
   "documentTypes": {
     "Actor": {
       "character": {
@@ -63,7 +62,6 @@
       }
     }
   },
-
   "packs": [
     {
       "name": "characters",
@@ -90,7 +88,6 @@
       "private": false
     }
   ],
-
   "packFolders": [
     {
       "name": "Core Content",
@@ -103,7 +100,6 @@
       ]
     }
   ],
-
   "languages": [
     {
       "lang": "en",
@@ -112,7 +108,6 @@
       "flags": {}
     }
   ],
-
   "media": [
     {
       "type": "cover",
@@ -125,19 +120,14 @@
       "thumbnail": "systems/role-and-roll/ui/official/rnr-thumbnail.jpg"
     }
   ],
-
   "socket": true,
-
   "grid": {
     "distance": 5,
     "units": "m"
   },
-
   "primaryTokenAttribute": "system.health",
   "secondaryTokenAttribute": "system.mental",
-
   "background": "systems/role-and-roll/ui/official/rnr-thumbnail.jpg",
-
   "flags": {
     "role-and-roll": {
       "sourceBooks": {
@@ -148,6 +138,5 @@
     "compatibleMigrationVersion": "1.0",
     "hotReload": false
   },
-
   "license": "LICENSE.txt"
 }
