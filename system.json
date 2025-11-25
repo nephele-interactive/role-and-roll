@@ -147,7 +147,7 @@
   "primaryTokenAttribute": "system.health",
   "secondaryTokenAttribute": "system.mental",
 
-  "background": "systems/role-and-roll/ui/official/rnr-background.webp",
+  "background": "systems/role-and-roll/ui/official/rnr-thumbnail.jpg",
 
   "flags": {
     "role-and-roll": {
