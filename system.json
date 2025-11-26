@@ -2,16 +2,14 @@
   "id": "role-and-roll",
   "title": "Role & Roll",
   "description": "Easy to play | TRPG from Thailand by BGN Squad",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
   },
-
   "url": "https://github.com/nephele-interactive/role-and-roll",
   "manifest": "https://raw.githubusercontent.com/nephele-interactive/role-and-roll/main/system.json",
-  "download": "https://github.com/nephele-interactive/role-and-roll/releases/download/v1.0.7/role-and-roll-v1.0.7.zip",
-
+  "download": "https://github.com/nephele-interactive/role-and-roll/releases/download/v1.0.8/role-and-roll-v1.0.8.zip",
   "authors": [
     {
       "name": "Nephele Interactive",
@@ -22,14 +20,12 @@
       "flags": {}
     }
   ],
-
   "esmodules": [
     "module/role-and-roll.mjs"
   ],
   "styles": [
     "styles/role-and-roll.css"
   ],
-
   "documentTypes": {
     "Actor": {
       "character": {
@@ -68,7 +64,6 @@
       }
     }
   },
-
   "packs": [
     {
       "name": "rnr-characters",
@@ -95,7 +90,6 @@
       "private": false
     }
   ],
-
   "packFolders": [
     {
       "name": "Role & Roll",
@@ -108,7 +102,6 @@
       ]
     }
   ],
-
   "languages": [
     {
       "lang": "en",
@@ -117,7 +110,6 @@
       "flags": {}
     }
   ],
-
   "media": [
     {
       "type": "cover",
@@ -130,19 +122,15 @@
       "thumbnail": "systems/role-and-roll/ui/official/rnr-thumbnail.jpg"
     }
   ],
-
   "socket": true,
-
   "grid": {
     "distance": 5,
     "units": "m"
   },
-
-  "primaryTokenAttribute": "system.health",
-  "secondaryTokenAttribute": "system.mental",
-
+  "initiative": "@initiative",
+  "primaryTokenAttribute": "health",
+  "secondaryTokenAttribute": "mental",
   "background": "systems/role-and-roll/ui/official/rnr-thumbnail.jpg",
-
   "flags": {
     "role-and-roll": {
       "sourceBooks": {
@@ -153,6 +141,5 @@
     "compatibleMigrationVersion": "1.0",
     "hotReload": false
   },
-
   "license": "LICENSE.txt"
 }

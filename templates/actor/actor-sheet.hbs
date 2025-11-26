@@ -17,12 +17,16 @@
       <div class="resources">
         <div class="resource">
           <label>Health</label>
-          <input type="number" name="system.health" value="{{system.health}}" />
+          <input type="number" name="system.health.value" value="{{system.health.value}}" />
+          <span>/</span>
+          <input type="number" name="system.health.max" value="{{system.health.max}}" />
         </div>
 
         <div class="resource">
           <label>Mental</label>
-          <input type="number" name="system.mental" value="{{system.mental}}" />
+          <input type="number" name="system.mental.value" value="{{system.mental.value}}" />
+          <span>/</span>
+          <input type="number" name="system.mental.max" value="{{system.mental.max}}" />
         </div>
 
         <div class="resource">
@@ -63,13 +67,13 @@
     <div class="tab attributes" data-group="primary" data-tab="attributes">
 
       {{#each system.attributes as |attr key|}}
-      <div class="attribute flexrow">
-        <label>{{capitalize key}}</label>
+      <div class="attribute">
+        <label class="attr-label">{{capitalize key}}</label>
 
         <div class="dice-pool">
           <button type="button" class="dice-control"
                   data-action="decrease"
-                  data-target="attributes.{{key}}.dice">-</button>
+                  data-target="attributes.{{key}}.dice">−</button>
 
           <div class="dice-display">
             {{#each (range 1 6) as |i|}}
@@ -84,12 +88,13 @@
 
         <input type="checkbox"
                name="system.attributes.{{key}}.succeed"
-               {{checked attr.succeed}}/>
+               {{checked attr.succeed}}
+               title="Succeed"/>
 
         <button type="button"
                 class="attribute-roll"
                 data-attribute="{{key}}">
-          🎲 Roll
+          <i class="fas fa-dice-d6"></i>
         </button>
       </div>
       {{/each}}
@@ -103,13 +108,13 @@
       <h3>{{capitalize cat}}</h3>
 
       {{#each group as |ability key|}}
-      <div class="ability flexrow">
-        <label>{{capitalize key}}</label>
+      <div class="ability">
+        <label class="ability-label">{{capitalize key}}</label>
 
         <div class="dice-pool">
           <button type="button" class="dice-control"
                   data-action="decrease"
-                  data-target="abilities.{{cat}}.{{key}}.dice">-</button>
+                  data-target="abilities.{{cat}}.{{key}}.dice">−</button>
 
           <div class="dice-display">
             {{#each (range 1 6) as |i|}}
@@ -124,13 +129,14 @@
 
         <input type="checkbox"
                name="system.abilities.{{cat}}.{{key}}.succeed"
-               {{checked ability.succeed}}/>
+               {{checked ability.succeed}}
+               title="Succeed"/>
 
         <button type="button"
                 class="ability-roll"
                 data-category="{{cat}}"
                 data-ability="{{key}}">
-          🎲 Roll
+          <i class="fas fa-dice-d6"></i>
         </button>
       </div>
       {{/each}}
@@ -143,27 +149,29 @@
     <div class="tab skills" data-group="primary" data-tab="skills">
 
       <div class="items-header">
-        <div class="item-name">Skill Name</div>
-        <div class="item-controls">
-          <a class="item-control item-create" data-type="skill">
-            ➕ Add Skill
-          </a>
-        </div>
+        <span class="header-title">Skills</span>
+        <a class="item-control item-create" data-type="skill" title="Add Skill">
+          <i class="fas fa-plus"></i> Add Skill
+        </a>
       </div>
 
       <ol class="items-list">
         {{#each skills as |skill idx|}}
         <li class="item skill-item">
+          <div class="skill-content">
+            <input type="text"
+                   class="skill-name"
+                   name="system.skills.{{idx}}.name"
+                   value="{{skill.name}}"
+                   placeholder="Skill name"/>
 
-          <input type="text"
-                 name="system.skills.{{idx}}.name"
-                 value="{{skill.name}}"
-                 placeholder="Skill name"/>
+            <textarea class="skill-description"
+                      name="system.skills.{{idx}}.description"
+                      placeholder="Description">{{skill.description}}</textarea>
+          </div>
 
-          <textarea name="system.skills.{{idx}}.description">{{skill.description}}</textarea>
-
-          <a class="item-control item-delete" data-index="{{idx}}">
-            🗑️
+          <a class="item-control item-delete" data-index="{{idx}}" title="Delete">
+            <i class="fas fa-trash"></i>
           </a>
         </li>
         {{/each}}
@@ -175,21 +183,30 @@
     <div class="tab equipment" data-group="primary" data-tab="equipment">
 
       <div class="items-header">
-        <div class="item-name">Equipment</div>
-        <div class="item-controls">
-          <a class="item-control item-create" data-type="item">
-            ➕ Add Item
-          </a>
-        </div>
+        <span class="header-title">Equipment</span>
+        <a class="item-control item-create" data-type="item" title="Add Item">
+          <i class="fas fa-plus"></i> Add Item
+        </a>
       </div>
 
       <ol class="items-list">
         {{#each items as |item id|}}
-        <li class="item" data-item-id="{{item._id}}">
-          <img src="{{item.img}}" width="32" height="32"/>
-          <span>{{item.name}}</span>
-          <a class="item-control item-edit">✏️</a>
-          <a class="item-control item-delete">🗑️</a>
+        <li class="item equipment-item" data-item-id="{{item._id}}">
+          <img src="{{item.img}}" class="item-img" width="36" height="36" title="{{item.name}}"/>
+          
+          <div class="item-details">
+            <h4 class="item-name">{{item.name}}</h4>
+            <span class="item-type">{{item.type}}</span>
+          </div>
+
+          <div class="item-controls">
+            <a class="item-control item-edit" title="Edit">
+              <i class="fas fa-edit"></i>
+            </a>
+            <a class="item-control item-delete" title="Delete">
+              <i class="fas fa-trash"></i>
+            </a>
+          </div>
         </li>
         {{/each}}
       </ol>
@@ -198,20 +215,42 @@
 
     <!-- BIOGRAPHY -->
     <div class="tab biography" data-group="primary" data-tab="biography">
-      <div class="item-name">Bio</div>
-      <textarea name="system.bio">{{system.bio}}</textarea>
-      <div class="item-name">Source of Will Power</div>
-      <textarea name="system.sourceOfWillPower">{{system.sourceOfWillPower}}</textarea>
-      <div class="item-name">Buff</div>
-      <textarea name="system.buff">{{system.buff}}</textarea>
-      <div class="item-name">Debuff</div>
-      <textarea name="system.debuff">{{system.debuff}}</textarea>
-      <div class="item-name">Injuries and Disorders</div>
-      <textarea name="system.injuries">{{system.injuries}}</textarea>
-      <div class="item-name">Flaws</div>
-      <textarea name="system.flaw">{{system.flaw}}</textarea>
-      <div class="item-name">Psychiatric Disorder</div>
-      <textarea name="system.psychiatricDisorder">{{system.psychiatricDisorder}}</textarea>
+      
+      <div class="bio-group">
+        <label>Bio</label>
+        <textarea name="system.bio" rows="4">{{system.bio}}</textarea>
+      </div>
+
+      <div class="bio-group">
+        <label>Source of Will Power</label>
+        <textarea name="system.sourceOfWillPower" rows="2">{{system.sourceOfWillPower}}</textarea>
+      </div>
+
+      <div class="bio-group">
+        <label>Buff</label>
+        <textarea name="system.buff" rows="3">{{system.buff}}</textarea>
+      </div>
+
+      <div class="bio-group">
+        <label>Debuff</label>
+        <textarea name="system.debuff" rows="3">{{system.debuff}}</textarea>
+      </div>
+
+      <div class="bio-group">
+        <label>Injuries and Disorders</label>
+        <textarea name="system.injuries" rows="2">{{system.injuries}}</textarea>
+      </div>
+
+      <div class="bio-group">
+        <label>Flaws</label>
+        <textarea name="system.flaw" rows="2">{{system.flaw}}</textarea>
+      </div>
+
+      <div class="bio-group">
+        <label>Psychiatric Disorder</label>
+        <textarea name="system.psychiatricDisorder" rows="2">{{system.psychiatricDisorder}}</textarea>
+      </div>
+
     </div>
 
   </section>
