@@ -144,8 +144,11 @@ See `LICENSE.txt` for full terms.
 
 ## Support
 
-GitHub:  
+## GitHub:  
 https://github.com/nephele-interactive/role-and-roll
+
+## Support Discord:  
+https://discord.gg/sMUn5ESwPV
 
 ## BGN Squad Discord:  
 https://discord.gg/RNjEeQvWeb
