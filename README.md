@@ -73,8 +73,6 @@ To install Dice So Nice:
 
 - Click 🎲 next to **Attributes** to roll
 - Click 🎲 next to **Abilities** to roll
-- Click 🎲 next to **Skills** to roll
-
 ---
 
 ### Dice Mechanics
