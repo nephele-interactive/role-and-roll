@@ -7,7 +7,10 @@ export class RoleAndRollItemSheet extends ItemSheet {
       classes: ["role-and-roll", "sheet", "item"],
       template: "systems/role-and-roll/templates/item/item-sheet.hbs",
       width: 520,
-      height: 480
+      height: 480,
+      tabs: [
+        { navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }
+      ]
     });
   }
 

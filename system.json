@@ -2,14 +2,14 @@
   "id": "role-and-roll",
   "title": "Role & Roll",
   "description": "Easy to play | TRPG from Thailand by BGN Squad",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
   },
   "url": "https://github.com/nephele-interactive/role-and-roll",
   "manifest": "https://raw.githubusercontent.com/nephele-interactive/role-and-roll/main/system.json",
-  "download": "https://github.com/nephele-interactive/role-and-roll/releases/download/v1.0.8/role-and-roll-v1.0.8.zip",
+  "download": "https://github.com/nephele-interactive/role-and-roll/releases/download/v1.0.9/role-and-roll-v1.0.9.zip",
   "authors": [
     {
       "name": "Nephele Interactive",
@@ -24,7 +24,8 @@
     "module/role-and-roll.mjs"
   ],
   "styles": [
-    "styles/role-and-roll.css"
+    "styles/role-and-roll.css",
+    "styles/chat-dice.css"
   ],
   "documentTypes": {
     "Actor": {
@@ -36,20 +37,8 @@
       }
     },
     "Item": {
-      "ability": {
-        "label": "Ability",
-        "htmlFields": [
-          "system.description"
-        ]
-      },
       "equipment": {
         "label": "Equipment",
-        "htmlFields": [
-          "system.description"
-        ]
-      },
-      "skill": {
-        "label": "Skill",
         "htmlFields": [
           "system.description"
         ]
@@ -107,6 +96,12 @@
       "lang": "en",
       "name": "English",
       "path": "lang/en.json",
+      "flags": {}
+    },
+    {
+      "lang": "th",
+      "name": "ไทย",
+      "path": "lang/th.json",
       "flags": {}
     }
   ],

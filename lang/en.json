@@ -1,60 +1,114 @@
-{
-  "ROLEANDROLL": {
-    "SheetLabels": {
-      "Actor": "Role & Roll Character Sheet",
-      "Item": "Role & Roll Item Sheet"
-    },
-    "Attributes": {
-      "Strength": "Strength",
-      "Dexterity": "Dexterity",
-      "Toughness": "Toughness",
-      "Intellect": "Intellect",
-      "Aptitude": "Aptitude",
-      "Sanity": "Sanity",
-      "Charm": "Charm",
-      "Rhetoric": "Rhetoric",
-      "Ego": "Ego"
-    },
-    "Abilities": {
-      "Academic": "Academic",
-      "Intuition": "Intuition and Training",
-      "Physical": "Physical Skills"
-    },
-    "Tabs": {
-      "Attributes": "Attributes",
-      "Abilities": "Abilities",
-      "Skills": "Skills",
-      "Equipment": "Equipment",
-      "Biography": "Biography"
-    },
-    "Labels": {
-      "Health": "Health",
-      "Mental": "Mental",
-      "Level": "Level",
-      "Exp": "EXP",
-      "Defense": "Defense",
-      "WP": "WP",
-      "Dice": "Dice",
-      "Succeed": "Succeed",
-      "Roll": "Roll",
-      "Name": "Name",
-      "Description": "Description",
-      "Quantity": "Quantity",
-      "Weight": "Weight",
-      "Damage": "Damage",
-      "Range": "Range",
-      "Bio": "Bio / Image",
-      "SourceOfWillPower": "Source of Will Power",
-      "Buff": "Buff",
-      "Debuff": "Debuff",
-      "Injuries": "Injuries and Disorders",
-      "Flaw": "Flaw",
-      "PsychiatricDisorder": "Psychiatric Disorder"
-    },
-    "Rolls": {
-      "Successes": "Successes",
-      "Criticals": "Criticals",
-      "DiceResults": "Dice"
-    }
-  }
-}
+      {
+        "ROLEANDROLL": {
+          "SheetLabels": {
+            "Actor": "Role & Roll Character Sheet",
+            "Item": "Role & Roll Item Sheet"
+          },
+          "Attributes": {
+            "strength": "Strength",
+            "dexterity": "Dexterity",
+            "toughness": "Toughness",
+            "intellect": "Intellect",
+            "aptitude": "Aptitude",
+            "sanity": "Sanity",
+            "charm": "Charm",
+            "rhetoric": "Rhetoric",
+            "ego": "Ego"
+          },
+          "Abilities": {
+            "generalEducation": "General Education",
+            "search": "Search",
+            "history": "History",
+            "art": "Art",
+            "medicine": "Medicine",
+            "herb": "Herb",
+            "firstAid": "First Aid",
+            "law": "Law",
+            "electronic": "Electronic",
+            "mechanical": "Mechanical",
+            "craft": "Craft",
+            "occult": "Occult",
+            "perception": "Perception",
+            "hideSneak": "Hide & Sneak",
+            "persuade": "Persuade",
+            "consider": "Consider",
+            "empathy": "Empathy",
+            "bet": "Bet",
+            "senseOfLie": "Sense of Lie",
+            "intimidate": "Intimidate",
+            "survival": "Survival",
+            "climb": "Climb",
+            "stealth": "Stealth",
+            "break": "Brawl",
+            "weapons": "Weapons",
+            "swordPlay": "Sword Play",
+            "throwing": "Throwing",
+            "shootingWeapons": "Shooting Weapons",
+            "reflex": "Reflex",
+            "larcency": "Larcency",
+            "athlete": "Athlete"
+          },
+          "AbilityCategories": {
+            "academic": "Academic",
+            "intuition": "Intuition and Training",
+            "physical": "Physical Skills"
+          },
+          "Tabs": {
+            "Attributes": "Attribute",
+            "Abilities": "Abilities",
+            "Skills": "Skills",
+            "Equipment": "Equipment",
+            "Biography": "Biography",
+            "Description": "Description",
+            "Details": "Details",
+            "Bio": "Bio"
+          },
+          "Labels": {
+            "Health": "Health",
+            "Mental": "Mental",
+            "Level": "Level",
+            "Exp": "EXP",
+            "Defense": "Defense",
+            "WillPower": "Will Power",
+            "Dice": "Dice",
+            "Succeed": "Succeed",
+            "Roll": "Roll",
+            "Name": "Name",
+            "Description": "Description",
+            "Quantity": "Quantity",
+            "Weight": "Weight",
+            "Damage": "Damage",
+            "Range": "Range",
+            "Bio": "Bio",
+            "SourceOfWillPower": "Source of Will Power",
+            "Buff": "Buff",
+            "Debuff": "Debuff",
+            "Injuries": "Injuries and Disorders",
+            "Flaw": "Flaw",
+            "PsychiatricDisorder": "Psychiatric Disorder",
+            "AddSkill": "Add Skill",
+            "AddItem": "Add Item",
+            "AddEquipment": "Add Equipment",
+            "CharacterName": "Character Name",
+            "SkillName": "Skill Name",
+            "ShowInChat": "Show in Chat",
+            "Prepared": "Prepared",
+            "Delete": "Delete",
+            "Edit": "Edit"
+          },
+          "Rolls": {
+            "Rolled": "Rolled",
+            "Successes": "Successes",
+            "Criticals": "Criticals"
+          },
+          "Bio": {
+            "Biography": "Bio",
+            "SourceOfWillPower": "Source of will power",
+            "Buff": "Buff",
+            "Debuff": "Debuff",
+            "Injuries": "Injuries and disorders",
+            "Flaw": "Flaw",
+            "PsychiatricDisorder": "Psychiatric disorder"
+          }
+        }
+      }

@@ -1,0 +1,80 @@
+/* Chat message dice result styles */
+.role-roll-result {
+    background: #f8f4e6 !important;
+    border: 2px solid #8b0000 !important;
+    border-radius: 8px !important;
+    padding: 15px !important;
+    margin: 5px 0 !important;
+}
+
+.role-roll-result .dice-results {
+    font-size: 16px !important;
+    margin-bottom: 10px !important;
+    color: #2b2b2b !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+}
+
+.role-roll-result .dice-pool-display {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    align-items: center !important;
+}
+
+.role-roll-result .die-box {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    border: 2px solid #2b2b2b !important;
+    border-radius: 4px !important;
+    background: #fff !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    color: #2b2b2b !important;
+    flex-shrink: 0 !important;
+}
+
+.role-roll-result .success-count {
+    font-size: 18px !important;
+    font-weight: bold !important;
+    color: #8b0000 !important;
+}
+
+.roll-avatar {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.roll-avatar img {
+    width: 64px;
+    height: 64px;
+    border-radius: 6px;
+    border: 2px solid #8b0000;
+    object-fit: cover;
+    background: #000;
+}
+
+.roll-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.roll-avatar-img {
+    width: 42px;
+    height: 42px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 2px solid #8b0000;
+}
+
+.roll-actor-name {
+    font-weight: bold;
+    font-size: 14px;
+}

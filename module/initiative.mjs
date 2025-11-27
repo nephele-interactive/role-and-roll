@@ -28,11 +28,12 @@ export function patchCombatForRnR() {
 
       // Read DEX dice from your actor schema
       const dexDice = Number(c.actor.system?.attributes?.dexterity?.dice ?? 0);
+      const dexSucceed = c.actor.system?.attributes?.dexterity?.succeed ? 1 : 0;
       const pool = Math.max(1, dexDice); // at least 1 die
 
       // Use your system roller: 1 = success, 6 = success + reroll
-      const result = await game.roleandroll.rollDicePool(pool, `${c.name} - Initiative`);
-      const score = Number(result?.successes ?? 0) + (dexDice*0.01);
+      const result = await game.roleandroll.rollDicePool(pool, `${c.name} - Initiative [${dexDice}]`, dexSucceed);
+      const score = Number(result?.successes ?? 0) + (dexDice * 0.01);
 
       updates.push({ _id: c.id, initiative: score });
     }

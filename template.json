@@ -1,6 +1,8 @@
 {
   "Actor": {
-    "types": ["character"],
+    "types": [
+      "character"
+    ],
     "character": {
       "health": {
         "value": 15,
@@ -14,9 +16,8 @@
       "exp": 0,
       "defense": 0,
       "wp": 0,
+      "biography": "",
       "sourceOfWillPower": "",
-      "bio": "",
-      "image": "",
       "buff": "",
       "debuff": "",
       "injuries": "",
@@ -62,45 +63,137 @@
       },
       "abilities": {
         "academic": {
-          "generalEducation": { "dice": 0, "succeed": false },
-          "search": { "dice": 0, "succeed": false },
-          "history": { "dice": 0, "succeed": false },
-          "art": { "dice": 0, "succeed": false },
-          "medicine": { "dice": 0, "succeed": false },
-          "herb": { "dice": 0, "succeed": false },
-          "firstAid": { "dice": 0, "succeed": false },
-          "law": { "dice": 0, "succeed": false },
-          "electronic": { "dice": 0, "succeed": false },
-          "mechanical": { "dice": 0, "succeed": false },
-          "craft": { "dice": 0, "succeed": false }
+          "generalEducation": {
+            "dice": 0,
+            "succeed": false
+          },
+          "search": {
+            "dice": 0,
+            "succeed": false
+          },
+          "history": {
+            "dice": 0,
+            "succeed": false
+          },
+          "art": {
+            "dice": 0,
+            "succeed": false
+          },
+          "medicine": {
+            "dice": 0,
+            "succeed": false
+          },
+          "herb": {
+            "dice": 0,
+            "succeed": false
+          },
+          "firstAid": {
+            "dice": 0,
+            "succeed": false
+          },
+          "law": {
+            "dice": 0,
+            "succeed": false
+          },
+          "electronic": {
+            "dice": 0,
+            "succeed": false
+          },
+          "mechanical": {
+            "dice": 0,
+            "succeed": false
+          },
+          "craft": {
+            "dice": 0,
+            "succeed": false
+          }
         },
         "intuition": {
-          "occult": { "dice": 0, "succeed": false },
-          "perception": { "dice": 0, "succeed": false },
-          "hideSneak": { "dice": 0, "succeed": false },
-          "persuade": { "dice": 0, "succeed": false },
-          "consider": { "dice": 0, "succeed": false },
-          "empathy": { "dice": 0, "succeed": false },
-          "bet": { "dice": 0, "succeed": false },
-          "senseOfLie": { "dice": 0, "succeed": false },
-          "intimidate": { "dice": 0, "succeed": false },
-          "survival": { "dice": 0, "succeed": false }
+          "occult": {
+            "dice": 0,
+            "succeed": false
+          },
+          "perception": {
+            "dice": 0,
+            "succeed": false
+          },
+          "hideSneak": {
+            "dice": 0,
+            "succeed": false
+          },
+          "persuade": {
+            "dice": 0,
+            "succeed": false
+          },
+          "consider": {
+            "dice": 0,
+            "succeed": false
+          },
+          "empathy": {
+            "dice": 0,
+            "succeed": false
+          },
+          "bet": {
+            "dice": 0,
+            "succeed": false
+          },
+          "senseOfLie": {
+            "dice": 0,
+            "succeed": false
+          },
+          "intimidate": {
+            "dice": 0,
+            "succeed": false
+          },
+          "survival": {
+            "dice": 0,
+            "succeed": false
+          }
         },
         "physical": {
-          "climb": { "dice": 0, "succeed": false },
-          "stealth": { "dice": 0, "succeed": false },
-          "break": { "dice": 0, "succeed": false },
-          "weapons": { "dice": 0, "succeed": false },
-          "swordPlay": { "dice": 0, "succeed": false },
-          "throwing": { "dice": 0, "succeed": false },
-          "shootingWeapons": { "dice": 0, "succeed": false },
-          "reflex": { "dice": 0, "succeed": false },
-          "agility": { "dice": 0, "succeed": false },
-          "athlete": { "dice": 0, "succeed": false }
+          "climb": {
+            "dice": 0,
+            "succeed": false
+          },
+          "stealth": {
+            "dice": 0,
+            "succeed": false
+          },
+          "break": {
+            "dice": 0,
+            "succeed": false
+          },
+          "weapons": {
+            "dice": 0,
+            "succeed": false
+          },
+          "swordPlay": {
+            "dice": 0,
+            "succeed": false
+          },
+          "throwing": {
+            "dice": 0,
+            "succeed": false
+          },
+          "shootingWeapons": {
+            "dice": 0,
+            "succeed": false
+          },
+          "reflex": {
+            "dice": 0,
+            "succeed": false
+          },
+          "larcency": {
+            "dice": 0,
+            "succeed": false
+          },
+          "athlete": {
+            "dice": 0,
+            "succeed": false
+          }
         }
       },
-      "skills": [
-      ],
+      "skills": [],
       "equipment": {
         "left": [],
         "right": [],
@@ -115,33 +208,13 @@
     }
   },
   "Item": {
-    "types": ["item", "weapon", "armor", "skill", "ability"],
-    "item": {
+    "types": [
+      "equipment"
+    ],
+    "equipment": {
       "description": "",
       "quantity": 1,
       "weight": 0
-    },
-    "weapon": {
-      "description": "",
-      "quantity": 1,
-      "weight": 0,
-      "damage": "",
-      "range": ""
-    },
-    "armor": {
-      "description": "",
-      "quantity": 1,
-      "weight": 0,
-      "defense": 0
-    },
-    "skill": {
-      "description": "",
-      "level": 1,
-      "dice": 0
-    },
-    "ability": {
-      "description": "",
-      "dice": 0
     }
   }
 }
