@@ -75,35 +75,115 @@
 
     {{!-- Attributes Tab --}}
     <div class="tab attributes" data-group="primary" data-tab="attributes">
-      <div class="attributes-grid">
-        {{#each system.attributes as |attr key|}}
-        <div class="attribute">
-          <label>
-            <div class="label-main">{{localize (concat "ROLEANDROLL.Attributes." key)}}</div>
-            {{#with (showEn (concat "ROLEANDROLL.Attributes." key)) as |en|}}
-            {{#if en}}
-            <div class="label-subtitle">{{en}}</div>
-            {{/if}}
-            {{/with}}
-          </label>
-          <div class="dice-pips">
-            {{#each (range 1 6) as |pip|}}
-            <button type="button" class="pip {{#if (lte pip attr.dice)}}filled{{/if}}" data-action="set-dice"
-              data-target="attributes.{{key}}.dice" data-value="{{pip}}">
-              ●
+
+      {{!-- Body Category --}}
+      <div class="ability-category">
+        <h3>{{localize "ROLEANDROLL.AttributeCategories.body"}}</h3>
+        <div class="attributes-grid">
+          {{#each system.attributes as |attr key|}}
+          {{#if (or (eq key "strength") (eq key "dexterity") (eq key "toughness"))}}
+          <div class="attribute">
+            <label>
+              <div class="label-main">{{localize (concat "ROLEANDROLL.Attributes." key)}}</div>
+              {{#with (showEn (concat "ROLEANDROLL.Attributes." key)) as |en|}}
+              {{#if en}}
+              <div class="label-subtitle">{{en}}</div>
+              {{/if}}
+              {{/with}}
+            </label>
+            <div class="dice-pips">
+              {{#each (range 1 6) as |pip|}}
+              <button type="button" class="pip {{#if (lte pip attr.dice)}}filled{{/if}}" data-action="set-dice"
+                data-target="attributes.{{key}}.dice" data-value="{{pip}}">
+                ●
+              </button>
+              {{/each}}
+            </div>
+            <div class="succeed-check">
+              <input type="checkbox" name="system.attributes.{{key}}.succeed" {{checked attr.succeed}} />
+              <label>{{localize "ROLEANDROLL.Labels.Succeed"}}</label>
+            </div>
+            <button type="button" class="attribute-roll" data-attribute="{{key}}">
+              {{localize "ROLEANDROLL.Labels.Roll"}}
             </button>
-            {{/each}}
           </div>
-          <div class="succeed-check">
-            <input type="checkbox" name="system.attributes.{{key}}.succeed" {{checked attr.succeed}} />
-            <label>{{localize "ROLEANDROLL.Labels.Succeed"}}</label>
-          </div>
-          <button type="button" class="attribute-roll" data-attribute="{{key}}">
-            {{localize "ROLEANDROLL.Labels.Roll"}}
-          </button>
+          {{/if}}
+          {{/each}}
         </div>
-        {{/each}}
       </div>
+
+      {{!-- Intelligence & Emotion Category --}}
+      <div class="ability-category">
+        <h3>{{localize "ROLEANDROLL.AttributeCategories.intelligenceEmotion"}}</h3>
+        <div class="attributes-grid">
+          {{#each system.attributes as |attr key|}}
+          {{#if (or (eq key "intellect") (eq key "aptitude") (eq key "sanity"))}}
+          <div class="attribute">
+            <label>
+              <div class="label-main">{{localize (concat "ROLEANDROLL.Attributes." key)}}</div>
+              {{#with (showEn (concat "ROLEANDROLL.Attributes." key)) as |en|}}
+              {{#if en}}
+              <div class="label-subtitle">{{en}}</div>
+              {{/if}}
+              {{/with}}
+            </label>
+            <div class="dice-pips">
+              {{#each (range 1 6) as |pip|}}
+              <button type="button" class="pip {{#if (lte pip attr.dice)}}filled{{/if}}" data-action="set-dice"
+                data-target="attributes.{{key}}.dice" data-value="{{pip}}">
+                ●
+              </button>
+              {{/each}}
+            </div>
+            <div class="succeed-check">
+              <input type="checkbox" name="system.attributes.{{key}}.succeed" {{checked attr.succeed}} />
+              <label>{{localize "ROLEANDROLL.Labels.Succeed"}}</label>
+            </div>
+            <button type="button" class="attribute-roll" data-attribute="{{key}}">
+              {{localize "ROLEANDROLL.Labels.Roll"}}
+            </button>
+          </div>
+          {{/if}}
+          {{/each}}
+        </div>
+      </div>
+
+      {{!-- Personality Category --}}
+      <div class="ability-category">
+        <h3>{{localize "ROLEANDROLL.AttributeCategories.personality"}}</h3>
+        <div class="attributes-grid">
+          {{#each system.attributes as |attr key|}}
+          {{#if (or (eq key "charm") (eq key "rhetoric") (eq key "ego"))}}
+          <div class="attribute">
+            <label>
+              <div class="label-main">{{localize (concat "ROLEANDROLL.Attributes." key)}}</div>
+              {{#with (showEn (concat "ROLEANDROLL.Attributes." key)) as |en|}}
+              {{#if en}}
+              <div class="label-subtitle">{{en}}</div>
+              {{/if}}
+              {{/with}}
+            </label>
+            <div class="dice-pips">
+              {{#each (range 1 6) as |pip|}}
+              <button type="button" class="pip {{#if (lte pip attr.dice)}}filled{{/if}}" data-action="set-dice"
+                data-target="attributes.{{key}}.dice" data-value="{{pip}}">
+                ●
+              </button>
+              {{/each}}
+            </div>
+            <div class="succeed-check">
+              <input type="checkbox" name="system.attributes.{{key}}.succeed" {{checked attr.succeed}} />
+              <label>{{localize "ROLEANDROLL.Labels.Succeed"}}</label>
+            </div>
+            <button type="button" class="attribute-roll" data-attribute="{{key}}">
+              {{localize "ROLEANDROLL.Labels.Roll"}}
+            </button>
+          </div>
+          {{/if}}
+          {{/each}}
+        </div>
+      </div>
+
     </div>
 
     {{!-- Abilities Tab --}}

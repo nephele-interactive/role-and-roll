@@ -48,6 +48,11 @@
                 "larcency": "โจรกรรม",
                 "athlete": "ทักษะด้านกีฬา"
             },
+            "AttributeCategories": {
+                "body": "Body",
+                "intelligenceEmotion": "Intelligence and Emotion",
+                "personality": "Personality"
+            },
             "AbilityCategories": {
                 "academic": "Academic",
                 "intuition": "Intuition and Training",
