@@ -91,15 +91,84 @@ export class RoleAndRollActor extends Actor {
       ? `${localizedName} (${englishName}) [${numDice}]`
       : `${localizedName} [${numDice}]`;
 
-    return await game.roleandroll.rollDicePool(numDice, label, autoSuccess, this);
+    // Import and show dice control dialog
+    const { DiceControlDialog } = await import("../dice-control-dialog.mjs");
+    const dialog = new DiceControlDialog(numDice, label, autoSuccess, this);
+    dialog.render(true);
   }
 
   async rollAbility(category, abilityKey) {
     const ability = this.system.abilities?.[category]?.[abilityKey];
     if (!ability) return;
 
-    const numDice = Number(ability.dice) || 0;
-    const autoSuccess = ability.succeed ? 1 : 0;
+    let abilityDice = Number(ability.dice) || 0;
+    let autoSuccess = ability.succeed ? 1 : 0;
+
+    // Get attribute configuration
+    const attributeMode = ability.attributeMode || 'single';
+    const attributes = ability.attributes || [];
+
+    // Count unique attributes with succeed=true as bonus successes
+    // Each unique attribute that has succeed counts as +1
+    const uniqueAttributesWithSucceed = new Set();
+    for (const attrKey of attributes) {
+      const attr = this.system.attributes?.[attrKey];
+      if (attr?.succeed) {
+        uniqueAttributesWithSucceed.add(attrKey);
+      }
+    }
+    autoSuccess += uniqueAttributesWithSucceed.size;
+
+    // Calculate total dice based on attribute mode
+    let totalDice = abilityDice;
+    let attributeBonus = 0;
+    let selectedAttribute = null;
+
+    if (attributeMode === 'single' && attributes.length > 0) {
+      // Single mode: add the one attribute
+      const attrKey = attributes[0];
+      const attrValue = Number(this.system.attributes?.[attrKey]?.dice) || 0;
+      attributeBonus = attrValue;
+      totalDice = abilityDice + attrValue;
+      selectedAttribute = attrKey;
+    } else if (attributeMode === 'dual' && attributes.length >= 2) {
+      // Dual mode: add both attributes
+      const attr1Value = Number(this.system.attributes?.[attributes[0]]?.dice) || 0;
+      const attr2Value = Number(this.system.attributes?.[attributes[1]]?.dice) || 0;
+      attributeBonus = attr1Value + attr2Value;
+      totalDice = abilityDice + attr1Value + attr2Value;
+      selectedAttribute = `${attributes[0]}+${attributes[1]}`;
+    } else if (attributeMode === 'select' && attributes.length > 1) {
+      // Select mode: let user choose which attribute
+      // For now, we'll show a dialog to let them pick
+      const choices = {};
+      for (const attrKey of attributes) {
+        const attrValue = Number(this.system.attributes?.[attrKey]?.dice) || 0;
+        const attrName = game.roleandroll?.safeCapitalize?.(attrKey) || attrKey;
+        choices[attrKey] = `${attrName} ${game.i18n.format("ROLEANDROLL.Notifications.AttributeBonus", { value: attrValue })}`;
+      }
+
+      // Show selection dialog
+      selectedAttribute = await new Promise((resolve) => {
+        new Dialog({
+          title: game.i18n.localize("ROLEANDROLL.Notifications.SelectAttribute"),
+          content: `<p>${game.i18n.localize("ROLEANDROLL.Notifications.SelectAttributePrompt")}</p>`,
+          buttons: Object.keys(choices).reduce((acc, key) => {
+            acc[key] = {
+              label: choices[key],
+              callback: () => resolve(key)
+            };
+            return acc;
+          }, {}),
+          default: attributes[0],
+          close: () => resolve(attributes[0]) // Default to first if closed
+        }).render(true);
+      });
+
+      const attrValue = Number(this.system.attributes?.[selectedAttribute]?.dice) || 0;
+      attributeBonus = attrValue;
+      totalDice = abilityDice + attrValue;
+    }
 
     const localizedName =
       game.roleandroll?.safeCapitalize?.(abilityKey) || abilityKey;
@@ -108,11 +177,22 @@ export class RoleAndRollActor extends Actor {
 
     const showEn = game.i18n.lang !== "en" && localizedName !== englishName;
 
-    const label = showEn
-      ? `${localizedName} (${englishName}) [${numDice}]`
-      : `${localizedName} [${numDice}]`;
+    // Build label showing ability + attribute breakdown
+    let label = showEn
+      ? `${localizedName} (${englishName})`
+      : `${localizedName}`;
 
-    return await game.roleandroll.rollDicePool(numDice, label, autoSuccess, this);
+    if (attributeBonus > 0 && selectedAttribute) {
+      const attrDisplayName = game.roleandroll?.safeCapitalize?.(selectedAttribute) || selectedAttribute;
+      label += ` [${abilityDice} + ${attributeBonus} (${attrDisplayName}) = ${totalDice}]`;
+    } else {
+      label += ` [${totalDice}]`;
+    }
+
+    // Import and show dice control dialog with total dice
+    const { DiceControlDialog } = await import("../dice-control-dialog.mjs");
+    const dialog = new DiceControlDialog(totalDice, label, autoSuccess, this);
+    dialog.render(true);
   }
 
   async rollSkill(skillName) {

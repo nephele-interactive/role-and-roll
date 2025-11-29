@@ -1,0 +1,220 @@
+/* Dice Control Dialog Styles */
+
+.dice-control-dialog {
+    font-family: "Signika", sans-serif;
+}
+
+.dice-control-dialog .window-content {
+    background: #f8f4e6;
+    padding: 0;
+}
+
+.rnr-dice-control {
+    padding: 20px;
+    background: #f8f4e6;
+}
+
+.dialog-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #8b0000;
+}
+
+.dialog-header h2 {
+    margin: 0 0 8px 0;
+    color: #8b0000;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.dialog-header .roll-label {
+    font-size: 16px;
+    color: #2b2b2b;
+    font-weight: 600;
+}
+
+.control-section {
+    margin-bottom: 20px;
+}
+
+.control-row {
+    margin-bottom: 12px;
+}
+
+.control-row label {
+    display: block;
+    font-weight: bold;
+    color: #2b2b2b;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.control-row input[type="number"] {
+    width: 80px;
+    padding: 6px 10px;
+    font-size: 16px;
+    border: 2px solid #8b0000;
+    border-radius: 4px;
+    background: white;
+    margin-right: 10px;
+}
+
+.help-text {
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+}
+
+.modifier-help-text {
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+    margin-top: 4px;
+}
+
+.dice-grid {
+    background: white;
+    border: 2px solid #8b0000;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.dice-row-container {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+    justify-content: center;
+}
+
+.dice-row-container:last-child {
+    margin-bottom: 0;
+}
+
+.die-column {
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.die-header {
+    font-size: 9px;
+    font-weight: bold;
+    color: #8b0000;
+    text-align: center;
+    margin-bottom: 2px;
+}
+
+.die-face-box {
+    width: 100%;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 2px solid #2b2b2b;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 25px;
+    color: #2b2b2b;
+}
+
+.die-face-box.locked {
+    background: #e0e0e0;
+    border-color: #666;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.face-selector-box {
+    width: 100%;
+    height: 46px;
+    padding: 3px;
+    font-size: 25px;
+    font-weight: bold;
+    border: 2px solid #8b0000;
+    border-radius: 3px;
+    background: white;
+    cursor: pointer;
+    text-align: center;
+}
+
+.face-selector-box:hover {
+    background: #fff5e6;
+}
+
+.face-selector-box:focus {
+    outline: none;
+    border-color: #b30000;
+    box-shadow: 0 0 0 2px rgba(139, 0, 0, 0.2);
+}
+
+.button-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 2px solid #8b0000;
+}
+
+.roll-dice-btn,
+.cancel-btn {
+    padding: 12px 32px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.roll-dice-btn {
+    background: #8b0000;
+    color: white;
+}
+
+.roll-dice-btn:hover {
+    background: #b30000;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.roll-dice-btn:active {
+    transform: translateY(0);
+}
+
+.cancel-btn {
+    background: #666;
+    color: white;
+}
+
+.cancel-btn:hover {
+    background: #888;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dice-row-container {
+        flex-direction: column;
+    }
+
+    .die-column {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .die-header {
+        width: 100%;
+    }
+
+    .die-face-box,
+    .face-selector-box {
+        flex: 0 0 45px;
+    }
+}

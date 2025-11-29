@@ -4,6 +4,23 @@
       "character"
     ],
     "character": {
+      "prototypeToken": {
+        "sight": {
+          "enabled": true,
+          "range": 60,
+          "angle": 360,
+          "visionMode": "basic",
+          "color": null,
+          "attenuation": 0.1,
+          "brightness": 0,
+          "saturation": 0,
+          "contrast": 0
+        },
+        "light": {
+          "dim": 0,
+          "bright": 0
+        }
+      },
       "health": {
         "value": 15,
         "max": 15
@@ -65,131 +82,257 @@
         "academic": {
           "generalEducation": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "intellect"
+            ],
+            "attributeMode": "single"
           },
           "search": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "aptitude"
+            ],
+            "attributeMode": "single"
           },
           "history": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "intellect"
+            ],
+            "attributeMode": "single"
           },
           "art": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "dexterity",
+              "intellect"
+            ],
+            "attributeMode": "select"
           },
           "medicine": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "intellect"
+            ],
+            "attributeMode": "single"
           },
           "herb": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "intellect"
+            ],
+            "attributeMode": "single"
           },
           "firstAid": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "aptitude"
+            ],
+            "attributeMode": "single"
           },
           "law": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "intellect"
+            ],
+            "attributeMode": "single"
           },
           "electronic": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "intellect"
+            ],
+            "attributeMode": "single"
           },
           "mechanical": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "intellect"
+            ],
+            "attributeMode": "single"
           },
           "craft": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "dexterity"
+            ],
+            "attributeMode": "single"
           }
         },
         "intuition": {
           "occult": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "sanity"
+            ],
+            "attributeMode": "single"
           },
           "perception": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "dexterity"
+            ],
+            "attributeMode": "single"
           },
           "hideSneak": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "dexterity"
+            ],
+            "attributeMode": "single"
           },
           "persuade": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "rhetoric"
+            ],
+            "attributeMode": "single"
           },
           "consider": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "ego"
+            ],
+            "attributeMode": "single"
           },
           "empathy": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "aptitude"
+            ],
+            "attributeMode": "single"
           },
           "bet": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "rhetoric"
+            ],
+            "attributeMode": "single"
           },
           "senseOfLie": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "aptitude"
+            ],
+            "attributeMode": "single"
           },
           "intimidate": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "charm"
+            ],
+            "attributeMode": "single"
           },
           "survival": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "aptitude"
+            ],
+            "attributeMode": "single"
           }
         },
         "physical": {
           "climb": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "strength"
+            ],
+            "attributeMode": "single"
           },
           "stealth": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "dexterity"
+            ],
+            "attributeMode": "single"
           },
           "break": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "strength",
+              "dexterity"
+            ],
+            "attributeMode": "select"
           },
           "weapons": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "strength"
+            ],
+            "attributeMode": "single"
           },
           "swordPlay": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "dexterity"
+            ],
+            "attributeMode": "single"
           },
           "throwing": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "strength"
+            ],
+            "attributeMode": "single"
           },
           "shootingWeapons": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "dexterity"
+            ],
+            "attributeMode": "single"
           },
           "reflex": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "dexterity"
+            ],
+            "attributeMode": "single"
           },
           "larcency": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "dexterity"
+            ],
+            "attributeMode": "single"
           },
           "athlete": {
             "dice": 0,
-            "succeed": false
+            "succeed": false,
+            "attributes": [
+              "strength"
+            ],
+            "attributeMode": "single"
           }
         }
       },

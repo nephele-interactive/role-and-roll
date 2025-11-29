@@ -41,6 +41,10 @@ export class RoleAndRollActorSheet extends ActorSheet {
     html.find(".dice-control").click(ev => this._onDiceControl(ev));
     html.find(".pip").click(ev => this._onDiceControl(ev));
 
+    // Right-click context menus to reset dice to 0
+    html.find(".attribute").contextmenu(ev => this._onAttributeContextMenu(ev));
+    html.find(".ability").contextmenu(ev => this._onAbilityContextMenu(ev));
+
     // Skill controls
     html.find(".skill-show-btn").click(ev => this._onSkillShow(ev));
 
@@ -105,6 +109,32 @@ export class RoleAndRollActorSheet extends ActorSheet {
     event.preventDefault();
     const { category, ability } = event.currentTarget.dataset;
     if (category && ability) await this.actor.rollAbility(category, ability);
+  }
+
+  async _onAttributeContextMenu(event) {
+    event.preventDefault();
+    const attributeDiv = event.currentTarget;
+    const rollButton = attributeDiv.querySelector(".attribute-roll");
+    if (!rollButton) return;
+
+    const key = rollButton.dataset.attribute;
+    if (!key) return;
+
+    // Reset dice to 0
+    await this.actor.update({ [`system.attributes.${key}.dice`]: 0 });
+  }
+
+  async _onAbilityContextMenu(event) {
+    event.preventDefault();
+    const abilityDiv = event.currentTarget;
+    const rollButton = abilityDiv.querySelector(".ability-roll");
+    if (!rollButton) return;
+
+    const { category, ability } = rollButton.dataset;
+    if (!category || !ability) return;
+
+    // Reset dice to 0
+    await this.actor.update({ [`system.abilities.${category}.${ability}.dice`]: 0 });
   }
 
   async _onDiceControl(event) {

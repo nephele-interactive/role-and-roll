@@ -515,26 +515,6 @@
   color: #2b2b2b;
 }
 
-.role-roll-result .die-box.success {
-  border-color: #8b0000;
-  background: #ffe6e6;
-  color: #8b0000;
-}
-
-.role-roll-result .die-box.critical {
-  border-color: #8b0000;
-  background: #8b0000;
-  color: #fff;
-  box-shadow: 0 0 8px rgba(139, 0, 0, 0.6);
-}
-
-.role-roll-result .roll-totals {
-  font-size: 14px;
-  font-weight: bold;
-  border-top: 1px solid #e0e0e0;
-  padding-top: 8px;
-}
-
 .role-roll-result .success-count {
   color: #8b0000;
 }

@@ -20,7 +20,7 @@
     display: flex !important;
     flex-wrap: wrap !important;
     gap: 6px !important;
-    align-items: center !important;
+    align-items: flex-end !important;
 }
 
 .role-roll-result .die-box {
@@ -77,4 +77,88 @@
 .roll-actor-name {
     font-weight: bold;
     font-size: 14px;
+}
+
+/* Dice container for annotation support */
+.die-container {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 0;
+    vertical-align: bottom;
+    min-height: 50px;
+}
+
+.die-annotation {
+    font-size: 8px;
+    color: #666;
+    font-style: italic;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    min-height: 14px;
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* Modifier-specific die boxes */
+.die-box.modifier-plus {
+    background: #e6ffe6 !important;
+    border-color: #00aa00 !important;
+    color: #00aa00 !important;
+}
+
+.die-box.modifier-minus {
+    background: #ffe6e6 !important;
+    border-color: #aa0000 !important;
+    color: #aa0000 !important;
+}
+
+.die-box.blank {
+    background: #f0f0f0 !important;
+    border-color: #ccc !important;
+}
+
+/* Removed dice (grayed out) */
+.die-box.removed {
+    background: #e0e0e0 !important;
+    border-color: #999 !important;
+    color: #999 !important;
+    opacity: 0.6;
+}
+
+/* Cancelled modifiers (+ and - that cancel each other) */
+.die-box.cancelled {
+    background: #e0e0e0 !important;
+    border-color: #999 !important;
+    color: #999 !important;
+}
+
+/* Success bonus indicator (combined auto-success and will power) */
+.success-bonus-indicator {
+    font-size: 14px;
+    font-weight: bold;
+    color: #8b0000;
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: #d4edda;
+    border: 2px solid #28a745;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* Will power cost display */
+.will-power-cost {
+    font-size: 14px;
+    font-weight: bold;
+    color: #8b0000;
+    margin-top: 6px;
+}
+
+/* Auto success indicator */
+.auto-success-indicator {
+    font-size: 14px;
+    font-weight: bold;
+    color: #8b0000;
+    margin-top: 6px;
 }

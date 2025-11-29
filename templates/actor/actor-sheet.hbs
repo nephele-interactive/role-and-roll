@@ -195,7 +195,8 @@
           {{#each category as |value abilityKey|}}
           <div class="ability">
             <label>
-              <div class="label-main">{{localize (concat "ROLEANDROLL.Abilities." abilityKey)}}</div>
+              <div class="label-main">{{localize (concat "ROLEANDROLL.Abilities." abilityKey)}}{{formatAbilityAttributes
+                value}}</div>
               {{#with (showEn (concat "ROLEANDROLL.Abilities." abilityKey)) as |en|}}
               {{#if en}}
               <div class="label-subtitle">{{en}}</div>

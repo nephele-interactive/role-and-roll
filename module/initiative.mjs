@@ -31,10 +31,20 @@ export function patchCombatForRnR() {
       const dexSucceed = c.actor.system?.attributes?.dexterity?.succeed ? 1 : 0;
       const pool = Math.max(1, dexDice); // at least 1 die
 
-      // Use your system roller: 1 = success, 6 = success + reroll
-      const result = await game.roleandroll.rollDicePool(pool, `${c.name} - Initiative [${dexDice}]`, dexSucceed);
-      const score = Number(result?.successes ?? 0) + (dexDice * 0.01);
+      // Show dice control dialog for initiative
+      const { DiceControlDialog } = await import("./dice-control-dialog.mjs");
+      const autoSuccess = dexSucceed;
+      const label = `${c.name} - Initiative`;
+      const dialog = new DiceControlDialog(pool, label, autoSuccess, c.actor);
 
+      // Wait for the dialog to be submitted and get the result
+      const result = await new Promise((resolve) => {
+        dialog._resolveCallback = resolve;
+        dialog.render(true);
+      });
+
+      // Calculate initiative score from the roll result
+      const score = Number(result?.successes ?? 0) + (dexDice * 0.01);
       updates.push({ _id: c.id, initiative: score });
     }
 

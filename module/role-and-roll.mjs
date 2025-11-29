@@ -3,6 +3,12 @@ import { RoleAndRollItem } from "./documents/item.mjs";
 import { RoleAndRollActorSheet } from "./sheets/actor-sheet.mjs";
 import { RoleAndRollItemSheet } from "./sheets/item-sheet.mjs";
 import { patchCombatForRnR } from "./initiative.mjs";
+import {
+  registerAllPresets,
+  modifierToPresetCode,
+  getSystemIdFromCode,
+  isDefaultModifier
+} from "./dice-presets.mjs";
 
 export const RNR = {};
 
@@ -100,6 +106,28 @@ Hooks.once("init", function () {
     return result || key;
   });
 
+  // Helper to add numbers (useful for 1-indexed display)
+  Handlebars.registerHelper("add", (a, b) => a + b);
+  // Helper to format ability attributes for display  
+  Handlebars.registerHelper("formatAbilityAttributes", function (ability) {
+    if (!ability || !ability.attributes || !ability.attributes.length) {
+      return "";
+    }
+
+    const cap = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1, 3) : "";
+    const mode = ability.attributeMode || 'single';
+    const attrs = ability.attributes;
+
+    if (mode === 'single' && attrs.length > 0) {
+      return ` (${cap(attrs[0])})`;
+    } else if (mode === 'dual' && attrs.length >= 2) {
+      return ` (${cap(attrs[0])}, ${cap(attrs[1])})`;
+    } else if (mode === 'select' && attrs.length > 1) {
+      return ` (${cap(attrs[0])} / ${cap(attrs[1])})`;
+    }
+    return "";
+  });
+
   /* ------------ Sheets ------------ */
 
   Actors.unregisterSheet("core", ActorSheet);
@@ -117,119 +145,286 @@ Hooks.once("init", function () {
   });
 });
 
+/* ------------ Dice So Nice Integration ------------ */
+
+Hooks.once("diceSoNiceReady", (dice3d) => {
+  console.log("Role & Roll | Registering custom dice with Dice So Nice");
+
+  // Register ALL possible dice face combinations (81 presets)
+  // This allows us to reliably show any combination of +/- modifiers on faces 2-5
+  // Each preset has a unique code like "bbbb" (all blank), "mpbb" (minus-plus-blank-blank), etc.
+  const count = registerAllPresets(dice3d);
+
+  console.log(`Role & Roll | Successfully registered ${count} dice presets`);
+});
+
 /* ------------ Dice Pool System ------------ */
 
-export async function rollDicePool(numDice, label = "Dice Pool", autoSuccess = 0, actor = null) {
+export async function rollDicePool(numDice, label = "Dice Pool", autoSuccess = 0, actor = null, willPower = 0, modifiers = []) {
   numDice = Number(numDice) || 0;
   autoSuccess = Number(autoSuccess) || 0;
+  willPower = Number(willPower) || 0;
 
-  if (numDice <= 0) {
-    ui.notifications?.warn("Cannot roll 0 dice!");
+  // Allow 0 dice ONLY if there is Will Power or Auto Success to count
+  if (numDice <= 0 && willPower <= 0 && autoSuccess <= 0) {
+    ui.notifications?.warn(game.i18n.localize("ROLEANDROLL.Notifications.CannotRoll0Dice") || "Cannot roll 0 dice!");
     return null;
   }
 
-  let successes = autoSuccess; // Start with automatic successes
-  let criticals = 0;
-  let queue = numDice;
-  const results = [];
-  const rolls = [];
+  // Get actor info
   let actorImg = null;
-
-  if (actor?.img) {
-    actorImg = actor.img;
-  } else {
-    const speaker = ChatMessage.getSpeaker();
-    const speakerActor = game.actors?.get(speaker.actor);
-    if (speakerActor?.img) {
-      actorImg = speakerActor.img;
-    }
-  }
-
   let actorName = "Unknown";
 
-  if (actor?.name) {
-    actorName = actor.name;
-  } else {
+  if (actor?.img) actorImg = actor.img;
+  if (actor?.name) actorName = actor.name;
+
+  if (!actorImg || actorName === "Unknown") {
     const speaker = ChatMessage.getSpeaker();
     const speakerActor = game.actors?.get(speaker.actor);
-    if (speakerActor?.name) {
-      actorName = speakerActor.name;
+    if (speakerActor) {
+      if (!actorImg) actorImg = speakerActor.img;
+      if (actorName === "Unknown") actorName = speakerActor.name;
     }
   }
-
 
   const show3D = game.dice3d && typeof game.dice3d.showForRoll === "function";
 
-  // Roll dice one by one
-  while (queue > 0) {
-    const roll = await new Roll("1d6").evaluate({ async: true });
-    const r = roll.total;
+  // Prepare dice with modifiers
+  const dice = [];
+  for (let i = 0; i < numDice; i++) {
+    const modifier = modifiers[i] || { positions: { 2: 'blank', 3: 'blank', 4: 'blank', 5: 'blank' } };
+    dice.push({ modifier, rerollWith: modifier });
+  }
 
-    // Show each die one by one in Dice So Nice
-    if (show3D) {
-      await game.dice3d.showForRoll(roll, game.user, true);
+  // Roll all dice with reroll loop
+  const allRolls = [];
+  let rerollQueue = [...dice];
+
+  while (rerollQueue.length > 0) {
+    const currentRolls = [];
+    const customRolls = [];
+
+    for (const die of rerollQueue) {
+      // Create the roll
+      const roll = new Roll("1d6");
+      await roll.evaluate();
+      const value = roll.total;
+
+      console.log(`Rolled: ${value}, Modifier positions:`, die.modifier.positions);
+
+      // Check if this die has modifiers (check if any position 2-5 is not blank)
+      const hasModifiers = !(
+        (!die.modifier.positions[2] || die.modifier.positions[2] === 'blank') &&
+        (!die.modifier.positions[3] || die.modifier.positions[3] === 'blank') &&
+        (!die.modifier.positions[4] || die.modifier.positions[4] === 'blank') &&
+        (!die.modifier.positions[5] || die.modifier.positions[5] === 'blank')
+      );
+
+      console.log(`Die has modifiers: ${hasModifiers}`);
+
+      // Store for 3D display
+      customRolls.push({
+        roll,
+        modifierPositions: die.modifier.positions,
+        hasModifiers
+      });
+
+      // Determine face based on value and modifier
+      let face = 'blank';
+      let modifier = null;
+
+      if (value === 1) {
+        face = 'dot';
+      } else if (value === 6) {
+        face = 'R';
+      } else if (value >= 2 && value <= 5) {
+        const modValue = die.modifier.positions[value];
+        if (modValue === 'plus') {
+          face = 'plus';
+          modifier = '+';
+        } else if (modValue === 'minus') {
+          face = 'minus';
+          modifier = '-';
+        }
+      }
+
+      currentRolls.push({
+        value,
+        face,
+        modifier,
+        rerollModifier: die.rerollWith,
+        annotation: null
+      });
     }
 
-    rolls.push(roll);
-    results.push(r);
+    // Show 3D dice one by one
+    if (show3D && customRolls.length > 0) {
+      const animations = [];
+      for (let i = 0; i < customRolls.length; i++) {
+        const { roll, modifierPositions, hasModifiers } = customRolls[i];
 
-    queue--; // Decrement first
+        if (!hasModifiers) {
+          // Use default system for unmodified dice
+          console.log("Role & Roll | Showing default die (no modifiers)");
 
-    if (r === 1) successes++;
-    if (r === 6) {
-      successes++;
-      criticals++;
-      queue++; // Roll again on a 6 (exploding dice)
+          if (roll.terms && roll.terms[0]) {
+            if (!roll.terms[0].options) roll.terms[0].options = {};
+            roll.terms[0].options.appearance = {
+              system: "role-and-roll-default"
+            };
+          }
+        } else {
+          // Use custom preset for modified dice
+          const presetCode = modifierToPresetCode(modifierPositions);
+          const systemId = getSystemIdFromCode(presetCode);
+
+          console.log(`Role & Roll | Showing die with modifiers: ${presetCode} -> ${systemId}`);
+
+          if (roll.terms && roll.terms[0]) {
+            if (!roll.terms[0].options) roll.terms[0].options = {};
+            roll.terms[0].options.appearance = {
+              system: systemId
+            };
+          }
+        }
+
+        // Show the dice
+        try {
+          const p = game.dice3d.showForRoll(roll, game.user, true, null, false);
+          animations.push(p);
+          // Small delay for sequential effect
+          await new Promise(resolve => setTimeout(resolve, 500));
+        } catch (e) {
+          console.error("Role & Roll | Error showing dice:", e);
+        }
+      }
+      // Wait for all animations in this batch to finish
+      await Promise.all(animations);
+    }
+
+    // Add to all rolls
+    allRolls.push(...currentRolls);
+
+    // Resolve modifiers
+    resolveModifiers(currentRolls, allRolls);
+
+    // Check for rerolls
+    rerollQueue = [];
+    for (const dieResult of currentRolls) {
+      if (dieResult.removed) continue;
+
+      if (dieResult.face === 'R') {
+        rerollQueue.push({
+          modifier: dieResult.rerollModifier,
+          rerollWith: dieResult.rerollModifier
+        });
+      }
+      if (dieResult.face === 'plus' && dieResult.copiedFace === 'R') {
+        rerollQueue.push({
+          modifier: dieResult.rerollModifier,
+          rerollWith: dieResult.rerollModifier
+        });
+      }
     }
   }
 
-  // Display results in chat with dice boxes showing ● for 1, R for 6, blank for others
-  const diceHTML = results.map(r => {
+  // Count successes and criticals
+  let successes = autoSuccess + willPower;
+  let criticals = 0;
+
+  for (const die of allRolls) {
+    if (die.removed) continue;
+
+    if (die.face === 'dot') successes++;
+    if (die.face === 'R') {
+      successes++;
+      criticals++;
+    }
+    if (die.face === 'plus' && die.copiedFace) {
+      if (die.copiedFace === 'dot') successes++;
+      if (die.copiedFace === 'R') {
+        successes++;
+        criticals++;
+      }
+    }
+  }
+
+  // Generate dice HTML
+  const diceHTML = allRolls.map(die => {
     let symbol = '';
     let cssClass = '';
+    let annotationHTML = '';
 
-    if (r === 1) {
+    if (die.face === 'dot') {
       symbol = '●';
       cssClass = 'success';
-    } else if (r === 6) {
+    } else if (die.face === 'R') {
       symbol = 'R';
       cssClass = 'critical';
+    } else if (die.face === 'plus') {
+      symbol = '+';
+      cssClass = 'modifier-plus';
+      if (die.cancelled) cssClass += ' cancelled';
+      if (die.annotation) annotationHTML = `<div class="die-annotation">${die.annotation}</div>`;
+    } else if (die.face === 'minus') {
+      symbol = '-';
+      cssClass = 'modifier-minus';
+      if (die.cancelled) cssClass += ' cancelled';
+      if (die.annotation) annotationHTML = `<div class="die-annotation">${die.annotation}</div>`;
+    } else if (die.face === 'blank') {
+      symbol = '';
+      cssClass = 'blank';
+      if (die.annotation) annotationHTML = `<div class="die-annotation">${die.annotation}</div>`;
     }
 
-    return `<div class="die-box ${cssClass}">${symbol}</div>`;
+    if (die.removed) {
+      cssClass += ' removed';
+      if (die.annotation) annotationHTML = `<div class="die-annotation">${die.annotation}</div>`;
+    }
+
+    return `
+      <div class="die-container">
+        ${annotationHTML}
+        <div class="die-box ${cssClass}">${symbol}</div>
+      </div>
+    `;
   }).join('');
 
-  // Add automatic success indicator if present
-  const autoSuccessHTML = autoSuccess > 0
-    ? `<div class="auto-success-indicator">+${autoSuccess} ${game.i18n.localize("ROLEANDROLL.Labels.Succeed")}</div>`
-    : '';
+  // Add success indicators
+  let successIndicators = '';
+  if (autoSuccess > 0 || willPower > 0) {
+    const parts = [];
+    if (autoSuccess > 0) {
+      parts.push(`+${autoSuccess} ${game.i18n.localize("ROLEANDROLL.Labels.Succeed") || "Succeed"}`);
+    }
+    if (willPower > 0) {
+      parts.push(`-${willPower} Will Power`);
+    }
+    successIndicators = `<div class="success-bonus-indicator">${parts.join(' | ')}</div>`;
+  }
 
   const flavor = `
-  <div class="role-roll-result">
+    <div class="role-roll-result">
+      <div class="roll-header">
+        ${actorImg ? `<img src="${actorImg}" class="roll-avatar-img" />` : ""}
+        <div class="roll-actor-name">${actorName}</div>
+      </div>
 
-    <div class="roll-header">
-      ${actorImg ? `<img src="${actorImg}" class="roll-avatar-img" />` : ""}
-      <div class="roll-actor-name">${actorName}</div>
+      <div class="roll-label"><strong>${label}</strong></div>
+
+      <div class="dice-results">
+        <div class="rolled-label">${game.i18n.localize("ROLEANDROLL.Rolls.Rolled") || "Rolled"}:</div>
+        <div class="dice-pool-display">${diceHTML}</div>
+        ${successIndicators}
+      </div>
+
+      <div class="roll-totals">
+        <span class="success-count">${game.i18n.localize("ROLEANDROLL.Rolls.Successes") || "Successes"}: ${successes}</span> | 
+        <span class="critical-count">${game.i18n.localize("ROLEANDROLL.Rolls.Criticals") || "Criticals"}: ${criticals}</span>
+      </div>
     </div>
+  `;
 
-    <div class="roll-label"><strong>${label}</strong></div>
-
-    <div class="dice-results">
-      <div class="rolled-label">${game.i18n.localize("ROLEANDROLL.Rolls.Rolled")}:</div>
-      <div class="dice-pool-display">${diceHTML}</div>
-      ${autoSuccessHTML}
-    </div>
-
-    <div class="roll-totals">
-      <span class="success-count">${game.i18n.localize("ROLEANDROLL.Rolls.Successes")}: ${successes}</span> | 
-      <span class="critical-count">${game.i18n.localize("ROLEANDROLL.Rolls.Criticals")}: ${criticals}</span>
-    </div>
-
-  </div>
-`;
-
-
-  // Create a simple roll for the chat without showing dice (already shown individually)
   const messageData = {
     user: game.user.id,
     speaker: ChatMessage.getSpeaker(),
@@ -239,7 +434,174 @@ export async function rollDicePool(numDice, label = "Dice Pool", autoSuccess = 0
   };
 
   await ChatMessage.create(messageData);
-  return { successes, criticals, results };
+
+  // Deduct will power
+  if (willPower > 0 && actor) {
+    const currentWP = actor.system.wp || 0;
+    await actor.update({ 'system.wp': Math.max(0, currentWP - willPower) });
+  }
+
+  return { successes, criticals, results: allRolls };
+}
+
+// Helper function to resolve +/- modifiers
+function resolveModifiers(diceResults, allRolls = null) {
+  // Step 1: Count +/- faces
+  const plusIndices = [];
+  const minusIndices = [];
+
+  diceResults.forEach((die, idx) => {
+    if (die.face === 'plus') plusIndices.push(idx);
+    if (die.face === 'minus') minusIndices.push(idx);
+  });
+
+  // Step 2: Cancel +/- pairs
+  const cancelCount = Math.min(plusIndices.length, minusIndices.length);
+  for (let i = 0; i < cancelCount; i++) {
+    const plusIdx = plusIndices[i];
+    const minusIdx = minusIndices[i];
+    // Keep the face type but mark as cancelled
+    diceResults[plusIdx].cancelled = true;
+    diceResults[plusIdx].annotation = 'cancelled';
+    diceResults[minusIdx].cancelled = true;
+    diceResults[minusIdx].annotation = 'cancelled';
+  }
+
+  // Step 3: Process remaining - faces (remove best faces)
+  // - can remove from ALL rounds (current + previous), priority: + > R(with +) > R > R(with -) > dot
+  const remainingMinus = minusIndices.slice(cancelCount);
+  for (const minusIdx of remainingMinus) {
+    // Find best face to remove (priority: + > R(with +) > R > R(with -) > dot)
+    // Look in allRolls if provided, otherwise just current round
+    const searchArray = allRolls || diceResults;
+    let bestIdx = -1;
+    let bestPriority = -1;
+    let bestInAllRolls = false; // Track if best is from allRolls
+
+    // First check current round (diceResults)
+    diceResults.forEach((die, idx) => {
+      if (idx === minusIdx) return; // Don't target self
+      if (die.face === 'blank') return; // Skip already blanks
+      if (die.face === 'minus') return; // Skip other minus
+      if (die.removed) return; // Skip already removed
+
+      let priority = 0;
+      if (die.face === 'plus') priority = 100;
+      else if (die.face === 'R' && die.modifier === '+') priority = 90;
+      else if (die.face === 'R' && !die.modifier) priority = 80;
+      else if (die.face === 'R' && die.modifier === '-') priority = 70;
+      else if (die.face === 'dot') priority = 60;
+
+      if (priority > bestPriority) {
+        bestPriority = priority;
+        bestIdx = idx;
+        bestInAllRolls = false;
+      }
+    });
+
+    // Then check all previous rounds (allRolls) if provided
+    if (allRolls && allRolls.length > diceResults.length) {
+      allRolls.forEach((die, idx) => {
+        // Skip current round dice (already checked above)
+        if (idx < allRolls.length - diceResults.length) {
+          if (die.face === 'blank') return; // Skip already blanks
+          if (die.face === 'minus') return; // Skip other minus
+          if (die.removed) return; // Skip already removed
+
+          let priority = 0;
+          if (die.face === 'plus') priority = 100;
+          else if (die.face === 'R' && die.modifier === '+') priority = 90;
+          else if (die.face === 'R' && !die.modifier) priority = 80;
+          else if (die.face === 'R' && die.modifier === '-') priority = 70;
+          else if (die.face === 'dot') priority = 60;
+
+          if (priority > bestPriority) {
+            bestPriority = priority;
+            bestIdx = idx;
+            bestInAllRolls = true;
+            bestInAllRolls = true;
+          }
+        }
+      });
+    }
+
+    if (bestIdx >= 0) {
+      const targetDie = bestInAllRolls ? allRolls[bestIdx] : diceResults[bestIdx];
+      const targetFace = targetDie.face;
+      // Mark as removed instead of making blank
+      targetDie.removed = true;
+      targetDie.annotation = `removed`;
+      // Keep minus face as 'minus' but add annotation
+      diceResults[minusIdx].annotation = `${targetFace}`;
+    } else {
+      // No target found, just mark annotation
+      diceResults[minusIdx].annotation = 'no target';
+    }
+  }
+
+  // Step 4: Process remaining + faces (copy best faces)
+  // + can copy from ALL rounds (current + previous), priority: R > dot > blank
+  const remainingPlus = plusIndices.slice(cancelCount);
+  for (const plusIdx of remainingPlus) {
+    // Find best face to copy (priority: R > dot > blank)
+    // Look in allRolls if provided, otherwise just current round
+    const searchArray = allRolls || diceResults;
+    let bestIdx = -1;
+    let bestPriority = -1;
+    let bestInAllRolls = false; // Track if best is from allRolls
+
+    // First check current round (diceResults)
+    diceResults.forEach((die, idx) => {
+      if (idx === plusIdx) return; // Don't copy self
+      if (die.face === 'plus') return; // Don't copy other plus
+      if (die.removed) return; // Skip removed faces
+
+      let priority = 0;
+      if (die.face === 'R') priority = 100;
+      else if (die.face === 'dot') priority = 50;
+      else if (die.face === 'blank') priority = 10;
+
+      if (priority > bestPriority) {
+        bestPriority = priority;
+        bestIdx = idx;
+        bestInAllRolls = false;
+      }
+    });
+
+    // Then check all previous rounds (allRolls) if provided
+    if (allRolls && allRolls.length > diceResults.length) {
+      allRolls.forEach((die, idx) => {
+        // Skip current round dice (already checked above)
+        if (idx < allRolls.length - diceResults.length) {
+          if (die.face === 'plus') return; // Don't copy other plus
+          if (die.removed) return; // Skip removed faces
+
+          let priority = 0;
+          if (die.face === 'R') priority = 100;
+          else if (die.face === 'dot') priority = 50;
+          else if (die.face === 'blank') priority = 10;
+
+          if (priority > bestPriority) {
+            bestPriority = priority;
+            bestIdx = idx;
+            bestInAllRolls = true;
+          }
+        }
+      });
+    }
+
+    if (bestIdx >= 0) {
+      const sourceDie = bestInAllRolls ? allRolls[bestIdx] : diceResults[bestIdx];
+      const sourceFace = sourceDie.face;
+      // Keep face as 'plus' but track what it copied
+      diceResults[plusIdx].copiedFace = sourceFace;
+      diceResults[plusIdx].annotation = `${sourceFace}`;
+    } else {
+      // No source found, copies blank
+      diceResults[plusIdx].copiedFace = 'blank';
+      diceResults[plusIdx].annotation = ' ';
+    }
+  }
 }
 
 /* ------------ Ready ------------ */
@@ -248,26 +610,20 @@ Hooks.on("preCreateActor", (doc) => {
     prototypeToken: {
       actorLink: true,
       bar1: { attribute: "health" },
-      bar2: { attribute: "mental" }
+      bar2: { attribute: "mental" },
+      sight: {
+        enabled: true,
+        range: 60,
+        angle: 360,
+        visionMode: "basic",
+        color: null,
+        attenuation: 0.1,
+        brightness: 0,
+        saturation: 0,
+        contrast: 0
+      }
     }
   });
-});
-
-/* ------------ Dice So Nice Configuration ------------ */
-Hooks.once("diceSoNiceReady", (dice3d) => {
-  console.log("Role & Roll | Configuring Dice So Nice");
-
-  // Register the system first
-  dice3d.addSystem({ id: "role-and-roll", name: "Role & Roll" }, "preferred");
-
-  // Add custom d6 appearance with custom labels
-  dice3d.addDicePreset({
-    type: "d6",
-    labels: ["●", " ", " ", " ", " ", "R"],
-    system: "role-and-roll"
-  });
-
-  console.log("Role & Roll | Custom 3D dice labels registered");
 });
 
 Hooks.once("ready", function () {
