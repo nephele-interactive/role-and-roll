@@ -22,8 +22,8 @@
         }
       },
       "health": {
-        "value": 15,
-        "max": 15
+        "value": 13,
+        "max": 13
       },
       "mental": {
         "value": 18,
@@ -32,7 +32,10 @@
       "level": 1,
       "exp": 0,
       "defense": 0,
-      "wp": 0,
+      "wp": {
+        "value": 9,
+        "max": 9
+      },
       "biography": "",
       "sourceOfWillPower": "",
       "buff": "",
@@ -42,39 +45,39 @@
       "psychiatricDisorder": "",
       "attributes": {
         "strength": {
-          "dice": 0,
+          "dice": 1,
           "succeed": false
         },
         "dexterity": {
-          "dice": 0,
+          "dice": 1,
           "succeed": false
         },
         "toughness": {
-          "dice": 0,
+          "dice": 1,
           "succeed": false
         },
         "intellect": {
-          "dice": 0,
+          "dice": 1,
           "succeed": false
         },
         "aptitude": {
-          "dice": 0,
+          "dice": 1,
           "succeed": false
         },
         "sanity": {
-          "dice": 0,
+          "dice": 1,
           "succeed": false
         },
         "charm": {
-          "dice": 0,
+          "dice": 1,
           "succeed": false
         },
         "rhetoric": {
-          "dice": 0,
+          "dice": 1,
           "succeed": false
         },
         "ego": {
-          "dice": 0,
+          "dice": 1,
           "succeed": false
         }
       },

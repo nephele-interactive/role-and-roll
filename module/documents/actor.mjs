@@ -64,9 +64,20 @@ export class RoleAndRollActor extends Actor {
 
     system.health ??= { value: 0, max: 0 };
     system.mental ??= { value: 0, max: 0 };
+    system.wp ??= { value: 0, max: 0 };
     system.attributes ??= {};
     system.abilities ??= {};
     system.skills ??= [];
+    system.level ??= 1;
+
+    // Calculate HP Max = 10 + (toughness*2) + Level
+    const toughness = Number(system.attributes.toughness?.dice) || 1;
+    const level = Number(system.level) || 1;
+    system.health.max = 10 + (toughness * 2) + level;
+
+    // Calculate WP Max = 8 + sanity
+    const sanity = Number(system.attributes.sanity?.dice) || 1;
+    system.wp.max = 8 + sanity;
   }
 
   /* -------------------------------------------- */

@@ -85,6 +85,43 @@ export class RoleAndRollActorSheet extends ActorSheet {
       html.find('.hidden-img-editor').click();
     });
 
+    // Validate value doesn't exceed max for health and wp
+    html.find('input[name="system.health.value"]').on('change', ev => {
+      const value = Number(ev.currentTarget.value);
+      const max = Number(this.actor.system.health.max);
+      if (value > max) {
+        ev.currentTarget.value = max;
+        this.actor.update({ 'system.health.value': max });
+      } else if (value < 0) {
+        ev.currentTarget.value = 0;
+        this.actor.update({ 'system.health.value': 0 });
+      }
+    });
+
+    html.find('input[name="system.wp.value"]').on('change', ev => {
+      const value = Number(ev.currentTarget.value);
+      const max = Number(this.actor.system.wp.max);
+      if (value > max) {
+        ev.currentTarget.value = max;
+        this.actor.update({ 'system.wp.value': max });
+      } else if (value < 0) {
+        ev.currentTarget.value = 0;
+        this.actor.update({ 'system.wp.value': 0 });
+      }
+    });
+
+    html.find('input[name="system.mental.value"]').on('change', ev => {
+      const value = Number(ev.currentTarget.value);
+      const max = Number(this.actor.system.mental.max);
+      if (value > max) {
+        ev.currentTarget.value = max;
+        this.actor.update({ 'system.mental.value': max });
+      } else if (value < 0) {
+        ev.currentTarget.value = 0;
+        this.actor.update({ 'system.mental.value': 0 });
+      }
+    });
+
 
   }
 
@@ -124,11 +161,15 @@ export class RoleAndRollActorSheet extends ActorSheet {
     }
 
     const last = path[path.length - 1];
-    let currentValue = Number(obj[last] ?? 0);
+    let currentValue = Number(obj[last] ?? 1);
     const pipValue = Number(dataValue) || 0;
 
-    // Only decrease if right-clicking on a filled pip
-    if (pipValue <= currentValue && currentValue > 0) {
+    // Check if this is an attribute dice field (minimum value is 1)
+    const isAttributeDice = target.startsWith("attributes.") && last === "dice";
+    const minValue = isAttributeDice ? 1 : 0;
+
+    // Only decrease if right-clicking on a filled pip and value is above minimum
+    if (pipValue <= currentValue && currentValue > minValue) {
       await this.actor.update({ [`system.${target}`]: currentValue - 1 });
     }
   }
@@ -147,11 +188,19 @@ export class RoleAndRollActorSheet extends ActorSheet {
     }
 
     const last = path[path.length - 1];
-    let value = Number(obj[last] ?? 0);
+    let value = Number(obj[last] ?? 1);
+
+    // Check if this is an attribute dice field (minimum value is 1)
+    const isAttributeDice = target.startsWith("attributes.") && last === "dice";
+    const minValue = isAttributeDice ? 1 : 0;
 
     if (action === "increase" && value < 6) value++;
-    if (action === "decrease" && value > 0) value--;
-    if (action === "set-dice") value = Number(dataValue) || 0;
+    if (action === "decrease" && value > minValue) value--;
+    if (action === "set-dice") {
+      value = Number(dataValue) || minValue;
+      // Ensure value is at least minValue
+      if (value < minValue) value = minValue;
+    }
 
     await this.actor.update({ [`system.${target}`]: value });
   }

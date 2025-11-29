@@ -27,7 +27,7 @@
           <label>{{localize "ROLEANDROLL.Labels.Health"}}</label>
           <input type="number" name="system.health.value" value="{{system.health.value}}" />
           <span>/</span>
-          <input type="number" name="system.health.max" value="{{system.health.max}}" />
+          <input type="number" name="system.health.max" value="{{system.health.max}}" readonly />
         </div>
 
         <div class="resource">
@@ -49,7 +49,9 @@
 
         <div class="resource">
           <label>{{localize "ROLEANDROLL.Labels.WillPower"}}</label>
-          <input type="number" name="system.wp" value="{{system.wp}}" />
+          <input type="number" name="system.wp.value" value="{{system.wp.value}}" min="0" max="{{system.wp.max}}" />
+          <span>/</span>
+          <input type="number" name="system.wp.max" value="{{system.wp.max}}" readonly />
         </div>
 
         <div class="resource">
