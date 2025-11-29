@@ -42,6 +42,7 @@ function safeCapitalize(str) {
 
 Hooks.once("init", function () {
   console.log("Role & Roll | Initializing system (FVTT v13 safe)");
+  patchCombatForRnR();
 
   game.roleandroll = {
     Actor: RoleAndRollActor,
@@ -628,5 +629,5 @@ Hooks.on("preCreateActor", (doc) => {
 
 Hooks.once("ready", function () {
   console.log("Role & Roll | System Ready (v13)");
-  patchCombatForRnR();
+  //patchCombatForRnR();
 });

@@ -62,6 +62,16 @@ export class DiceControlDialog extends FormApplication {
         });
     }
 
+    async close(options = {}) {
+        // If the dialog is being closed and there's a reject callback (from initiative),
+        // and we haven't resolved yet, reject the promise
+        if (this._rejectCallback && !this._resolved) {
+            this._rejectCallback(new Error("Dialog was cancelled"));
+        }
+        return super.close(options);
+    }
+
+
     async _updateObject(event, formData) {
         console.log("Dice Control Dialog - _updateObject called", formData);
 
@@ -101,6 +111,9 @@ export class DiceControlDialog extends FormApplication {
 
         console.log("Calling rollDicePool with:", { numDice: this.numDice, label: this.label, autoSuccess: this.autoSuccess, willPower, modifiers });
 
+        // Mark as resolved before closing
+        this._resolved = true;
+
         // Close dialog immediately
         this.close();
 
@@ -120,3 +133,4 @@ export class DiceControlDialog extends FormApplication {
         }
     }
 }
+

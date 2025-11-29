@@ -21,7 +21,9 @@
     }
   ],
   "esmodules": [
-    "module/role-and-roll.mjs"
+    "module/role-and-roll.mjs",
+    "module/dice-control-dialog.mjs",
+    "module/initiative.mjs"
   ],
   "styles": [
     "styles/role-and-roll.css",
