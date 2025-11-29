@@ -41,9 +41,8 @@ export class RoleAndRollActorSheet extends ActorSheet {
     html.find(".dice-control").click(ev => this._onDiceControl(ev));
     html.find(".pip").click(ev => this._onDiceControl(ev));
 
-    // Right-click context menus to reset dice to 0
-    html.find(".attribute").contextmenu(ev => this._onAttributeContextMenu(ev));
-    html.find(".ability").contextmenu(ev => this._onAbilityContextMenu(ev));
+    // Right-click on pip to decrease pip value by 1
+    html.find(".pip").contextmenu(ev => this._onPipContextMenu(ev));
 
     // Skill controls
     html.find(".skill-show-btn").click(ev => this._onSkillShow(ev));
@@ -111,30 +110,27 @@ export class RoleAndRollActorSheet extends ActorSheet {
     if (category && ability) await this.actor.rollAbility(category, ability);
   }
 
-  async _onAttributeContextMenu(event) {
+  async _onPipContextMenu(event) {
     event.preventDefault();
-    const attributeDiv = event.currentTarget;
-    const rollButton = attributeDiv.querySelector(".attribute-roll");
-    if (!rollButton) return;
+    const { target, value: dataValue } = event.currentTarget.dataset;
+    if (!target) return;
 
-    const key = rollButton.dataset.attribute;
-    if (!key) return;
+    const path = target.split(".");
+    let obj = this.actor.system;
 
-    // Reset dice to 0
-    await this.actor.update({ [`system.attributes.${key}.dice`]: 0 });
-  }
+    for (let i = 0; i < path.length - 1; i++) {
+      obj = obj?.[path[i]];
+      if (!obj) return;
+    }
 
-  async _onAbilityContextMenu(event) {
-    event.preventDefault();
-    const abilityDiv = event.currentTarget;
-    const rollButton = abilityDiv.querySelector(".ability-roll");
-    if (!rollButton) return;
+    const last = path[path.length - 1];
+    let currentValue = Number(obj[last] ?? 0);
+    const pipValue = Number(dataValue) || 0;
 
-    const { category, ability } = rollButton.dataset;
-    if (!category || !ability) return;
-
-    // Reset dice to 0
-    await this.actor.update({ [`system.abilities.${category}.${ability}.dice`]: 0 });
+    // Only decrease if right-clicking on a filled pip
+    if (pipValue <= currentValue && currentValue > 0) {
+      await this.actor.update({ [`system.${target}`]: currentValue - 1 });
+    }
   }
 
   async _onDiceControl(event) {

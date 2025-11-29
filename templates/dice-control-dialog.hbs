@@ -1,0 +1,57 @@
+<form class="rnr-dice-control">
+    <div class="dialog-header">
+        <h2>{{localize "ROLEANDROLL.DiceControl.Title"}}</h2>
+        <div class="roll-label">{{label}}</div>
+    </div>
+
+    <div class="control-section">
+        <div class="control-row">
+            <label for="willPower">{{localize "ROLEANDROLL.DiceControl.UsingWillPower"}}</label>
+            <input type="number" name="willPower" id="willPower" value="0" min="0">
+            <span class="help-text">({{willPowerHelpText}})</span>
+        </div>
+    </div>
+
+    <div class="control-section">
+        <div class="control-row">
+            <label>{{localize "ROLEANDROLL.DiceControl.HaveSpecial"}}</label>
+            <div class="modifier-help-text">{{localize "ROLEANDROLL.DiceControl.ModifierHelp"}}</div>
+        </div>
+
+        <div class="dice-grid">
+            {{#each diceRows}}
+            <div class="dice-row-container">
+                {{#each this}}
+                <div class="die-column">
+                    <div class="die-header">{{localize "ROLEANDROLL.DiceControl.Dice"}} {{add dieIndex 1}}</div>
+
+                    <!-- Face 1: DOT (locked) -->
+                    <div class="die-face-box locked">●</div>
+
+                    <!-- Faces 2-5: Selectable -->
+                    {{#each positions}}
+                    <select name="dice{{../dieIndex}}.pos{{this}}" class="face-selector-box">
+                        <option value="blank" selected>{{localize "ROLEANDROLL.DiceControl.BlankFace"}}</option>
+                        <option value="plus">{{localize "ROLEANDROLL.DiceControl.PlusFace"}}</option>
+                        <option value="minus">{{localize "ROLEANDROLL.DiceControl.MinusFace"}}</option>
+                    </select>
+                    {{/each}}
+
+                    <!-- Face 6: R (locked) -->
+                    <div class="die-face-box locked">R</div>
+                </div>
+                {{/each}}
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <div class="button-row">
+        <button type="submit" class="roll-dice-btn">
+            <i class="fas fa-dice"></i> {{localize "ROLEANDROLL.DiceControl.RollDice"}}
+        </button>
+        <button type="button" class="cancel-btn">
+            <i class="fas fa-times"></i> {{localize "ROLEANDROLL.DiceControl.Cancel"}}
+        </button>
+    </div>
+</form>
