@@ -438,8 +438,8 @@ export async function rollDicePool(numDice, label = "Dice Pool", autoSuccess = 0
 
   // Deduct will power
   if (willPower > 0 && actor) {
-    const currentWP = actor.system.wp || 0;
-    await actor.update({ 'system.wp': Math.max(0, currentWP - willPower) });
+    const currentWP = actor.system.wp.value || 0;
+    await actor.update({ 'system.wp.value': Math.max(0, currentWP - willPower) });
   }
 
   return { successes, criticals, results: allRolls };
@@ -533,7 +533,7 @@ function resolveModifiers(diceResults, allRolls = null) {
       targetDie.removed = true;
       targetDie.annotation = `removed`;
       // Keep minus face as 'minus' but add annotation
-      diceResults[minusIdx].annotation = `${targetFace}`;
+      diceResults[minusIdx].annotation = `${targetFace} `;
     } else {
       // No target found, just mark annotation
       diceResults[minusIdx].annotation = 'no target';
@@ -596,7 +596,7 @@ function resolveModifiers(diceResults, allRolls = null) {
       const sourceFace = sourceDie.face;
       // Keep face as 'plus' but track what it copied
       diceResults[plusIdx].copiedFace = sourceFace;
-      diceResults[plusIdx].annotation = `${sourceFace}`;
+      diceResults[plusIdx].annotation = `${sourceFace} `;
     } else {
       // No source found, copies blank
       diceResults[plusIdx].copiedFace = 'blank';

@@ -25,7 +25,7 @@ export class DiceControlDialog extends FormApplication {
         const context = super.getData();
 
         // Get will power from actor (wp field)
-        context.currentWillPower = this.actor?.system?.wp || 0;
+        context.currentWillPower = this.actor?.system?.wp?.value || 0;
 
         // Format the help text with the current will power value
         context.willPowerHelpText = game.i18n.format("ROLEANDROLL.DiceControl.WillPowerHelp", {
@@ -79,7 +79,7 @@ export class DiceControlDialog extends FormApplication {
         const willPower = parseInt(formData.willPower) || 0;
 
         // Validate will power
-        const currentWP = this.actor?.system?.wp || 0;
+        const currentWP = this.actor?.system?.wp?.value || 0;
         if (willPower > currentWP) {
             const msg = game.i18n.format("ROLEANDROLL.Notifications.NotEnoughWillPower", { current: currentWP, tried: willPower });
             ui.notifications.warn(msg);

@@ -29,12 +29,14 @@ export function patchCombatForRnR() {
       // Read DEX dice from your actor schema
       const dexDice = Number(c.actor.system?.attributes?.dexterity?.dice ?? 0);
       const dexSucceed = c.actor.system?.attributes?.dexterity?.succeed ? 1 : 0;
-      const pool = Math.max(1, dexDice); // at least 1 die
+      const refDice = Number(c.actor.system?.abilities?.physical?.reflex?.dice ?? 0);
+      const refSucceed = c.actor.system?.abilities?.physical?.reflex?.succeed ? 1 : 0;
+      const pool = Math.max(1, dexDice + refDice); // at least 1 die
 
       // Show dice control dialog for initiative
       const { DiceControlDialog } = await import("./dice-control-dialog.mjs");
-      const autoSuccess = dexSucceed;
-      const label = `${c.name} - Initiative`;
+      const autoSuccess = dexSucceed + refSucceed;
+      const label = `${c.name} - Initiative (Reflex)`;
       const dialog = new DiceControlDialog(pool, label, autoSuccess, c.actor);
 
       // Wait for the dialog to be submitted and get the result
@@ -44,7 +46,7 @@ export function patchCombatForRnR() {
       });
 
       // Calculate initiative score from the roll result
-      const score = Number(result?.successes ?? 0) + (dexDice * 0.01);
+      const score = Number(result?.successes ?? 0) + ((dexDice + refDice) * 0.01);
       updates.push({ _id: c.id, initiative: score });
     }
 
