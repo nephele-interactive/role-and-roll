@@ -67,6 +67,9 @@
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item" data-tab="attributes">{{localize "ROLEANDROLL.Tabs.Attributes"}}</a>
     <a class="item" data-tab="abilities">{{localize "ROLEANDROLL.Tabs.Abilities"}}</a>
+    {{#if (isSessionAbilitiesEnabled)}}
+    <a class="item" data-tab="sessionAbilities">{{localize "ROLEANDROLL.Tabs.SessionAbilities"}}</a>
+    {{/if}}
     <a class="item" data-tab="skills">{{localize "ROLEANDROLL.Tabs.Skills"}}</a>
     <a class="item" data-tab="equipment">{{localize "ROLEANDROLL.Tabs.Equipment"}}</a>
     <a class="item" data-tab="bio">{{localize "ROLEANDROLL.Tabs.Bio"}}</a>
@@ -227,6 +230,42 @@
       </div>
       {{/each}}
     </div>
+
+    {{!-- Session Abilities Tab --}}
+    {{#if (isSessionAbilitiesEnabled)}}
+    <div class="tab sessionAbilities" data-group="primary" data-tab="sessionAbilities">
+      <div class="ability-category">
+        <h3>{{localize "ROLEANDROLL.SessionAbilities.Title"}}</h3>
+        <div class="abilities-grid">
+          {{#each (getSessionAbilities) as |config key|}}
+          {{#with (lookup ../system.sessionAbilities key) as |value|}}
+          <div class="ability">
+            <label>
+              <div class="label-main">{{config.name}}</div>
+            </label>
+            <div class="dice-pips">
+              {{#each (range 1 6) as |pip|}}
+              <button type="button" class="pip {{#if (lte pip value.dice)}}filled{{/if}}" 
+                      data-action="set-dice"
+                      data-target="sessionAbilities.{{key}}.dice" data-value="{{pip}}">
+                ●
+              </button>
+              {{/each}}
+            </div>
+            <div class="succeed-check">
+              <input type="checkbox" name="system.sessionAbilities.{{key}}.succeed" {{checked value.succeed}} />
+              <label>{{localize "ROLEANDROLL.Labels.Succeed"}}</label>
+            </div>
+            <button type="button" class="ability-roll session-ability-roll" data-ability="{{key}}">
+              {{localize "ROLEANDROLL.Labels.Roll"}}
+            </button>
+          </div>
+          {{/with}}
+          {{/each}}
+        </div>
+      </div>
+    </div>
+    {{/if}}
 
     {{!-- Skills Tab --}}
     <div class="tab skills" data-group="primary" data-tab="skills">

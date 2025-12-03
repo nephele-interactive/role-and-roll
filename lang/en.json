@@ -74,7 +74,8 @@
       "Biography": "Biography",
       "Description": "Description",
       "Details": "Details",
-      "Bio": "Bio"
+      "Bio": "Bio",
+      "SessionAbilities": "Session Abilities"
     },
     "Labels": {
       "Health": "Health",
@@ -142,6 +143,32 @@
       "SelectAttribute": "Select Attribute",
       "SelectAttributePrompt": "Select Attribute to use for Ability Check",
       "AttributeBonus": "(+{value} Dice)"
+    },
+    "SessionAbilities": {
+      "Title": "Session Abilities"
+    },
+    "Settings": {
+      "EnableSessionAbilities": "Enable Session Abilities Tab",
+      "EnableSessionAbilitiesHint": "Show the Session Abilities tab on character sheets. GMs can configure custom abilities in the settings menu.",
+      "ConfigureSessionAbilities": "Configure Session Abilities",
+      "ConfigureSessionAbilitiesLabel": "Manage Custom Abilities",
+      "ConfigureSessionAbilitiesHint": "Add, edit, or remove custom session abilities available to all characters."
+    },
+    "SessionAbilitiesConfig": {
+      "Title": "Configure Session Abilities",
+      "Description": "Define custom session abilities for your game.",
+      "Instructions": "Select base attributes/abilities from the dropdown. Single mode = 1 selection only.",
+      "AddAbility": "Add Ability",
+      "SaveConfiguration": "Save Configuration",
+      "KeyPlaceholder": "computer",
+      "NamePlaceholder": "Computer",
+      "SelectPlaceholder": "Select...",
+      "HelpKey": "Key: Unique identifier (lowercase, no spaces)",
+      "HelpName": "Name: Display name shown to players",
+      "HelpMode": "Mode: Single = 1 base only | Multiple = sum all | Select = player chooses",
+      "ModeSingle": "Single",
+      "ModeDual": "Multiple",
+      "ModeSelect": "Select"
     }
   }
 }

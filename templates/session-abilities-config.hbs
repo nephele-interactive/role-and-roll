@@ -1,0 +1,351 @@
+<form class="session-abilities-config">
+  <div class="dialog-header">
+    <h2>{{localize "ROLEANDROLL.SessionAbilitiesConfig.Title"}}</h2>
+    <p class="header-description">
+      {{localize "ROLEANDROLL.SessionAbilitiesConfig.Description"}}<br>
+      {{localize "ROLEANDROLL.SessionAbilitiesConfig.Instructions"}}
+    </p>
+  </div>
+  
+  <div class="ability-list">
+    {{#each abilities as |ability|}}
+    <div class="ability-row">
+      <input type="text" class="ability-key" value="{{ability.key}}" placeholder="{{localize 'ROLEANDROLL.SessionAbilitiesConfig.KeyPlaceholder'}}" />
+      <input type="text" class="ability-name" value="{{ability.name}}" placeholder="{{localize 'ROLEANDROLL.SessionAbilitiesConfig.NamePlaceholder'}}" />
+      <div class="multi-select-wrapper">
+        <div class="selected-items">
+          {{#each ability.baseAbilities as |base|}}
+          <span class="selected-tag" data-value="{{base}}">
+            {{base}}
+            <i class="fas fa-times remove-selected"></i>
+          </span>
+          {{/each}}
+        </div>
+        <div class="dropdown-toggle" data-action="toggle-dropdown">
+          <span class="placeholder">{{localize "ROLEANDROLL.SessionAbilitiesConfig.SelectPlaceholder"}}</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="dropdown-options" style="display: none;">
+          {{#each ../allOptions as |opt|}}
+          <div class="base-ability-option {{#each ../ability.baseAbilities}}{{#if (eq this opt.value)}}selected{{/if}}{{/each}}" data-value="{{opt.value}}">
+            {{opt.label}}
+          </div>
+          {{/each}}
+        </div>
+      </div>
+      <select class="ability-mode">
+        <option value="single" {{#if (eq ability.mode "single")}}selected{{/if}}>{{localize "ROLEANDROLL.SessionAbilitiesConfig.ModeSingle"}}</option>
+        <option value="dual" {{#if (eq ability.mode "dual")}}selected{{/if}}>{{localize "ROLEANDROLL.SessionAbilitiesConfig.ModeDual"}}</option>
+        <option value="select" {{#if (eq ability.mode "select")}}selected{{/if}}>{{localize "ROLEANDROLL.SessionAbilitiesConfig.ModeSelect"}}</option>
+      </select>
+      <button type="button" class="delete-ability"><i class="fas fa-trash"></i></button>
+    </div>
+    {{/each}}
+  </div>
+  
+  <button type="button" class="add-ability"><i class="fas fa-plus"></i> {{localize "ROLEANDROLL.SessionAbilitiesConfig.AddAbility"}}</button>
+  
+  <div class="form-footer">
+    <p class="help-text">
+      {{localize "ROLEANDROLL.SessionAbilitiesConfig.HelpKey"}}<br>
+      {{localize "ROLEANDROLL.SessionAbilitiesConfig.HelpName"}}<br>
+      {{localize "ROLEANDROLL.SessionAbilitiesConfig.HelpMode"}}
+    </p>
+    <button type="submit" class="save-button"><i class="fas fa-save"></i> {{localize "ROLEANDROLL.SessionAbilitiesConfig.SaveConfiguration"}}</button>
+  </div>
+</form>
+
+<style>
+/* Session Abilities Config - Matching Dice Control Dialog Theme */
+
+.session-abilities-config {
+  padding: 20px;
+  background: #f8f4e6;
+  font-family: "Signika", sans-serif;
+}
+
+.dialog-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #8b0000;
+}
+
+.dialog-header h2 {
+  margin: 0 0 8px 0;
+  color: #8b0000;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.header-description {
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.ability-list {
+  background: white;
+  border: 2px solid #8b0000;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.ability-row {
+  display: grid;
+  grid-template-columns: 120px 150px 1fr 100px 45px;
+  gap: 8px;
+  margin-bottom: 12px;
+  align-items: start;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ability-row:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.ability-key,
+.ability-name {
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 2px solid #8b0000;
+  border-radius: 4px;
+  background: white;
+  color: #2b2b2b;
+  font-weight: 500;
+}
+
+.ability-key {
+  font-family: monospace;
+  font-size: 13px;
+}
+
+.ability-key:focus,
+.ability-name:focus {
+  outline: none;
+  border-color: #b30000;
+  box-shadow: 0 0 0 2px rgba(139, 0, 0, 0.2);
+}
+
+/* Multi-select dropdown styles */
+.multi-select-wrapper {
+  position: relative;
+  border: 2px solid #8b0000;
+  border-radius: 4px;
+  background: white;
+  min-height: 38px;
+}
+
+.multi-select-wrapper .selected-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  min-height: 30px;
+}
+
+.selected-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #8b0000;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.selected-tag i {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.selected-tag i:hover {
+  opacity: 1;
+}
+
+.dropdown-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-top: 1px solid #ccc;
+  background: #f8f4e6;
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.dropdown-toggle:hover {
+  background: #ede8d5;
+}
+
+.dropdown-options {
+  position: absolute;
+  top: 100%;
+  left: -2px;
+  right: -2px;
+  max-height: 250px;
+  overflow-y: auto;
+  background: white;
+  border: 2px solid #8b0000;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.base-ability-option {
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #2b2b2b;
+  font-weight: 500;
+}
+
+.base-ability-option:hover {
+  background: #fff5e6;
+}
+
+.base-ability-option.selected {
+  background: #ffe6e6;
+  color: #8b0000;
+  font-weight: 600;
+}
+
+.ability-mode {
+  padding: 6px 8px;
+  font-size: 13px;
+  border: 2px solid #8b0000;
+  border-radius: 4px;
+  background: white;
+  color: #2b2b2b;
+  font-weight: 600;
+  cursor: pointer;
+  height: 38px;
+  line-height: 1.2;
+}
+
+.ability-mode:focus {
+  outline: none;
+  border-color: #b30000;
+  box-shadow: 0 0 0 2px rgba(139, 0, 0, 0.2);
+}
+
+.ability-mode option {
+  background: white;
+  color: #2b2b2b;
+  font-weight: 500;
+  padding: 8px;
+  font-size: 13px;
+}
+
+.delete-ability {
+  background: #666;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  height: 38px;
+  transition: all 0.2s;
+}
+
+.delete-ability:hover {
+  background: #888;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.add-ability {
+  background: #8b0000;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 15px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto;
+}
+
+.add-ability:hover {
+  background: #b30000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.form-footer {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #8b0000;
+}
+
+.help-text {
+  background: white;
+  border: 1px solid #ccc;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-bottom: 15px;
+  line-height: 1.6;
+  color: #666;
+  font-style: italic;
+}
+
+.save-button {
+  background: #8b0000;
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+  font-size: 16px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.save-button:hover {
+  background: #b30000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.save-button:active {
+  transform: translateY(0);
+}
+</style>
+
+<script>
+// Attach dropdown toggle listeners when rendered
+$(document).on('click', '.dropdown-toggle', function(e) {
+  e.stopPropagation();
+  $(this).siblings('.dropdown-options').toggle();
+});
+
+// Close dropdowns when clicking outside
+$(document).on('click', function(e) {
+  if (!$(e.target).closest('.multi-select-wrapper').length) {
+    $('.dropdown-options').hide();
+  }
+});
+</script>

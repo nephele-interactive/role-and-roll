@@ -3,6 +3,7 @@ import { RoleAndRollItem } from "./documents/item.mjs";
 import { RoleAndRollActorSheet } from "./sheets/actor-sheet.mjs";
 import { RoleAndRollItemSheet } from "./sheets/item-sheet.mjs";
 import { patchCombatForRnR } from "./initiative.mjs";
+import { SessionAbilitiesConfig } from "./session-abilities-config.mjs";
 import {
   registerAllPresets,
   modifierToPresetCode,
@@ -128,7 +129,50 @@ Hooks.once("init", function () {
     }
     return "";
   });
+  // Session Abilities Handlebars Helpers
+  Handlebars.registerHelper("isSessionAbilitiesEnabled", () => {
+    return game.settings?.get("role-and-roll", "sessionAbilitiesEnabled") || false;
+  });
+  Handlebars.registerHelper("getSessionAbilities", () => {
+    return game.settings?.get("role-and-roll", "customSessionAbilities") || {};
+  });
+  Handlebars.registerHelper("getSessionAbilityDice", function(key) {
+    return this.sessionAbilitiesData?.[key]?.dice || 0;
+  });
 
+  Handlebars.registerHelper("getSessionAbilitySucceed", function(key) {
+    return this.sessionAbilitiesData?.[key]?.succeed || false;
+  });
+  /* ------------ Settings ------------ */
+  // Register Session Abilities settings
+  game.settings.register("role-and-roll", "sessionAbilitiesEnabled", {
+    name: "ROLEANDROLL.Settings.EnableSessionAbilities",
+    hint: "ROLEANDROLL.Settings.EnableSessionAbilitiesHint",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+    onChange: () => {
+      // Re-render all actor sheets when setting changes
+      Object.values(ui.windows).forEach(app => {
+        if (app.constructor.name === "RoleAndRollActorSheet") app.render();
+      });
+    }
+  });
+  game.settings.register("role-and-roll", "customSessionAbilities", {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: {}
+  });
+  game.settings.registerMenu("role-and-roll", "sessionAbilitiesConfig", {
+    name: "ROLEANDROLL.Settings.ConfigureSessionAbilities",
+    label: "ROLEANDROLL.Settings.ConfigureSessionAbilitiesLabel",
+    hint: "ROLEANDROLL.Settings.ConfigureSessionAbilitiesHint",
+    icon: "fas fa-cogs",
+    type: SessionAbilitiesConfig,
+    restricted: true
+  });
   /* ------------ Sheets ------------ */
 
   Actors.unregisterSheet("core", ActorSheet);

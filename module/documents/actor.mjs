@@ -206,6 +206,145 @@ export class RoleAndRollActor extends Actor {
     dialog.render(true);
   }
 
+  async rollSessionAbility(abilityKey) {
+    const customAbilities = game.settings.get("role-and-roll", "customSessionAbilities") || {};
+    const config = customAbilities[abilityKey];
+    if (!config) return;
+    // Initialize if not exists
+    this.system.sessionAbilities ??= {};
+    this.system.sessionAbilities[abilityKey] ??= { dice: 0, succeed: false };
+    const sessionAbility = this.system.sessionAbilities[abilityKey];
+    let abilityDice = Number(sessionAbility.dice) || 0;
+    let autoSuccess = sessionAbility.succeed ? 1 : 0;
+    const mode = config.mode || 'single';
+    const baseAbilities = config.baseAbilities || [];
+    let totalDice = abilityDice;
+    let attributeBonus = 0;
+    let selectedAbility = null;
+    let bonusDetails = [];
+    // Collect all abilities/attributes to include (with recursive lookup)
+    const abilitiesToInclude = [];
+
+    if (mode === 'single' && baseAbilities.length > 0) {
+      // Use only the first base ability/attribute
+      abilitiesToInclude.push(baseAbilities[0]);
+      selectedAbility = baseAbilities[0];
+    } else if (mode === 'dual' && baseAbilities.length > 0) {
+      // Use ALL base abilities/attributes
+      abilitiesToInclude.push(...baseAbilities);
+      selectedAbility = baseAbilities.join('+');
+    } else if (mode === 'select' && baseAbilities.length > 1) {
+      // Let user choose one - calculate total dice for each option including recursive attributes
+      const choices = {};
+      for (const baseKey of baseAbilities) {
+        // Calculate total dice for this option (including underlying attributes)
+        let totalDiceForOption = 0;
+        const processedForOption = new Set();
+        const queueForOption = [baseKey];
+        
+        while (queueForOption.length > 0) {
+          const key = queueForOption.shift();
+          if (processedForOption.has(key)) continue;
+          processedForOption.add(key);
+          
+          const data = this._getAbilityOrAttributeData(key);
+          totalDiceForOption += data.dice;
+          
+          // If this is an ability, add its underlying attributes
+          if (!data.isAttribute && data.attributes && data.attributes.length > 0) {
+            for (const attrKey of data.attributes) {
+              if (!processedForOption.has(attrKey)) {
+                queueForOption.push(attrKey);
+              }
+            }
+          }
+        }
+        
+        const baseName = game.roleandroll?.safeCapitalize?.(baseKey) || baseKey;
+        choices[baseKey] = `${baseName} ${game.i18n.format("ROLEANDROLL.Notifications.AttributeBonus", { value: totalDiceForOption })}`;
+      }
+
+      selectedAbility = await new Promise((resolve) => {
+        new Dialog({
+          title: game.i18n.localize("ROLEANDROLL.Notifications.SelectAttribute"),
+          content: `<p>${game.i18n.localize("ROLEANDROLL.Notifications.SelectAttributePrompt")}</p>`,
+          buttons: Object.keys(choices).reduce((acc, key) => {
+            acc[key] = {
+              label: choices[key],
+              callback: () => resolve(key)
+            };
+            return acc;
+          }, {}),
+          default: baseAbilities[0],
+          close: () => resolve(baseAbilities[0])
+        }).render(true);
+      });
+
+      abilitiesToInclude.push(selectedAbility);
+    }
+    // For each ability to include, get its data AND recursively find underlying attributes
+    const processed = new Set();
+    const queue = [...abilitiesToInclude];
+    while (queue.length > 0) {
+      const key = queue.shift();
+      if (processed.has(key)) continue;
+      processed.add(key);
+      const data = this._getAbilityOrAttributeData(key);
+      attributeBonus += data.dice;
+      if (data.succeed) autoSuccess++;
+      bonusDetails.push({ key, dice: data.dice, isAttribute: data.isAttribute });
+      // If this is an ability (not attribute), check if it has underlying attributes
+      if (!data.isAttribute && data.attributes && data.attributes.length > 0) {
+        // Add the underlying attributes to the queue for processing
+        for (const attrKey of data.attributes) {
+          if (!processed.has(attrKey)) {
+            queue.push(attrKey);
+          }
+        }
+      }
+    }
+    totalDice = abilityDice + attributeBonus;
+    // Build label
+    let label = config.name || abilityKey;
+    if (bonusDetails.length > 0) {
+      const baseLabel = bonusDetails.map(b => game.roleandroll?.safeCapitalize?.(b.key) || b.key).join(' + ');
+      label += ` [${abilityDice} + ${attributeBonus} (${baseLabel}) = ${totalDice}]`;
+    } else {
+      label += ` [${totalDice}]`;
+    }
+    // Show dice control dialog
+    const { DiceControlDialog } = await import("../dice-control-dialog.mjs");
+    const dialog = new DiceControlDialog(totalDice, label, autoSuccess, this);
+    dialog.render(true);
+  }
+  // Helper to get ability or attribute data
+  _getAbilityOrAttributeData(key) {
+    // First check if it's an attribute
+    const attribute = this.system.attributes?.[key];
+    if (attribute) {
+      return {
+        dice: Number(attribute.dice) || 0,
+        succeed: attribute.succeed || false,
+        isAttribute: true,
+        attributes: [] // Attributes don't have sub-attributes
+      };
+    }
+    // Then check in all ability categories
+    for (const category in this.system.abilities) {
+      const ability = this.system.abilities[category]?.[key];
+      if (ability) {
+        return {
+          dice: Number(ability.dice) || 0,
+          succeed: ability.succeed || false,
+          isAttribute: false,
+          attributes: ability.attributes || [] // Return the attributes this ability is based on
+        };
+      }
+    }
+    // Not found, return defaults
+    return { dice: 0, succeed: false, isAttribute: false, attributes: [] };
+  }
+
   async rollSkill(skillName) {
     const skills = Array.isArray(this.system.skills)
       ? this.system.skills

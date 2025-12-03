@@ -74,7 +74,8 @@
             "Biography": "ประวัติ",
             "Description": "คำอธิบาย",
             "Details": "รายละเอียด",
-            "Bio": "ประวัติ"
+            "Bio": "ประวัติ",
+            "SessionAbilities": "Session Abilities"
         },
         "Labels": {
             "Health": "พลังชีพ",
@@ -142,6 +143,32 @@
             "SelectAttribute": "เลือก Attribute",
             "SelectAttributePrompt": "เลือก Attribute ที่จะใช้สำหรับ Ability Check",
             "AttributeBonus": "(+{value} ลูกเต๋า)"
+        },
+        "SessionAbilities": {
+            "Title": "Session Abilities"
+        },
+        "Settings": {
+            "EnableSessionAbilities": "เปิดใช้งานแถบ Session Abilities",
+            "EnableSessionAbilitiesHint": "แสดงแถบ Session Abilities บนชีทตัวละคร GM สามารถตั้งค่า Abilities พิเศษได้ในเมนูการตั้งค่า",
+            "ConfigureSessionAbilities": "ตั้งค่า Session Abilities",
+            "ConfigureSessionAbilitiesLabel": "จัดการ Session Abilities",
+            "ConfigureSessionAbilitiesHint": "เพิ่ม แก้ไข หรือลบ Session Abilities ที่ตัวละครทุกคนสามารถใช้ได้"
+        },
+        "SessionAbilitiesConfig": {
+            "Title": "ตั้งค่า Abilities พิเศษในเซสชั่น",
+            "Description": "กำหนด Abilities พิเศษในเซสชั่นสำหรับเกมของคุณ",
+            "Instructions": "เลือกคุณ Attribute/Abilitie พื้นฐานจากเมนูดรอปดาวน์ (โหมด Single = เลือกได้เพียง 1 อย่างเท่านั้น)",
+            "AddAbility": "เพิ่ม Session Abilities",
+            "SaveConfiguration": "บันทึกการตั้งค่า",
+            "KeyPlaceholder": "computer",
+            "NamePlaceholder": "คอมพิวเตอร์",
+            "SelectPlaceholder": "เลือก...",
+            "HelpKey": "Key: รหัสเฉพาะ (ภาษาอังกฤษตัวพิมพ์เล็ก ไม่มีช่องว่าง)",
+            "HelpName": "Name: ชื่อที่แสดงให้ผู้เล่นเห็น",
+            "HelpMode": "Mode: เดี่ยว = 1 อันเท่านั้น | ทั้งหมด = จะรวม Attribute และ Abilities ทั้งหมด | เลือก = ผู้เล่นเลือกเอง 1 อัน",
+            "ModeSingle": "เดี่ยว",
+            "ModeDual": "ทั้งหมด",
+            "ModeSelect": "เลือก"
         }
     }
 }

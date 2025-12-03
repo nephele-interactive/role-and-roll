@@ -26,16 +26,51 @@ export class RoleAndRollActorSheet extends ActorSheet {
 
     const skills = actorData.system.skills ?? [];
     context.skills = Array.isArray(skills) ? skills : Object.values(skills);
-
+    context.sessionAbilitiesEnabled = game.settings.get("role-and-roll", "sessionAbilitiesEnabled");
+    context.customSessionAbilities = game.settings.get("role-and-roll", "customSessionAbilities") || {};
+    
+    // Pass session abilities data to context for rendering
+    context.sessionAbilitiesData = this.actor.system.sessionAbilities || {};
+    
     context.items = actorData.items?.sort((a, b) => (a.sort || 0) - (b.sort || 0)) ?? [];
-
     return context;
+  }
+
+  async _render(force, options) {
+    // Initialize session abilities before rendering
+    const sessionEnabled = game.settings.get("role-and-roll", "sessionAbilitiesEnabled");
+    if (sessionEnabled) {
+      const customAbilities = game.settings.get("role-and-roll", "customSessionAbilities") || {};
+      const currentSessionAbilities = this.actor.system.sessionAbilities || {};
+      let hasChanges = false;
+      
+      for (const key in customAbilities) {
+        if (!currentSessionAbilities[key]) {
+          currentSessionAbilities[key] = { dice: 0, succeed: false };
+          hasChanges = true;
+        }
+      }
+      
+      if (hasChanges) {
+        await this.actor.update({ 'system.sessionAbilities': currentSessionAbilities });
+      }
+    }
+    
+    return super._render(force, options);
   }
 
   activateListeners(html) {
     super.activateListeners(html);
     if (!this.isEditable) return;
-
+    
+    // Listen for session ability updates and force re-render
+    this._sessionAbilityHook = Hooks.on('updateActor', (actor, changes) => {
+      if (actor.id === this.actor.id && changes.system?.sessionAbilities) {
+        this.render(false);
+      }
+    });
+    
+    html.find(".session-ability-roll").click(ev => this._onSessionAbilityRoll(ev));
     html.find(".attribute-roll").click(ev => this._onAttributeRoll(ev));
     html.find(".ability-roll").click(ev => this._onAbilityRoll(ev));
     html.find(".dice-control").click(ev => this._onDiceControl(ev));
@@ -174,7 +209,7 @@ export class RoleAndRollActorSheet extends ActorSheet {
     }
   }
 
-  async _onDiceControl(event) {
+    async _onDiceControl(event) {
     event.preventDefault();
     const { action, target, value: dataValue } = event.currentTarget.dataset;
     if (!target) return;
@@ -203,6 +238,11 @@ export class RoleAndRollActorSheet extends ActorSheet {
     }
 
     await this.actor.update({ [`system.${target}`]: value });
+    
+    // Force re-render for session abilities to update UI
+    if (target.startsWith("sessionAbilities.")) {
+      this.render(false);
+    }
   }
 
   async _onItemCreate(event) {
@@ -308,6 +348,12 @@ export class RoleAndRollActorSheet extends ActorSheet {
     await item.update({ "system.weight": weight });
   }
 
+  async _onSessionAbilityRoll(event) {
+    event.preventDefault();
+    const abilityKey = event.currentTarget.dataset.ability;
+    if (abilityKey) await this.actor.rollSessionAbility(abilityKey);
+  }
+
   async _onItemShowChat(event) {
     event.preventDefault();
     const itemId = event.currentTarget.dataset.itemId;
@@ -334,5 +380,12 @@ export class RoleAndRollActorSheet extends ActorSheet {
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       content: content
     });
+  }
+
+    close(options) {
+    if (this._sessionAbilityHook) {
+      Hooks.off('updateActor', this._sessionAbilityHook);
+    }
+    return super.close(options);
   }
 }
