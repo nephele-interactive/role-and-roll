@@ -70,14 +70,15 @@ export class RoleAndRollActor extends Actor {
     system.skills ??= [];
     system.level ??= 1;
 
-    // Calculate HP Max = 10 + (toughness*2) + Level
+    // Calculate HP Max = 10 + (toughness*2) + (3 if toughness succeeded)
     const toughness = Number(system.attributes.toughness?.dice) || 1;
-    const level = Number(system.level) || 1;
-    system.health.max = 10 + (toughness * 2) + level;
+    const toughnessSucceed = system.attributes.toughness?.succeed ? 3 : 0;
+    system.health.max = 10 + (toughness * 2) + toughnessSucceed;
 
-    // Calculate WP Max = 8 + sanity
+    // Calculate WP Max = 8 + sanity + (2 if sanity succeeded)
     const sanity = Number(system.attributes.sanity?.dice) || 1;
-    system.wp.max = 8 + sanity;
+    const sanitySucceed = system.attributes.sanity?.succeed ? 2 : 0;
+    system.wp.max = 8 + sanity + sanitySucceed;
   }
 
   /* -------------------------------------------- */
