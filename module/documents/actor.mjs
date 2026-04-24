@@ -69,16 +69,18 @@ export class RoleAndRollActor extends Actor {
     system.abilities ??= {};
     system.skills ??= [];
     system.level ??= 1;
+    
+    const totalLevelIncrease = system.level - 1
 
-    // Calculate HP Max = 10 + (toughness*2) + (3 if toughness succeeded)
+    // Calculate HP Max = 10 + (toughness*2) + (3 if toughness succeeded) + (2 * Increased Level)
     const toughness = Number(system.attributes.toughness?.dice) || 1;
     const toughnessSucceed = system.attributes.toughness?.succeed ? 3 : 0;
-    system.health.max = 10 + (toughness * 2) + toughnessSucceed;
+    system.health.max = 10 + (toughness * 2) + toughnessSucceed + (2 * totalLevelIncrease);
 
-    // Calculate WP Max = 8 + sanity + (2 if sanity succeeded)
+    // Calculate WP Max = 8 + sanity + (2 if sanity succeeded) + (1 * Increased Level)
     const sanity = Number(system.attributes.sanity?.dice) || 1;
     const sanitySucceed = system.attributes.sanity?.succeed ? 2 : 0;
-    system.wp.max = 8 + sanity + sanitySucceed;
+    system.wp.max = 8 + sanity + sanitySucceed + (1 * totalLevelIncrease);
   }
 
   /* -------------------------------------------- */
