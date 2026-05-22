@@ -1,187 +1,180 @@
-<form class="{{cssClass}}" autocomplete="off">
-
-  <!-- HEADER -->
-  <header class="sheet-header role-header">
-    <div class="profile-img-container">
-      <div class="profile-img-frame">
-        <img class="profile-img preview-only" src="{{actor.img}}" title="{{actor.name}}" />
-
-        <!-- hidden real editor (required by Foundry) -->
-        <img class="hidden-img-editor" data-edit="img" src="{{actor.img}}" style="display:none" />
-      </div>
-
-      <button type="button" class="profile-img-edit-btn">
-        <i class="fas fa-pencil-alt"></i>
-      </button>
+<div class="rnr-sheet">
+  {{!-- TOP BAR --}}
+  <header class="rnr-topbar">
+    <h1 class="rnr-charname">
+      <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name" />
+    </h1>
+    <div class="rnr-level-badge">
+      <span class="rnr-lv-label">LV</span>
+      <input type="number" name="system.level" value="{{system.level}}" class="rnr-lv-input" />
     </div>
-    </div>
-
-    <div class="header-fields">
-      <h1 class="charname">
-        <input name="name" type="text" value="{{actor.name}}"
-          placeholder="{{localize 'ROLEANDROLL.Labels.CharacterName'}}" />
-      </h1>
-
-      <div class="resources">
-        <div class="resource">
-          <label>{{localize "ROLEANDROLL.Labels.Health"}}</label>
-          <input type="number" name="system.health.value" value="{{system.health.value}}" />
-          <span>/</span>
-          <input type="number" name="system.health.max" value="{{system.health.max}}" readonly />
-        </div>
-
-        <div class="resource">
-          <label>{{localize "ROLEANDROLL.Labels.Mental"}}</label>
-          <input type="number" name="system.mental.value" value="{{system.mental.value}}" />
-          <span>/</span>
-          <input type="number" name="system.mental.max" value="{{system.mental.max}}" />
-        </div>
-
-        <div class="resource">
-          <label>{{localize "ROLEANDROLL.Labels.Level"}}</label>
-          <input type="number" name="system.level" value="{{system.level}}" />
-        </div>
-
-        <div class="resource">
-          <label>{{localize "ROLEANDROLL.Labels.Exp"}}</label>
-          <input type="number" name="system.exp" value="{{system.exp}}" />
-        </div>
-
-        <div class="resource">
-          <label>{{localize "ROLEANDROLL.Labels.WillPower"}}</label>
-          <input type="number" name="system.wp.value" value="{{system.wp.value}}" min="0" max="{{system.wp.max}}" />
-          <span>/</span>
-          <input type="number" name="system.wp.max" value="{{system.wp.max}}" readonly />
-        </div>
-
-        <div class="resource">
-          <label>{{localize "ROLEANDROLL.Labels.Defense"}}</label>
-          <input type="number" name="system.defense" value="{{system.defense}}" />
-        </div>
-      </div>
-
+    <div class="rnr-xp-block">
+      <span class="rnr-xp-label">EXP</span>
+      <input type="number" name="system.exp" value="{{system.exp}}" class="rnr-xp-input" />
     </div>
   </header>
 
-  {{!-- Navigation Tabs --}}
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="attributes">{{localize "ROLEANDROLL.Tabs.Attributes"}}</a>
-    <a class="item" data-tab="abilities">{{localize "ROLEANDROLL.Tabs.Abilities"}}</a>
-    {{#if (isSessionAbilitiesEnabled)}}
-    <a class="item" data-tab="sessionAbilities">{{localize "ROLEANDROLL.Tabs.SessionAbilities"}}</a>
-    {{/if}}
-    <a class="item" data-tab="skills">{{localize "ROLEANDROLL.Tabs.Skills"}}</a>
-    <a class="item" data-tab="equipment">{{localize "ROLEANDROLL.Tabs.Equipment"}}</a>
-    <a class="item" data-tab="bio">{{localize "ROLEANDROLL.Tabs.Bio"}}</a>
-  </nav>
+  <div class="rnr-body">
+    {{!-- LEFT SIDEBAR --}}
+    <aside class="rnr-sidebar">
+      <div class="rnr-portrait" data-view="{{portraitView}}">
+        {{#if (eq portraitView "token")}}
+        <img src="{{actor.prototypeToken.texture.src}}" title="{{actor.name}}" data-action="previewImage" />
+        <img class="hidden-img-editor" data-edit="prototypeToken.texture.src" src="{{actor.prototypeToken.texture.src}}" style="display:none" />
+        {{else}}
+        <img src="{{actor.img}}" title="{{actor.name}}" data-action="previewImage" />
+        <img class="hidden-img-editor" data-edit="img" src="{{actor.img}}" style="display:none" />
+        {{/if}}
 
-  {{!-- Sheet Body --}}
-  <section class="sheet-body">
+        {{!-- Portrait / Token Toggle Overlay --}}
+        <div class="rnr-portrait-toggle">
+          <button type="button" class="rnr-toggle-btn {{#if (eq portraitView 'portrait')}}active{{/if}}" data-action="togglePortraitView" data-view="portrait" title="Portrait">
+            <i class="fas fa-user"></i>
+          </button>
+          <button type="button" class="rnr-toggle-btn {{#if (eq portraitView 'token')}}active{{/if}}" data-action="togglePortraitView" data-view="token" title="Token">
+            <i class="fas fa-circle-user"></i>
+          </button>
+        </div>
 
-    {{!-- Attributes Tab --}}
-    <div class="tab attributes" data-group="primary" data-tab="attributes">
+        {{#if editable}}
+        <button type="button" class="rnr-portrait-edit" data-action="editProfileImage">
+          <i class="fas fa-camera"></i>
+        </button>
+        {{/if}}
+      </div>
 
-      {{!-- Body Category --}}
-      <div class="ability-category">
-        <h3>{{localize "ROLEANDROLL.AttributeCategories.body"}}</h3>
-        <div class="attributes-grid">
+      {{!-- Vitals & Defense Frame --}}
+      <div class="rnr-sidebar-frame">
+        {{!-- HP Bar --}}
+        <div class="rnr-vital-box">
+          <div class="rnr-vital-label">{{localize "ROLEANDROLL.Labels.Health"}}</div>
+          <div class="rnr-bar bar-hp">
+            <div class="rnr-bar-fill hp-fill" style="width: {{hpPercent}}%"></div>
+            <div class="rnr-bar-content">
+              <input type="number" name="system.health.value" value="{{system.health.value}}" />
+              <span class="rnr-sep">/</span>
+              <input type="number" name="system.health.max" value="{{system.health.max}}" readonly />
+            </div>
+          </div>
+        </div>
+
+        {{!-- Mental Bar --}}
+        <div class="rnr-vital-box">
+          <div class="rnr-vital-label">{{localize "ROLEANDROLL.Labels.Mental"}}</div>
+          <div class="rnr-bar bar-mental">
+            <div class="rnr-bar-fill mental-fill" style="width: {{mentalPercent}}%"></div>
+            <div class="rnr-bar-content">
+              <input type="number" name="system.mental.value" value="{{system.mental.value}}" />
+              <span class="rnr-sep">/</span>
+              <input type="number" name="system.mental.max" value="{{system.mental.max}}" />
+            </div>
+          </div>
+        </div>
+
+        {{!-- WP Bar --}}
+        <div class="rnr-vital-box">
+          <div class="rnr-vital-label">{{localize "ROLEANDROLL.Labels.WillPower"}}</div>
+          <div class="rnr-bar bar-wp">
+            <div class="rnr-bar-fill wp-fill" style="width: {{wpPercent}}%"></div>
+            <div class="rnr-bar-content">
+              <input type="number" name="system.wp.value" value="{{system.wp.value}}" min="0" />
+              <span class="rnr-sep">/</span>
+              <input type="number" name="system.wp.max" value="{{system.wp.max}}" readonly />
+            </div>
+          </div>
+        </div>
+
+        {{!-- Defense --}}
+        <div class="rnr-defense">
+          <input type="number" name="system.defense" value="{{system.defense}}" class="rnr-defense-value" />
+          <div class="rnr-defense-label">{{localize "ROLEANDROLL.Labels.Defense"}}</div>
+        </div>
+      </div>
+    </aside>
+
+    {{!-- MAIN CONTENT --}}
+    <main class="rnr-main">
+
+      {{!-- ATTRIBUTES TAB --}}
+      <div class="tab" data-group="primary" data-tab="attributes">
+        <div class="rnr-category">
+          <h3>{{localize "ROLEANDROLL.AttributeCategories.body"}}</h3>
           {{#each system.attributes as |attr key|}}
           {{#if (or (eq key "strength") (eq key "dexterity") (eq key "toughness"))}}
-          <div class="attribute">
-            <label>
-              <div class="label-main">{{localize (concat "ROLEANDROLL.Attributes." key)}}</div>
+          <div class="rnr-row">
+            <div class="rnr-row-label">
+              <span class="rnr-name">{{localize (concat "ROLEANDROLL.Attributes." key)}}</span>
               {{#with (showEn (concat "ROLEANDROLL.Attributes." key)) as |en|}}
-              {{#if en}}
-              <div class="label-subtitle">{{en}}</div>
-              {{/if}}
+              {{#if en}}<span class="rnr-sub">{{en}}</span>{{/if}}
               {{/with}}
-            </label>
+            </div>
             <div class="dice-pips">
               {{#each (range 1 6) as |pip|}}
-              <button type="button" class="pip {{#if (lte pip attr.dice)}}filled{{/if}}" data-action="set-dice"
-                data-target="attributes.{{key}}.dice" data-value="{{pip}}">
-                ●
-              </button>
+              <button type="button" class="pip {{#if (lte pip attr.dice)}}filled{{/if}}" data-action="pipClick"
+                data-target="attributes.{{key}}.dice" data-value="{{pip}}"></button>
               {{/each}}
             </div>
-            <div class="succeed-check">
+            <div class="rnr-succeed">
               <input type="checkbox" name="system.attributes.{{key}}.succeed" {{checked attr.succeed}} />
-              <label>{{localize "ROLEANDROLL.Labels.Succeed"}}</label>
             </div>
-            <button type="button" class="attribute-roll" data-attribute="{{key}}">
-              {{localize "ROLEANDROLL.Labels.Roll"}}
+            <button type="button" class="rnr-roll" data-action="attributeRoll" data-attribute="{{key}}">
+              <i class="fas fa-dice-d20"></i>
             </button>
           </div>
           {{/if}}
           {{/each}}
         </div>
-      </div>
 
-      {{!-- Intelligence & Emotion Category --}}
-      <div class="ability-category">
-        <h3>{{localize "ROLEANDROLL.AttributeCategories.intelligenceEmotion"}}</h3>
-        <div class="attributes-grid">
+        <div class="rnr-category">
+          <h3>{{localize "ROLEANDROLL.AttributeCategories.intelligenceEmotion"}}</h3>
           {{#each system.attributes as |attr key|}}
           {{#if (or (eq key "intellect") (eq key "aptitude") (eq key "sanity"))}}
-          <div class="attribute">
-            <label>
-              <div class="label-main">{{localize (concat "ROLEANDROLL.Attributes." key)}}</div>
+          <div class="rnr-row">
+            <div class="rnr-row-label">
+              <span class="rnr-name">{{localize (concat "ROLEANDROLL.Attributes." key)}}</span>
               {{#with (showEn (concat "ROLEANDROLL.Attributes." key)) as |en|}}
-              {{#if en}}
-              <div class="label-subtitle">{{en}}</div>
-              {{/if}}
+              {{#if en}}<span class="rnr-sub">{{en}}</span>{{/if}}
               {{/with}}
-            </label>
+            </div>
             <div class="dice-pips">
               {{#each (range 1 6) as |pip|}}
-              <button type="button" class="pip {{#if (lte pip attr.dice)}}filled{{/if}}" data-action="set-dice"
-                data-target="attributes.{{key}}.dice" data-value="{{pip}}">
-                ●
-              </button>
+              <button type="button" class="pip {{#if (lte pip attr.dice)}}filled{{/if}}" data-action="pipClick"
+                data-target="attributes.{{key}}.dice" data-value="{{pip}}"></button>
               {{/each}}
             </div>
-            <div class="succeed-check">
+            <div class="rnr-succeed">
               <input type="checkbox" name="system.attributes.{{key}}.succeed" {{checked attr.succeed}} />
-              <label>{{localize "ROLEANDROLL.Labels.Succeed"}}</label>
             </div>
-            <button type="button" class="attribute-roll" data-attribute="{{key}}">
-              {{localize "ROLEANDROLL.Labels.Roll"}}
+            <button type="button" class="rnr-roll" data-action="attributeRoll" data-attribute="{{key}}">
+              <i class="fas fa-dice-d20"></i>
             </button>
           </div>
           {{/if}}
           {{/each}}
         </div>
-      </div>
 
-      {{!-- Personality Category --}}
-      <div class="ability-category">
-        <h3>{{localize "ROLEANDROLL.AttributeCategories.personality"}}</h3>
-        <div class="attributes-grid">
+        <div class="rnr-category">
+          <h3>{{localize "ROLEANDROLL.AttributeCategories.personality"}}</h3>
           {{#each system.attributes as |attr key|}}
           {{#if (or (eq key "charm") (eq key "rhetoric") (eq key "ego"))}}
-          <div class="attribute">
-            <label>
-              <div class="label-main">{{localize (concat "ROLEANDROLL.Attributes." key)}}</div>
+          <div class="rnr-row">
+            <div class="rnr-row-label">
+              <span class="rnr-name">{{localize (concat "ROLEANDROLL.Attributes." key)}}</span>
               {{#with (showEn (concat "ROLEANDROLL.Attributes." key)) as |en|}}
-              {{#if en}}
-              <div class="label-subtitle">{{en}}</div>
-              {{/if}}
+              {{#if en}}<span class="rnr-sub">{{en}}</span>{{/if}}
               {{/with}}
-            </label>
+            </div>
             <div class="dice-pips">
               {{#each (range 1 6) as |pip|}}
-              <button type="button" class="pip {{#if (lte pip attr.dice)}}filled{{/if}}" data-action="set-dice"
-                data-target="attributes.{{key}}.dice" data-value="{{pip}}">
-                ●
-              </button>
+              <button type="button" class="pip {{#if (lte pip attr.dice)}}filled{{/if}}" data-action="pipClick"
+                data-target="attributes.{{key}}.dice" data-value="{{pip}}"></button>
               {{/each}}
             </div>
-            <div class="succeed-check">
+            <div class="rnr-succeed">
               <input type="checkbox" name="system.attributes.{{key}}.succeed" {{checked attr.succeed}} />
-              <label>{{localize "ROLEANDROLL.Labels.Succeed"}}</label>
             </div>
-            <button type="button" class="attribute-roll" data-attribute="{{key}}">
-              {{localize "ROLEANDROLL.Labels.Roll"}}
+            <button type="button" class="rnr-roll" data-action="attributeRoll" data-attribute="{{key}}">
+              <i class="fas fa-dice-d20"></i>
             </button>
           </div>
           {{/if}}
@@ -189,220 +182,182 @@
         </div>
       </div>
 
-    </div>
-
-    {{!-- Abilities Tab --}}
-    <div class="tab abilities" data-group="primary" data-tab="abilities">
-      {{#each system.abilities as |category catKey|}}
-      <div class="ability-category">
-        <h3>{{localize (concat "ROLEANDROLL.AbilityCategories." catKey)}}</h3>
-        <div class="abilities-grid">
+      {{!-- ABILITIES TAB --}}
+      <div class="tab" data-group="primary" data-tab="abilities">
+        {{#each system.abilities as |category catKey|}}
+        <div class="rnr-category">
+          <h3>{{localize (concat "ROLEANDROLL.AbilityCategories." catKey)}}</h3>
           {{#each category as |value abilityKey|}}
-          <div class="ability">
-            <label>
-              <div class="label-main">{{localize (concat "ROLEANDROLL.Abilities." abilityKey)}}{{formatAbilityAttributes
-                value}}</div>
+          <div class="rnr-row">
+            <div class="rnr-row-label">
+              <span class="rnr-name">{{localize (concat "ROLEANDROLL.Abilities." abilityKey)}}{{formatAbilityAttributes value}}</span>
               {{#with (showEn (concat "ROLEANDROLL.Abilities." abilityKey)) as |en|}}
-              {{#if en}}
-              <div class="label-subtitle">{{en}}</div>
-              {{/if}}
+              {{#if en}}<span class="rnr-sub">{{en}}</span>{{/if}}
               {{/with}}
-            </label>
+            </div>
             <div class="dice-pips">
               {{#each (range 1 6) as |pip|}}
-              <button type="button" class="pip {{#if (lte pip value.dice)}}filled{{/if}}" data-action="set-dice"
-                data-target="abilities.{{catKey}}.{{abilityKey}}.dice" data-value="{{pip}}">
-                ●
-              </button>
+              <button type="button" class="pip {{#if (lte pip value.dice)}}filled{{/if}}" data-action="pipClick"
+                data-target="abilities.{{catKey}}.{{abilityKey}}.dice" data-value="{{pip}}"></button>
               {{/each}}
             </div>
-            <div class="succeed-check">
-              <input type="checkbox" name="system.abilities.{{catKey}}.{{abilityKey}}.succeed" {{checked
-                value.succeed}} />
-              <label>{{localize "ROLEANDROLL.Labels.Succeed"}}</label>
+            <div class="rnr-succeed">
+              <input type="checkbox" name="system.abilities.{{catKey}}.{{abilityKey}}.succeed" {{checked value.succeed}} />
             </div>
-            <button type="button" class="ability-roll" data-category="{{catKey}}" data-ability="{{abilityKey}}">
-              {{localize "ROLEANDROLL.Labels.Roll"}}
+            <button type="button" class="rnr-roll" data-action="abilityRoll" data-category="{{catKey}}" data-ability="{{abilityKey}}">
+              <i class="fas fa-dice-d20"></i>
             </button>
           </div>
           {{/each}}
         </div>
+        {{/each}}
       </div>
-      {{/each}}
-    </div>
 
-    {{!-- Session Abilities Tab --}}
-    {{#if (isSessionAbilitiesEnabled)}}
-    <div class="tab sessionAbilities" data-group="primary" data-tab="sessionAbilities">
-      <div class="ability-category">
-        <h3>{{localize "ROLEANDROLL.SessionAbilities.Title"}}</h3>
-        <div class="abilities-grid">
+      {{!-- SESSION ABILITIES TAB --}}
+      {{#if (isSessionAbilitiesEnabled)}}
+      <div class="tab" data-group="primary" data-tab="sessionAbilities">
+        <div class="rnr-category">
+          <h3>{{localize "ROLEANDROLL.SessionAbilities.Title"}}</h3>
           {{#each (getSessionAbilities) as |config key|}}
           {{#with (lookup ../system.sessionAbilities key) as |value|}}
-          <div class="ability">
-            <label>
-              <div class="label-main">{{config.name}}</div>
-            </label>
+          <div class="rnr-row">
+            <div class="rnr-row-label">
+              <span class="rnr-name">{{config.name}}</span>
+            </div>
             <div class="dice-pips">
               {{#each (range 1 6) as |pip|}}
-              <button type="button" class="pip {{#if (lte pip value.dice)}}filled{{/if}}" 
-                      data-action="set-dice"
-                      data-target="sessionAbilities.{{key}}.dice" data-value="{{pip}}">
-                ●
-              </button>
+              <button type="button" class="pip {{#if (lte pip value.dice)}}filled{{/if}}" data-action="pipClick"
+                data-target="sessionAbilities.{{key}}.dice" data-value="{{pip}}"></button>
               {{/each}}
             </div>
-            <div class="succeed-check">
+            <div class="rnr-succeed">
               <input type="checkbox" name="system.sessionAbilities.{{key}}.succeed" {{checked value.succeed}} />
-              <label>{{localize "ROLEANDROLL.Labels.Succeed"}}</label>
             </div>
-            <button type="button" class="ability-roll session-ability-roll" data-ability="{{key}}">
-              {{localize "ROLEANDROLL.Labels.Roll"}}
+            <button type="button" class="rnr-roll" data-action="sessionAbilityRoll" data-ability="{{key}}">
+              <i class="fas fa-dice-d20"></i>
             </button>
           </div>
           {{/with}}
           {{/each}}
         </div>
       </div>
-    </div>
-    {{/if}}
+      {{/if}}
 
-    {{!-- Skills Tab --}}
-    <div class="tab skills" data-group="primary" data-tab="skills">
-      <button type="button" class="item-create" data-type="skill">
-        <i class="fas fa-plus"></i> {{localize "ROLEANDROLL.Labels.AddSkill"}}
-      </button>
-      <ol class="items-list">
-        {{#each skills as |skill index|}}
-        <li class="item skill-item-simple" data-index="{{index}}">
-          <div class="skill-content">
-            <input type="text" class="skill-name" name="system.skills.{{index}}.name" value="{{skill.name}}"
+      {{!-- SKILLS TAB --}}
+      <div class="tab" data-group="primary" data-tab="skills">
+        <div class="rnr-category">
+          <h3><i class="fas fa-scroll"></i> {{localize "ROLEANDROLL.Tabs.Skills"}}</h3>
+          <button type="button" class="rnr-add-btn" data-action="itemCreate" data-type="skill">
+            <i class="fas fa-plus"></i> {{localize "ROLEANDROLL.Labels.AddSkill"}}
+          </button>
+        </div>
+        <ol class="rnr-skill-list">
+          {{#each skills as |skill index|}}
+          <li class="rnr-skill-card" data-index="{{index}}">
+            <input type="text" class="rnr-skill-name" name="system.skills.{{index}}.name" value="{{skill.name}}"
               placeholder="{{localize 'ROLEANDROLL.Labels.SkillName'}}" />
-
-            <textarea class="skill-description" name="system.skills.{{index}}.description"
+            <textarea class="rnr-skill-desc" name="system.skills.{{index}}.description"
               placeholder="{{localize 'ROLEANDROLL.Labels.Description'}}" rows="2">{{skill.description}}</textarea>
-
-            <div class="skill-actions">
-              <button type="button" class="skill-show-btn" data-index="{{index}}">
-                <i class="fas fa-comment"></i> {{localize "ROLEANDROLL.Labels.ShowInChat"}}
-              </button>
-              <button type="button" class="item-delete" data-index="{{index}}">
-                <i class="fas fa-trash"></i>
-              </button>
-            </div>
-          </div>
-        </li>
-        {{/each}}
-      </ol>
-    </div>
-
-    {{!-- Equipment Tab --}}
-    <div class="tab equipment" data-group="primary" data-tab="equipment">
-      <button type="button" class="item-create" data-type="equipment">
-        <i class="fas fa-plus"></i> {{localize "ROLEANDROLL.Labels.AddEquipment"}}
-      </button>
-      <ol class="items-list equipment-list">
-        {{#each items as |item|}}
-        {{#if (eq item.type "equipment")}}
-        <li class="item equipment-item-card" data-item-id="{{item._id}}">
-          <div class="item-header">
-            <img class="item-img" src="{{item.img}}" alt="{{item.name}}" data-item-id="{{item._id}}" />
-            <div class="item-title-section">
-              <h4 class="item-name">{{item.name}}</h4>
-              <div class="item-properties">
-                <div class="item-weight-input">
-                  <label>{{localize "ROLEANDROLL.Labels.Weight"}}:</label>
-                  <input type="number" class="weight-input" data-item-id="{{item._id}}" value="{{item.system.weight}}"
-                    step="0.1" />
-                </div>
-                <span class="item-quantity-display">{{localize "ROLEANDROLL.Labels.Quantity"}}:
-                  {{item.system.quantity}}</span>
-              </div>
-            </div>
-            <div class="item-header-controls">
-              <a class="item-control item-show-chat" data-item-id="{{item._id}}"
-                title="{{localize 'ROLEANDROLL.Labels.ShowInChat'}}">
+            <div class="rnr-skill-actions">
+              <button type="button" class="rnr-btn-small" data-action="skillShow" data-index="{{index}}">
                 <i class="fas fa-comment"></i>
-              </a>
-              <a class="item-control item-edit" title="{{localize 'ROLEANDROLL.Labels.Edit'}}">
-                <i class="fas fa-edit"></i>
-              </a>
-              <a class="item-control item-delete" title="{{localize 'ROLEANDROLL.Labels.Delete'}}">
+              </button>
+              <button type="button" class="rnr-btn-small danger" data-action="itemDelete" data-index="{{index}}">
                 <i class="fas fa-trash"></i>
-              </a>
+              </button>
             </div>
-          </div>
-          <div class="item-footer">
-            <div class="item-quantity-controls">
-              <button type="button" class="quantity-btn decrease" data-item-id="{{item._id}}"
-                data-action="decrease-qty">−</button>
-              <span class="quantity-value">{{item.system.quantity}}</span>
-              <button type="button" class="quantity-btn increase" data-item-id="{{item._id}}"
-                data-action="increase-qty">+</button>
-            </div>
-          </div>
-        </li>
-        {{/if}}
-        {{/each}}
-      </ol>
-    </div>
+          </li>
+          {{/each}}
+        </ol>
+      </div>
 
-    {{!-- Bio Tab --}}
-    <div class="tab bio" data-group="primary" data-tab="bio">
-      <div class="bio-grid">
-        <div class="bio-field bio-image">
-          <div class="ability-category">
-            <h3>{{localize "ROLEANDROLL.Bio.Biography"}}</h3>
+      {{!-- EQUIPMENT TAB --}}
+      <div class="tab" data-group="primary" data-tab="equipment">
+        <div class="rnr-category">
+          <h3><i class="fas fa-shield-alt"></i> {{localize "ROLEANDROLL.Tabs.Equipment"}}</h3>
+          <button type="button" class="rnr-add-btn" data-action="itemCreate" data-type="equipment">
+            <i class="fas fa-plus"></i> {{localize "ROLEANDROLL.Labels.AddEquipment"}}
+          </button>
+        </div>
+        <ol class="rnr-equip-list">
+          {{#each items as |item|}}
+          {{#if (eq item.type "equipment")}}
+          <li class="rnr-equip-card" data-item-id="{{item._id}}">
+            <img class="rnr-equip-img" src="{{item.img}}" alt="{{item.name}}" />
+            <div class="rnr-equip-info">
+              <h4>{{item.name}}</h4>
+              <div class="rnr-equip-meta">
+                <span><i class="fas fa-weight-hanging"></i>
+                  <input type="number" class="weight-input rnr-inline-input" data-item-id="{{item._id}}" value="{{item.system.weight}}" step="0.1" />
+                </span>
+                <span><i class="fas fa-layer-group"></i> {{item.system.quantity}}</span>
+              </div>
+            </div>
+            <div class="rnr-equip-controls">
+              <div class="rnr-qty-controls">
+                <button type="button" class="rnr-qty-btn" data-action="quantityChange" data-item-id="{{item._id}}" data-qty-action="decrease-qty">−</button>
+                <span>{{item.system.quantity}}</span>
+                <button type="button" class="rnr-qty-btn" data-action="quantityChange" data-item-id="{{item._id}}" data-qty-action="increase-qty">+</button>
+              </div>
+              <div class="rnr-equip-btns">
+                <a class="rnr-icon-btn" data-action="itemShowChat" data-item-id="{{item._id}}"><i class="fas fa-comment"></i></a>
+                <a class="rnr-icon-btn" data-action="itemEdit"><i class="fas fa-edit"></i></a>
+                <a class="rnr-icon-btn danger" data-action="itemDelete"><i class="fas fa-trash"></i></a>
+              </div>
+            </div>
+          </li>
+          {{/if}}
+          {{/each}}
+        </ol>
+      </div>
+
+      {{!-- BIO TAB --}}
+      <div class="tab" data-group="primary" data-tab="bio">
+        <div class="rnr-category"><h3><i class="fas fa-feather-alt"></i> {{localize "ROLEANDROLL.Bio.Biography"}}</h3></div>
+        <textarea name="system.biography" rows="5" class="rnr-bio-text">{{system.biography}}</textarea>
+
+        <div class="rnr-category"><h3>{{localize "ROLEANDROLL.Bio.SourceOfWillPower"}}</h3></div>
+        <textarea name="system.sourceOfWillPower" rows="3" class="rnr-bio-text">{{system.sourceOfWillPower}}</textarea>
+
+        <div class="rnr-bio-row">
+          <div class="rnr-bio-col">
+            <div class="rnr-category"><h3>{{localize "ROLEANDROLL.Bio.Buff"}}</h3></div>
+            <textarea name="system.buff" rows="3" class="rnr-bio-text">{{system.buff}}</textarea>
           </div>
-          <textarea name="system.biography" rows="10">{{system.biography}}</textarea>
+          <div class="rnr-bio-col">
+            <div class="rnr-category"><h3>{{localize "ROLEANDROLL.Bio.Debuff"}}</h3></div>
+            <textarea name="system.debuff" rows="3" class="rnr-bio-text">{{system.debuff}}</textarea>
+          </div>
         </div>
 
-        <div class="bio-right-column">
-          <div class="bio-field">
-            <div class="ability-category">
-              <h3>{{localize "ROLEANDROLL.Bio.SourceOfWillPower"}}</h3>
-            </div>
-            <textarea name="system.sourceOfWillPower" rows="3">{{system.sourceOfWillPower}}</textarea>
+        <div class="rnr-bio-row">
+          <div class="rnr-bio-col">
+            <div class="rnr-category"><h3>{{localize "ROLEANDROLL.Bio.Injuries"}}</h3></div>
+            <textarea name="system.injuries" rows="3" class="rnr-bio-text">{{system.injuries}}</textarea>
           </div>
-
-          <div class="bio-field-row">
-            <div class="bio-field">
-              <div class="ability-category">
-                <h3>{{localize "ROLEANDROLL.Bio.Buff"}}</h3>
-              </div>
-              <textarea name="system.buff" rows="6">{{system.buff}}</textarea>
-            </div>
-            <div class="bio-field">
-              <div class="ability-category">
-                <h3>{{localize "ROLEANDROLL.Bio.Debuff"}}</h3>
-              </div>
-              <textarea name="system.debuff" rows="6">{{system.debuff}}</textarea>
-            </div>
+          <div class="rnr-bio-col">
+            <div class="rnr-category"><h3>{{localize "ROLEANDROLL.Bio.Flaw"}}</h3></div>
+            <textarea name="system.flaw" rows="3" class="rnr-bio-text">{{system.flaw}}</textarea>
           </div>
-        </div>
-
-        <div class="bio-field-row bio-bottom-row">
-          <div class="bio-field">
-            <div class="ability-category">
-              <h3>{{localize "ROLEANDROLL.Bio.Injuries"}}</h3>
-            </div>
-            <textarea name="system.injuries" rows="5">{{system.injuries}}</textarea>
-          </div>
-          <div class="bio-field">
-            <div class="ability-category">
-              <h3>{{localize "ROLEANDROLL.Bio.Flaw"}}</h3>
-            </div>
-            <textarea name="system.flaw" rows="5">{{system.flaw}}</textarea>
-          </div>
-          <div class="bio-field">
-            <div class="ability-category">
-              <h3>{{localize "ROLEANDROLL.Bio.PsychiatricDisorder"}}</h3>
-            </div>
-            <textarea name="system.psychiatricDisorder" rows="5">{{system.psychiatricDisorder}}</textarea>
+          <div class="rnr-bio-col">
+            <div class="rnr-category"><h3>{{localize "ROLEANDROLL.Bio.PsychiatricDisorder"}}</h3></div>
+            <textarea name="system.psychiatricDisorder" rows="3" class="rnr-bio-text">{{system.psychiatricDisorder}}</textarea>
           </div>
         </div>
       </div>
-    </div>
 
-  </section>
-</form>
+    </main>
+  </div>
+
+  {{!-- FLOATING TAB NAV (outside the body, positioned to overflow right edge) --}}
+  <nav class="rnr-tabs" data-group="primary">
+    <a class="rnr-tab" data-tab="attributes" title="{{localize 'ROLEANDROLL.Tabs.Attributes'}}"><i class="fas fa-fist-raised"></i></a>
+    <a class="rnr-tab" data-tab="abilities" title="{{localize 'ROLEANDROLL.Tabs.Abilities'}}"><i class="fas fa-book-open"></i></a>
+    {{#if (isSessionAbilitiesEnabled)}}
+    <a class="rnr-tab" data-tab="sessionAbilities" title="{{localize 'ROLEANDROLL.Tabs.SessionAbilities'}}"><i class="fas fa-star"></i></a>
+    {{/if}}
+    <a class="rnr-tab" data-tab="skills" title="{{localize 'ROLEANDROLL.Tabs.Skills'}}"><i class="fas fa-scroll"></i></a>
+    <a class="rnr-tab" data-tab="equipment" title="{{localize 'ROLEANDROLL.Tabs.Equipment'}}"><i class="fas fa-shield-alt"></i></a>
+    <a class="rnr-tab" data-tab="bio" title="{{localize 'ROLEANDROLL.Tabs.Bio'}}"><i class="fas fa-feather-alt"></i></a>
+  </nav>
+</div>

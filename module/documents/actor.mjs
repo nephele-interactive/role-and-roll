@@ -107,7 +107,7 @@ export class RoleAndRollActor extends Actor {
 
     // Import and show dice control dialog
     const { DiceControlDialog } = await import("../dice-control-dialog.mjs");
-    const dialog = new DiceControlDialog(numDice, label, autoSuccess, this);
+    const dialog = new DiceControlDialog({numDice, label, autoSuccess, actor: this});
     dialog.render(true);
   }
 
@@ -162,22 +162,19 @@ export class RoleAndRollActor extends Actor {
         choices[attrKey] = `${attrName} ${game.i18n.format("ROLEANDROLL.Notifications.AttributeBonus", { value: attrValue })}`;
       }
 
-      // Show selection dialog
-      selectedAttribute = await new Promise((resolve) => {
-        new Dialog({
-          title: game.i18n.localize("ROLEANDROLL.Notifications.SelectAttribute"),
-          content: `<p>${game.i18n.localize("ROLEANDROLL.Notifications.SelectAttributePrompt")}</p>`,
-          buttons: Object.keys(choices).reduce((acc, key) => {
-            acc[key] = {
-              label: choices[key],
-              callback: () => resolve(key)
-            };
-            return acc;
-          }, {}),
-          default: attributes[0],
-          close: () => resolve(attributes[0]) // Default to first if closed
-        }).render(true);
+      // Show selection dialog using DialogV2
+      selectedAttribute = await foundry.applications.api.DialogV2.wait({
+        window: { title: game.i18n.localize("ROLEANDROLL.Notifications.SelectAttribute") },
+        content: `<p>${game.i18n.localize("ROLEANDROLL.Notifications.SelectAttributePrompt")}</p>`,
+        buttons: attributes.map(key => ({
+          action: key,
+          label: choices[key]
+        })),
+        close: () => attributes[0]
       });
+
+      // If dialog was closed without selection, default to first
+      if (!selectedAttribute) selectedAttribute = attributes[0];
 
       const attrValue = Number(this.system.attributes?.[selectedAttribute]?.dice) || 0;
       attributeBonus = attrValue;
@@ -205,7 +202,7 @@ export class RoleAndRollActor extends Actor {
 
     // Import and show dice control dialog with total dice
     const { DiceControlDialog } = await import("../dice-control-dialog.mjs");
-    const dialog = new DiceControlDialog(totalDice, label, autoSuccess, this);
+    const dialog = new DiceControlDialog({numDice: totalDice, label, autoSuccess, actor: this});
     dialog.render(true);
   }
 
@@ -267,21 +264,18 @@ export class RoleAndRollActor extends Actor {
         choices[baseKey] = `${baseName} ${game.i18n.format("ROLEANDROLL.Notifications.AttributeBonus", { value: totalDiceForOption })}`;
       }
 
-      selectedAbility = await new Promise((resolve) => {
-        new Dialog({
-          title: game.i18n.localize("ROLEANDROLL.Notifications.SelectAttribute"),
-          content: `<p>${game.i18n.localize("ROLEANDROLL.Notifications.SelectAttributePrompt")}</p>`,
-          buttons: Object.keys(choices).reduce((acc, key) => {
-            acc[key] = {
-              label: choices[key],
-              callback: () => resolve(key)
-            };
-            return acc;
-          }, {}),
-          default: baseAbilities[0],
-          close: () => resolve(baseAbilities[0])
-        }).render(true);
+      selectedAbility = await foundry.applications.api.DialogV2.wait({
+        window: { title: game.i18n.localize("ROLEANDROLL.Notifications.SelectAttribute") },
+        content: `<p>${game.i18n.localize("ROLEANDROLL.Notifications.SelectAttributePrompt")}</p>`,
+        buttons: baseAbilities.map(key => ({
+          action: key,
+          label: choices[key]
+        })),
+        close: () => baseAbilities[0]
       });
+
+      // If dialog was closed without selection, default to first
+      if (!selectedAbility) selectedAbility = baseAbilities[0];
 
       abilitiesToInclude.push(selectedAbility);
     }
@@ -317,7 +311,7 @@ export class RoleAndRollActor extends Actor {
     }
     // Show dice control dialog
     const { DiceControlDialog } = await import("../dice-control-dialog.mjs");
-    const dialog = new DiceControlDialog(totalDice, label, autoSuccess, this);
+    const dialog = new DiceControlDialog({numDice: totalDice, label, autoSuccess, actor: this});
     dialog.render(true);
   }
   // Helper to get ability or attribute data

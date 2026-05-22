@@ -42,7 +42,7 @@ function safeCapitalize(str) {
 }
 
 Hooks.once("init", function () {
-  console.log("Role & Roll | Initializing system (FVTT v13 safe)");
+  console.log("Role & Roll | Initializing system (FVTT v14)");
   patchCombatForRnR();
 
   game.roleandroll = {
@@ -154,8 +154,8 @@ Hooks.once("init", function () {
     default: false,
     onChange: () => {
       // Re-render all actor sheets when setting changes
-      Object.values(ui.windows).forEach(app => {
-        if (app.constructor.name === "RoleAndRollActorSheet") app.render();
+      foundry.applications.instances.forEach(app => {
+        if (app instanceof RoleAndRollActorSheet) app.render();
       });
     }
   });
@@ -175,15 +175,15 @@ Hooks.once("init", function () {
   });
   /* ------------ Sheets ------------ */
 
-  Actors.unregisterSheet("core", ActorSheet);
-  Actors.registerSheet("role-and-roll", RoleAndRollActorSheet, {
+  DocumentSheetConfig.unregisterSheet(Actor, "core", foundry.appv1.sheets.ActorSheet);
+  DocumentSheetConfig.registerSheet(Actor, "role-and-roll", RoleAndRollActorSheet, {
     makeDefault: true,
     types: ["character", "npc"],
     label: "Role & Roll Actor Sheet"
   });
 
-  Items.unregisterSheet("core", ItemSheet);
-  Items.registerSheet("role-and-roll", RoleAndRollItemSheet, {
+  DocumentSheetConfig.unregisterSheet(Item, "core", foundry.appv1.sheets.ItemSheet);
+  DocumentSheetConfig.registerSheet(Item, "role-and-roll", RoleAndRollItemSheet, {
     makeDefault: true,
     types: ["ability", "equipment", "skill"],
     label: "Role & Roll Item Sheet"
@@ -474,7 +474,7 @@ export async function rollDicePool(numDice, label = "Dice Pool", autoSuccess = 0
     user: game.user.id,
     speaker: ChatMessage.getSpeaker(),
     content: flavor,
-    type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+    style: CONST.CHAT_MESSAGE_STYLES.OTHER,
     sound: CONFIG.sounds.dice
   };
 
@@ -672,6 +672,6 @@ Hooks.on("preCreateActor", (doc) => {
 });
 
 Hooks.once("ready", function () {
-  console.log("Role & Roll | System Ready (v13)");
+  console.log("Role & Roll | System Ready (v14)");
   //patchCombatForRnR();
 });

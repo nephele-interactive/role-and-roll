@@ -1,6 +1,6 @@
 // module/initiative.mjs
 export function patchCombatForRnR() {
-  console.log("Role & Roll | Patching initiative (v13) …");
+  console.log("Role & Roll | Patching initiative (v14) …");
 
   // Get the actual document class that Foundry uses
   const CombatDoc = CONFIG.Combat?.documentClass || Combat;
@@ -37,11 +37,12 @@ export function patchCombatForRnR() {
       const { DiceControlDialog } = await import("./dice-control-dialog.mjs");
       const autoSuccess = dexSucceed + refSucceed;
       const label = `${c.name} - Initiative (Reflex)`;
-      const dialog = new DiceControlDialog(pool, label, autoSuccess, c.actor);
+      const dialog = new DiceControlDialog({numDice: pool, label, autoSuccess, actor: c.actor});
 
       // Wait for the dialog to be submitted and get the result
-      const result = await new Promise((resolve) => {
+      const result = await new Promise((resolve, reject) => {
         dialog._resolveCallback = resolve;
+        dialog._rejectCallback = reject;
         dialog.render(true);
       });
 

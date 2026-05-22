@@ -1,193 +1,326 @@
 // module/sheets/actor-sheet.mjs
 
-export class RoleAndRollActorSheet extends ActorSheet {
+const { HandlebarsApplicationMixin } = foundry.applications.api;
+const { ActorSheetV2 } = foundry.applications.sheets;
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["role-and-roll", "sheet", "actor"],
+export class RoleAndRollActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
+
+  static DEFAULT_OPTIONS = {
+    classes: ["role-and-roll", "sheet", "actor"],
+    position: { width: 920, height: 840 },
+    window: { resizable: true },
+    tag: "form",
+    form: {
+      submitOnChange: true,
+      closeOnSubmit: false
+    },
+    actions: {
+      attributeRoll: RoleAndRollActorSheet.#onAttributeRoll,
+      abilityRoll: RoleAndRollActorSheet.#onAbilityRoll,
+      sessionAbilityRoll: RoleAndRollActorSheet.#onSessionAbilityRoll,
+      diceControl: RoleAndRollActorSheet.#onDiceControl,
+      pipClick: RoleAndRollActorSheet.#onPipClick,
+      itemCreate: RoleAndRollActorSheet.#onItemCreate,
+      itemDelete: RoleAndRollActorSheet.#onItemDelete,
+      itemEdit: RoleAndRollActorSheet.#onItemEdit,
+      skillShow: RoleAndRollActorSheet.#onSkillShow,
+      quantityChange: RoleAndRollActorSheet.#onQuantityChange,
+      itemShowChat: RoleAndRollActorSheet.#onItemShowChat,
+      editProfileImage: RoleAndRollActorSheet.#onEditProfileImage,
+      previewImage: RoleAndRollActorSheet.#onPreviewImage,
+      togglePortraitView: RoleAndRollActorSheet.#onTogglePortraitView
+    }
+  };
+
+  static PARTS = {
+    sheet: {
       template: "systems/role-and-roll/templates/actor/actor-sheet.hbs",
-      width: 920,
-      height: 840,
-      tabs: [
-        { navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "attributes" }
-      ],
-      scrollY: [".sheet-body"]
-    });
-  }
+      scrollable: [".rnr-main"]
+    }
+  };
 
-  getData() {
-    const context = super.getData();
+  _portraitView = "portrait";
+
+  tabGroups = {
+    primary: "attributes"
+  };
+
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
     const actorData = this.actor.toObject(false);
 
     context.actor = this.actor;
     context.system = actorData.system;
     context.flags = actorData.flags;
     context.config = CONFIG.ROLEANDROLL ?? {};
+    context.editable = this.isEditable;
+    context.portraitView = this._portraitView || "portrait";
 
     const skills = actorData.system.skills ?? [];
     context.skills = Array.isArray(skills) ? skills : Object.values(skills);
     context.sessionAbilitiesEnabled = game.settings.get("role-and-roll", "sessionAbilitiesEnabled");
     context.customSessionAbilities = game.settings.get("role-and-roll", "customSessionAbilities") || {};
-    
+
     // Pass session abilities data to context for rendering
     context.sessionAbilitiesData = this.actor.system.sessionAbilities || {};
-    
-    context.items = actorData.items?.sort((a, b) => (a.sort || 0) - (b.sort || 0)) ?? [];
-    return context;
-  }
 
-  async _render(force, options) {
-    // Initialize session abilities before rendering
-    const sessionEnabled = game.settings.get("role-and-roll", "sessionAbilitiesEnabled");
+    context.items = actorData.items?.sort((a, b) => (a.sort || 0) - (b.sort || 0)) ?? [];
+
+    // Initialize session abilities if needed
+    const sessionEnabled = context.sessionAbilitiesEnabled;
     if (sessionEnabled) {
-      const customAbilities = game.settings.get("role-and-roll", "customSessionAbilities") || {};
+      const customAbilities = context.customSessionAbilities;
       const currentSessionAbilities = this.actor.system.sessionAbilities || {};
       let hasChanges = false;
-      
+
       for (const key in customAbilities) {
         if (!currentSessionAbilities[key]) {
           currentSessionAbilities[key] = { dice: 0, succeed: false };
           hasChanges = true;
         }
       }
-      
+
       if (hasChanges) {
         await this.actor.update({ 'system.sessionAbilities': currentSessionAbilities });
       }
     }
-    
-    return super._render(force, options);
+
+    // Calculate bar fill percentages for dynamic HP/Mental/WP bars
+    const sys = actorData.system;
+    context.hpPercent = sys.health?.max > 0 ? Math.round((sys.health.value / sys.health.max) * 100) : 0;
+    context.mentalPercent = sys.mental?.max > 0 ? Math.round((sys.mental.value / sys.mental.max) * 100) : 0;
+    context.wpPercent = sys.wp?.max > 0 ? Math.round((sys.wp.value / sys.wp.max) * 100) : 0;
+
+    return context;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  _onRender(context, options) {
+    super._onRender(context, options);
+
+    // Move tabs outside window-content to the application root element
+    // so they can float outside the sheet (like D&D 5e)
+    this._attachFloatingTabs();
+
+    // Tab management
+    this._initializeTabs();
+
     if (!this.isEditable) return;
-    
+
     // Listen for session ability updates and force re-render
     this._sessionAbilityHook = Hooks.on('updateActor', (actor, changes) => {
       if (actor.id === this.actor.id && changes.system?.sessionAbilities) {
         this.render(false);
       }
     });
-    
-    html.find(".session-ability-roll").click(ev => this._onSessionAbilityRoll(ev));
-    html.find(".attribute-roll").click(ev => this._onAttributeRoll(ev));
-    html.find(".ability-roll").click(ev => this._onAbilityRoll(ev));
-    html.find(".dice-control").click(ev => this._onDiceControl(ev));
-    html.find(".pip").click(ev => this._onDiceControl(ev));
 
     // Right-click on pip to decrease pip value by 1
-    html.find(".pip").contextmenu(ev => this._onPipContextMenu(ev));
-
-    // Skill controls
-    html.find(".skill-show-btn").click(ev => this._onSkillShow(ev));
-
-    // Equipment controls
-    html.find(".quantity-btn").click(ev => this._onQuantityChange(ev));
-    html.find(".weight-input").change(ev => this._onWeightChange(ev));
-    html.find(".item-show-chat").click(ev => this._onItemShowChat(ev));
-
-    html.find(".item-create").click(ev => this._onItemCreate(ev));
-    html.find(".item-delete").click(ev => this._onItemDelete(ev));
-    html.find(".item-edit").click(ev => this._onItemEdit(ev));
-
-    // Profile image click to show in popout
-
-    // Profile image edit click
-    html.find(".profile-img-edit").click(ev => this._onEditImage(ev));
-    html.find('.profile-img').click(ev => {
-      ev.stopPropagation();
-      const src = ev.currentTarget.src;
-
-      // new ImagePopout(src, {
-      //   title: this.actor.name
-      // }).render(true);
+    this.element.querySelectorAll("[data-action='pipClick']").forEach(pip => {
+      pip.addEventListener("contextmenu", this._onPipContextMenu.bind(this));
     });
 
-    // IMAGE PREVIEW ONLY
-    html.find('.preview-only').on('click', ev => {
-      ev.preventDefault();
-      ev.stopPropagation();
-      new ImagePopout(this.actor.img, {
-        title: this.actor.name
-      }).render(true);
+    // Validate value doesn't exceed max for health
+    const healthInput = this.element.querySelector('input[name="system.health.value"]');
+    if (healthInput) {
+      healthInput.addEventListener('change', (ev) => {
+        const value = Number(ev.currentTarget.value);
+        const max = Number(this.actor.system.health.max);
+        if (value > max) {
+          ev.currentTarget.value = max;
+          this.actor.update({ 'system.health.value': max });
+        } else if (value < 0) {
+          ev.currentTarget.value = 0;
+          this.actor.update({ 'system.health.value': 0 });
+        }
+      });
+    }
+
+    // Validate wp
+    const wpInput = this.element.querySelector('input[name="system.wp.value"]');
+    if (wpInput) {
+      wpInput.addEventListener('change', (ev) => {
+        const value = Number(ev.currentTarget.value);
+        const max = Number(this.actor.system.wp.max);
+        if (value > max) {
+          ev.currentTarget.value = max;
+          this.actor.update({ 'system.wp.value': max });
+        } else if (value < 0) {
+          ev.currentTarget.value = 0;
+          this.actor.update({ 'system.wp.value': 0 });
+        }
+      });
+    }
+
+    // Validate mental
+    const mentalInput = this.element.querySelector('input[name="system.mental.value"]');
+    if (mentalInput) {
+      mentalInput.addEventListener('change', (ev) => {
+        const value = Number(ev.currentTarget.value);
+        const max = Number(this.actor.system.mental.max);
+        if (value > max) {
+          ev.currentTarget.value = max;
+          this.actor.update({ 'system.mental.value': max });
+        } else if (value < 0) {
+          ev.currentTarget.value = 0;
+          this.actor.update({ 'system.mental.value': 0 });
+        }
+      });
+    }
+
+    // Weight input change
+    this.element.querySelectorAll(".weight-input").forEach(input => {
+      input.addEventListener("change", this._onWeightChange.bind(this));
     });
-
-    // PENCIL = OPEN FILE PICKER
-    html.find('.profile-img-edit-btn').on('click', ev => {
-      ev.preventDefault();
-      ev.stopPropagation();
-      html.find('.hidden-img-editor').click();
-    });
-
-    // Validate value doesn't exceed max for health and wp
-    html.find('input[name="system.health.value"]').on('change', ev => {
-      const value = Number(ev.currentTarget.value);
-      const max = Number(this.actor.system.health.max);
-      if (value > max) {
-        ev.currentTarget.value = max;
-        this.actor.update({ 'system.health.value': max });
-      } else if (value < 0) {
-        ev.currentTarget.value = 0;
-        this.actor.update({ 'system.health.value': 0 });
-      }
-    });
-
-    html.find('input[name="system.wp.value"]').on('change', ev => {
-      const value = Number(ev.currentTarget.value);
-      const max = Number(this.actor.system.wp.max);
-      if (value > max) {
-        ev.currentTarget.value = max;
-        this.actor.update({ 'system.wp.value': max });
-      } else if (value < 0) {
-        ev.currentTarget.value = 0;
-        this.actor.update({ 'system.wp.value': 0 });
-      }
-    });
-
-    html.find('input[name="system.mental.value"]').on('change', ev => {
-      const value = Number(ev.currentTarget.value);
-      const max = Number(this.actor.system.mental.max);
-      if (value > max) {
-        ev.currentTarget.value = max;
-        this.actor.update({ 'system.mental.value': max });
-      } else if (value < 0) {
-        ev.currentTarget.value = 0;
-        this.actor.update({ 'system.mental.value': 0 });
-      }
-    });
-
-
   }
 
-  _onShowProfileImage(event) {
-    event.preventDefault();
-    const img = this.actor.img;
-    new ImagePopout(img, {
-      title: this.actor.name,
-      uuid: this.actor.uuid
-    }).render(true);
+  _attachFloatingTabs() {
+    // Remove any previously moved tabs (from prior renders)
+    this.element.querySelectorAll(':scope > .rnr-tabs').forEach(old => old.remove());
+
+    // Find the new tabs inside the rendered template
+    const windowContent = this.element.querySelector('.window-content');
+    const tabNav = windowContent?.querySelector('.rnr-tabs');
+    if (!tabNav) return;
+
+    // Move tabs to the application root element (outside window-content)
+    this.element.appendChild(tabNav);
+
+    // Force overflow visible on the application window container so tabs can extend beyond the sheet boundary.
+    // We do NOT set overflow: visible on windowContent because it must remain overflow: hidden to allow internal sheet scrolling.
+    this.element.style.overflow = 'visible';
+    if (windowContent) windowContent.style.overflow = '';
   }
 
+  _initializeTabs() {
+    const group = "primary";
+    const activeTab = this.tabGroups[group] || "attributes";
+    const nav = this.element.querySelector('.rnr-tabs[data-group="primary"]');
+    const body = this.element.querySelector('.rnr-main');
+    if (!nav || !body) return;
 
-  async _onAttributeRoll(event) {
+    // Set active tab nav
+    nav.querySelectorAll(".rnr-tab[data-tab]").forEach(tab => {
+      tab.classList.toggle("active", tab.dataset.tab === activeTab);
+    });
+
+    // Set active tab content
+    body.querySelectorAll(".tab[data-tab]").forEach(panel => {
+      panel.classList.toggle("active", panel.dataset.tab === activeTab);
+    });
+
+    // Handle tab clicks
+    nav.querySelectorAll(".rnr-tab[data-tab]").forEach(tab => {
+      tab.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        const tabName = ev.currentTarget.dataset.tab;
+        this.tabGroups[group] = tabName;
+
+        nav.querySelectorAll(".rnr-tab[data-tab]").forEach(t => {
+          t.classList.toggle("active", t.dataset.tab === tabName);
+        });
+        body.querySelectorAll(".tab[data-tab]").forEach(p => {
+          p.classList.toggle("active", p.dataset.tab === tabName);
+        });
+      });
+    });
+  }
+
+  _onClose(options) {
+    if (this._sessionAbilityHook) {
+      Hooks.off('updateActor', this._sessionAbilityHook);
+    }
+    return super._onClose(options);
+  }
+
+  /* ---- Action Handlers ---- */
+
+  static async #onAttributeRoll(event, target) {
     event.preventDefault();
-    const key = event.currentTarget.dataset.attribute;
+    const key = target.dataset.attribute;
     if (key) await this.actor.rollAttribute(key);
   }
 
-  async _onAbilityRoll(event) {
+  static async #onAbilityRoll(event, target) {
     event.preventDefault();
-    const { category, ability } = event.currentTarget.dataset;
+    const { category, ability } = target.dataset;
     if (category && ability) await this.actor.rollAbility(category, ability);
+  }
+
+  static async #onSessionAbilityRoll(event, target) {
+    event.preventDefault();
+    const abilityKey = target.dataset.ability;
+    if (abilityKey) await this.actor.rollSessionAbility(abilityKey);
+  }
+
+  static async #onDiceControl(event, target) {
+    event.preventDefault();
+    const { action, target: dataTarget, value: dataValue } = target.dataset;
+    if (!dataTarget) return;
+
+    const path = dataTarget.split(".");
+    let obj = this.actor.system;
+
+    for (let i = 0; i < path.length - 1; i++) {
+      obj = obj?.[path[i]];
+      if (!obj) return;
+    }
+
+    const last = path[path.length - 1];
+    let value = Number(obj[last] ?? 1);
+
+    // Check if this is an attribute dice field (minimum value is 1)
+    const isAttributeDice = dataTarget.startsWith("attributes.") && last === "dice";
+    const minValue = isAttributeDice ? 1 : 0;
+
+    if (action === "increase" && value < 6) value++;
+    if (action === "decrease" && value > minValue) value--;
+    if (action === "set-dice") {
+      value = Number(dataValue) || minValue;
+      if (value < minValue) value = minValue;
+    }
+
+    await this.actor.update({ [`system.${dataTarget}`]: value });
+
+    // Force re-render for session abilities to update UI
+    if (dataTarget.startsWith("sessionAbilities.")) {
+      this.render(false);
+    }
+  }
+
+  static async #onPipClick(event, target) {
+    // Pip click is the same as dice control with set-dice action
+    event.preventDefault();
+    const { target: dataTarget, value: dataValue } = target.dataset;
+    if (!dataTarget) return;
+
+    const path = dataTarget.split(".");
+    let obj = this.actor.system;
+
+    for (let i = 0; i < path.length - 1; i++) {
+      obj = obj?.[path[i]];
+      if (!obj) return;
+    }
+
+    const last = path[path.length - 1];
+    const isAttributeDice = dataTarget.startsWith("attributes.") && last === "dice";
+    const minValue = isAttributeDice ? 1 : 0;
+
+    let value = Number(dataValue) || minValue;
+    if (value < minValue) value = minValue;
+
+    await this.actor.update({ [`system.${dataTarget}`]: value });
+
+    // Force re-render for session abilities to update UI
+    if (dataTarget.startsWith("sessionAbilities.")) {
+      this.render(false);
+    }
   }
 
   async _onPipContextMenu(event) {
     event.preventDefault();
-    const { target, value: dataValue } = event.currentTarget.dataset;
-    if (!target) return;
+    const { target: dataTarget, value: dataValue } = event.currentTarget.dataset;
+    if (!dataTarget) return;
 
-    const path = target.split(".");
+    const path = dataTarget.split(".");
     let obj = this.actor.system;
 
     for (let i = 0; i < path.length - 1; i++) {
@@ -200,55 +333,22 @@ export class RoleAndRollActorSheet extends ActorSheet {
     const pipValue = Number(dataValue) || 0;
 
     // Check if this is an attribute dice field (minimum value is 1)
-    const isAttributeDice = target.startsWith("attributes.") && last === "dice";
+    const isAttributeDice = dataTarget.startsWith("attributes.") && last === "dice";
     const minValue = isAttributeDice ? 1 : 0;
 
     // Only decrease if right-clicking on a filled pip and value is above minimum
     if (pipValue <= currentValue && currentValue > minValue) {
-      await this.actor.update({ [`system.${target}`]: currentValue - 1 });
+      await this.actor.update({ [`system.${dataTarget}`]: currentValue - 1 });
     }
   }
 
-    async _onDiceControl(event) {
-    event.preventDefault();
-    const { action, target, value: dataValue } = event.currentTarget.dataset;
-    if (!target) return;
-
-    const path = target.split(".");
-    let obj = this.actor.system;
-
-    for (let i = 0; i < path.length - 1; i++) {
-      obj = obj?.[path[i]];
-      if (!obj) return;
-    }
-
-    const last = path[path.length - 1];
-    let value = Number(obj[last] ?? 1);
-
-    // Check if this is an attribute dice field (minimum value is 1)
-    const isAttributeDice = target.startsWith("attributes.") && last === "dice";
-    const minValue = isAttributeDice ? 1 : 0;
-
-    if (action === "increase" && value < 6) value++;
-    if (action === "decrease" && value > minValue) value--;
-    if (action === "set-dice") {
-      value = Number(dataValue) || minValue;
-      // Ensure value is at least minValue
-      if (value < minValue) value = minValue;
-    }
-
-    await this.actor.update({ [`system.${target}`]: value });
-    
-    // Force re-render for session abilities to update UI
-    if (target.startsWith("sessionAbilities.")) {
-      this.render(false);
-    }
-  }
-
-  async _onItemCreate(event) {
-    const type = event.currentTarget.dataset.type;
+  static async #onItemCreate(event, target) {
+    const type = target.dataset.type;
 
     if (type === "skill") {
+      // Save any currently edited text (like name or description) first
+      await this.submit();
+
       const skills = Array.isArray(this.actor.system.skills)
         ? foundry.utils.duplicate(this.actor.system.skills)
         : [];
@@ -270,10 +370,13 @@ export class RoleAndRollActorSheet extends ActorSheet {
     this.render(true);
   }
 
-  async _onItemDelete(event) {
-    const skillIndex = event.currentTarget.dataset.index;
+  static async #onItemDelete(event, target) {
+    const skillIndex = target.dataset.index;
 
     if (skillIndex !== undefined) {
+      // Save any currently edited text (like name or description) first
+      await this.submit();
+
       const skills = Array.from(this.actor.system.skills ?? []);
       skills.splice(Number(skillIndex), 1);
       await this.actor.update({ "system.skills": skills });
@@ -281,7 +384,7 @@ export class RoleAndRollActorSheet extends ActorSheet {
       return;
     }
 
-    const li = event.currentTarget.closest(".item");
+    const li = target.closest("[data-item-id]");
     const id = li?.dataset?.itemId;
     if (!id) return;
 
@@ -289,15 +392,15 @@ export class RoleAndRollActorSheet extends ActorSheet {
     this.render(true);
   }
 
-  async _onItemEdit(event) {
-    const li = event.currentTarget.closest(".item");
+  static async #onItemEdit(event, target) {
+    const li = target.closest("[data-item-id]");
     const item = this.actor.items.get(li?.dataset?.itemId);
     if (item) item.sheet.render(true);
   }
 
-  async _onSkillShow(event) {
+  static async #onSkillShow(event, target) {
     event.preventDefault();
-    const index = event.currentTarget.dataset.index;
+    const index = target.dataset.index;
     const skill = this.actor.system.skills[index];
 
     if (!skill) return;
@@ -316,11 +419,10 @@ export class RoleAndRollActorSheet extends ActorSheet {
     });
   }
 
-  async _onQuantityChange(event) {
+  static async #onQuantityChange(event, target) {
     event.preventDefault();
-    const button = event.currentTarget;
-    const itemId = button.dataset.itemId;
-    const action = button.dataset.action;
+    const itemId = target.dataset.itemId;
+    const action = target.dataset.qtyAction;
     const item = this.actor.items.get(itemId);
 
     if (!item) return;
@@ -348,15 +450,9 @@ export class RoleAndRollActorSheet extends ActorSheet {
     await item.update({ "system.weight": weight });
   }
 
-  async _onSessionAbilityRoll(event) {
+  static async #onItemShowChat(event, target) {
     event.preventDefault();
-    const abilityKey = event.currentTarget.dataset.ability;
-    if (abilityKey) await this.actor.rollSessionAbility(abilityKey);
-  }
-
-  async _onItemShowChat(event) {
-    event.preventDefault();
-    const itemId = event.currentTarget.dataset.itemId;
+    const itemId = target.dataset.itemId;
     const item = this.actor.items.get(itemId);
 
     if (!item) return;
@@ -382,10 +478,52 @@ export class RoleAndRollActorSheet extends ActorSheet {
     });
   }
 
-    close(options) {
-    if (this._sessionAbilityHook) {
-      Hooks.off('updateActor', this._sessionAbilityHook);
+  static #onTogglePortraitView(event, target) {
+    event.preventDefault();
+    event.stopPropagation();
+    const view = target.dataset.view;
+    if (view === "portrait" || view === "token") {
+      this._portraitView = view;
+      this.render(false);
     }
-    return super.close(options);
+  }
+
+  static #onEditProfileImage(event, target) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!this.isEditable) return;
+
+    const isToken = this._portraitView === "token";
+    const currentPath = isToken
+      ? (this.actor.prototypeToken?.texture?.src || "icons/svg/mystery-man.svg")
+      : this.actor.img;
+
+    const fp = new FilePicker({
+      type: "image",
+      current: currentPath,
+      callback: async (path) => {
+        if (isToken) {
+          await this.actor.update({ "prototypeToken.texture.src": path });
+        } else {
+          await this.actor.update({ img: path });
+        }
+      }
+    });
+    fp.render(true);
+  }
+
+  static #onPreviewImage(event, target) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const isToken = this._portraitView === "token";
+    const path = isToken
+      ? (this.actor.prototypeToken?.texture?.src || "icons/svg/mystery-man.svg")
+      : this.actor.img;
+
+    new ImagePopout(path, {
+      title: this.actor.name
+    }).render(true);
   }
 }

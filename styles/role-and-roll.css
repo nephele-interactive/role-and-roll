@@ -1,1724 +1,521 @@
-/* styles/role-and-roll.css */
+/* ================================================
+   Role & Roll — Black & Red Character Sheet
+   ================================================ */
 
-.role-and-roll {
-  font-family: "Signika", sans-serif;
+:root {
+  --rnr-bg: #1e1e22;
+  --rnr-sidebar: #18181c;
+  --rnr-surface: #252529;
+  --rnr-surface-hover: #2c2c32;
+  --rnr-border: rgba(255,255,255,0.06);
+  --rnr-red: #c0392b;
+  --rnr-red-bright: #e74c3c;
+  --rnr-red-dim: #7a2018;
+  --rnr-red-glow: rgba(192, 57, 43, 0.35);
+  --rnr-text: #d4d0c8;
+  --rnr-text-bright: #ede9e0;
+  --rnr-text-dim: #6b6860;
+  --rnr-text-faint: #4a4840;
 }
 
-.role-and-roll .window-content {
-  background: #f8f4e6;
-  color: #2b2b2b;
+/* Match Foundry V14 ApplicationV2 window structure — allow tabs to overflow */
+.role-and-roll.sheet.actor {
+  overflow: visible !important;
 }
 
-/* Header */
-.role-and-roll .sheet-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 10px 12px;
-  background: linear-gradient(to bottom, #8b0000, #4a0000);
-  border-bottom: 3px solid #2b0000;
+.role-and-roll.sheet.actor > .window-content,
+.role-and-roll > .window-content,
+.application.role-and-roll > .window-content {
+  overflow: hidden !important;
 }
 
-.role-and-roll .profile-img-container {
+/* ---- Reset ---- */
+.rnr-sheet *, .rnr-sheet *::before, .rnr-sheet *::after { box-sizing: border-box; }
+
+.rnr-sheet {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  min-width: 90px;
-}
-
-.role-and-roll .profile-img-frame {
-  width: 90px;
-  height: 90px;
-  border: 3px solid #fff;
-  border-radius: 8px;
-  padding: 3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
-}
-
-.role-and-roll .profile-img {
-  width: 100%;
   height: 100%;
-  object-fit: contain;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-
-.role-and-roll .profile-img-edit {
-  width: 86px;
-  height: 22px;
-  margin-top: 4px;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-
-
-.role-and-roll .profile-img-edit:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-1px);
-}
-
-.role-and-roll .profile-img-edit i {
-  font-size: 11px;
-  line-height: 1;
-  display: block;
-}
-
-.role-and-roll .sheet-header .header-fields {
-  flex: 1;
-  min-width: 0;
-}
-
-.role-and-roll .sheet-header .charname input {
-  background: transparent;
-  border: none;
-  color: #fff;
-  font-size: 24px;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-  width: 100%;
-}
-
-.role-and-roll .resources {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 10px;
-  width: 100%;
-}
-
-.role-and-roll .resource {
-  min-width: 0;
   overflow: hidden;
+  background: var(--rnr-bg);
+  color: var(--rnr-text);
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  border-radius: 0 0 5px 5px;
 }
 
-.role-and-roll .resource label {
-  font-weight: bold;
-  margin: 0;
-  white-space: nowrap;
-}
+.rnr-sheet input, .rnr-sheet textarea, .rnr-sheet button { font-family: inherit; }
+.rnr-sheet input[type="text"], .rnr-sheet input[type="number"] { background: transparent; border: none; color: var(--rnr-text); padding: 0; }
+.rnr-sheet input:focus, .rnr-sheet textarea:focus { outline: none; }
 
-.role-and-roll .resource input {
-  width: 50px;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #666;
-  border-radius: 3px;
-  padding: 2px;
-  color: #2b2b2b;
-}
-
-/* Tabs */
-.role-and-roll .tabs {
-  display: flex;
-  background: #d4c5a9;
-  border-bottom: 2px solid #8b0000;
-  margin: 0;
-  padding: 0;
-}
-
-.role-and-roll .tabs .item {
-  flex: 1;
-  padding: 10px;
-  text-align: center;
-  border-right: 1px solid #8b0000;
-  cursor: pointer;
-  background: #d4c5a9;
-  color: #2b2b2b;
-  font-weight: bold;
-  transition: all 0.2s;
-}
-
-.role-and-roll .tabs .item:hover {
-  background: #c4b599;
-}
-
-.role-and-roll .tabs .item.active {
-  background: #f8f4e6;
-  border-bottom: 2px solid #f8f4e6;
-  margin-bottom: -2px;
-}
-
-/* Sheet Body */
-.role-and-roll .sheet-body {
-  padding: 15px;
-}
-
-.role-and-roll .tab {
-  display: none;
-}
-
-.role-and-roll .tab.active {
-  display: block;
-}
-
-/* Attributes and Abilities */
-.role-and-roll .attribute,
-.role-and-roll .ability {
+/* ==================== TOP BAR ==================== */
+.rnr-topbar {
   display: flex;
   align-items: center;
-  padding: 8px;
-  margin-bottom: 5px;
-  background: #fff;
-  border: 1px solid #d4c5a9;
-  border-radius: 4px;
-}
-
-.role-and-roll .attribute:hover,
-.role-and-roll .ability:hover {
-  background: #fffef8;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.role-and-roll .attribute label,
-.role-and-roll .ability label {
-  min-width: 120px;
-  font-weight: bold;
-  color: #2b2b2b;
-}
-
-/* Pip Dots for Dice Selection */
-.role-and-roll .dice-pips {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 0 8px;
-  flex: 1;
-}
-
-.role-and-roll .pip {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid #d0d0d0;
-  background: #f9f9f9;
-  color: #d0d0d0;
-  font-size: 20px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-
-.role-and-roll .pip:hover {
-  border-color: #8b0000;
-  background: #ffe6e6;
-  transform: scale(1.1);
-}
-
-.role-and-roll .pip.filled {
-  border-color: #8b0000;
-  background: #8b0000;
-  color: #fff;
-  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
-}
-
-.role-and-roll .pip.filled:hover {
-  background: #a00000;
-  border-color: #a00000;
-}
-
-/* Succeed Checkbox */
-.role-and-roll .succeed-check {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 0 8px;
-  white-space: nowrap;
-}
-
-.role-and-roll .succeed-check input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  accent-color: #8b0000;
-}
-
-.role-and-roll .succeed-check label {
-  margin: 0;
-  font-size: 12px;
-  font-weight: normal;
-  color: #666;
-  min-width: auto;
-}
-
-/* Dice Controls (for skills) */
-.role-and-roll .dice-controls {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.role-and-roll .dice-control {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid #8b0000;
-  background: #fff;
-  color: #8b0000;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.role-and-roll .dice-control:hover {
-  background: #8b0000;
-  color: #fff;
-  transform: scale(1.1);
-}
-
-.role-and-roll .dice-value {
-  min-width: 20px;
-  text-align: center;
-  font-weight: bold;
-}
-
-/* Roll Buttons */
-.role-and-roll .attribute-roll,
-.role-and-roll .ability-roll,
-.role-and-roll .skill-roll {
-  padding: 5px 15px;
-  background: linear-gradient(to bottom, #8b0000, #6b0000);
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
-.role-and-roll .attribute-roll:hover,
-.role-and-roll .ability-roll:hover,
-.role-and-roll .skill-roll:hover {
-  background: linear-gradient(to bottom, #a00000, #7b0000);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  transform: translateY(-1px);
-}
-
-/* Skills Tab */
-.role-and-roll .skills .item-create {
-  padding: 8px 16px;
-  background: linear-gradient(to bottom, #8b0000, #6b0000);
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  margin-bottom: 15px;
-  transition: all 0.2s;
-}
-
-.role-and-roll .skills .item-create:hover {
-  background: linear-gradient(to bottom, #a00000, #7b0000);
-  transform: translateY(-1px);
-}
-
-.role-and-roll .skills .items-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
   gap: 10px;
+  padding: 6px 14px;
+  background: #141418;
+  flex-shrink: 0;
 }
 
-.role-and-roll .skill-item {
+.rnr-charname { flex: 1; margin: 0; }
+.rnr-charname input { color: var(--rnr-text-bright); font-size: 20px; font-weight: 700; width: 100%; }
+
+.rnr-level-badge {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--rnr-red); color: #fff;
+  padding: 3px 10px; border-radius: 4px;
+  font-weight: 700; flex-shrink: 0;
+}
+
+.rnr-lv-label { font-size: 9px; letter-spacing: 1px; opacity: 0.75; }
+.rnr-lv-input { color: #fff; font-size: 15px; font-weight: 800; width: 28px; text-align: center; }
+
+.rnr-xp-block {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--rnr-surface); padding: 3px 10px;
+  border-radius: 4px; flex-shrink: 0;
+}
+
+.rnr-xp-label { font-size: 9px; color: var(--rnr-text-dim); letter-spacing: 1px; font-weight: 700; }
+.rnr-xp-input { font-size: 13px; font-weight: 600; width: 44px; text-align: center; }
+
+/* ==================== BODY ==================== */
+.rnr-body {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: #fff;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  transition: all 0.2s;
-}
-
-.role-and-roll .skill-item:hover {
-  border-color: #8b0000;
-  box-shadow: 0 3px 8px rgba(139, 0, 0, 0.15);
-}
-
-.role-and-roll .skill-item input[type="text"] {
   flex: 1;
-  padding: 6px 10px;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  font-size: 14px;
+  min-height: 0;
 }
 
-.role-and-roll .skill-item .item-delete {
-  padding: 5px 12px;
-  background: #dc3545;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  transition: all 0.2s;
-}
-
-.role-and-roll .skill-item .item-delete:hover {
-  background: #c82333;
-}
-
-/* Equipment Tab */
-.role-and-roll .equipment .item-create {
-  padding: 8px 16px;
-  background: linear-gradient(to bottom, #8b0000, #6b0000);
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  margin-bottom: 15px;
-  transition: all 0.2s;
-}
-
-.role-and-roll .equipment .item-create:hover {
-  background: linear-gradient(to bottom, #a00000, #7b0000);
-  transform: translateY(-1px);
-}
-
-.role-and-roll .equipment .items-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* ==================== LEFT SIDEBAR ==================== */
+.rnr-sidebar {
+  width: 180px;
+  background: var(--rnr-sidebar);
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.role-and-roll .equipment-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
   padding: 12px;
-  background: #fff;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  transition: all 0.2s;
+  gap: 10px;
+  flex-shrink: 0;
+  overflow-y: auto;
 }
 
-.role-and-roll .equipment-item:hover {
-  border-color: #8b0000;
-  box-shadow: 0 3px 8px rgba(139, 0, 0, 0.15);
-}
-
-.role-and-roll .item-name {
-  flex: 1;
-  font-weight: 600;
-  color: #2b2b2b;
-}
-
-.role-and-roll .equipment-item .item-controls {
-  display: flex;
-  gap: 8px;
-}
-
-.role-and-roll .equipment-item .item-control {
-  color: #999;
-  font-size: 16px;
-  padding: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.role-and-roll .equipment-item .item-edit:hover {
-  color: #4a90e2;
-}
-
-.role-and-roll .equipment-item .item-delete:hover {
-  color: #d00000;
-}
-
-/* Section Headers */
-.role-and-roll h3 {
-  color: #8b0000;
-  border-bottom: 2px solid #8b0000;
-  padding-bottom: 5px;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-/* Ability Categories */
-.role-and-roll .ability-category {
-  margin-bottom: 25px;
-}
-
-.role-and-roll .abilities-grid {
-  cursor: pointer;
-}
-
-/* Chat Dice Result Boxes */
-.role-roll-result {
-  background: #fff;
-  border: 2px solid #8b0000;
+/* Portrait */
+.rnr-portrait {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
   border-radius: 8px;
-  padding: 12px;
-  margin: 8px 0;
+  overflow: hidden;
+  background: #111;
+  border: 1px solid var(--rnr-red-dim);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
-.role-roll-result .roll-label {
-  font-size: 14px;
-  font-weight: bold;
-  color: #2b2b2b;
-  margin-bottom: 8px;
+.rnr-portrait img:first-child {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block; cursor: pointer;
 }
 
-.role-roll-result .dice-results {
-  margin: 10px 0;
-}
-
-.role-roll-result .rolled-label {
-  font-size: 13px;
-  font-weight: bold;
-  color: #666;
-  margin-bottom: 5px;
-}
-
-.role-roll-result .dice-pool-display {
+/* Portrait / Token Toggle Overlay */
+.rnr-portrait-toggle {
+  position: absolute;
+  top: 6px;
+  left: 6px;
   display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  padding: 3px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 2;
+  opacity: 0.8;
+  transition: opacity 0.2s, background 0.2s;
 }
 
-.role-roll-result .die-box {
+.rnr-portrait:hover .rnr-portrait-toggle {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.rnr-toggle-btn {
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 35px;
-  height: 35px;
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
-  font-size: 18px;
-  font-weight: bold;
-  color: #2b2b2b;
-}
-
-.role-roll-result .success-count {
-  color: #8b0000;
-}
-
-.role-roll-result .critical-count {
-  color: #8b0000;
-}
-
-/* Enhanced Skills */
-.role-and-roll .skill-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 15px;
-  background: #fff;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  transition: all 0.2s;
-}
-
-.role-and-roll .skill-item:hover {
-  border-color: #8b0000;
-  box-shadow: 0 3px 8px rgba(139, 0, 0, 0.15);
-}
-
-.role-and-roll .skill-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.role-and-roll .skill-name {
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  font-size: 15px;
-  font-weight: 600;
-  background: #f9f9f9;
-}
-
-.role-and-roll .skill-name:focus {
-  outline: none;
-  border-color: #8b0000;
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
-}
-
-.role-and-roll .skill-body {
-  display: flex;
-  flex-direction: column;
-}
-
-.role-and-roll .skill-description {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  font-size: 13px;
-  font-family: inherit;
-  resize: vertical;
-  background: #f9f9f9;
-}
-
-.role-and-roll .skill-description:focus {
-  outline: none;
-  border-color: #8b0000;
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
-}
-
-.role-and-roll .skill-footer {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.role-and-roll .skill-footer label {
-  font-weight: bold;
-  font-size: 13px;
-  min-width: auto;
-}
-
-.role-and-roll .skill-item .item-delete {
-  padding: 6px 12px;
-  background: #dc3545;
-  color: #fff;
+  background: transparent;
   border: none;
   border-radius: 4px;
+  color: var(--rnr-text-dim);
   cursor: pointer;
   font-size: 12px;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
-}
-
-.role-and-roll .skill-item .item-delete:hover {
-  background: #c82333;
-}
-
-/* Enhanced Equipment with Images */
-.role-and-roll .equipment-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: #fff;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  transition: all 0.2s;
-}
-
-.role-and-roll .equipment-item:hover {
-  border-color: #8b0000;
-  box-shadow: 0 3px 8px rgba(139, 0, 0, 0.15);
-}
-
-.role-and-roll .equipment-item .item-img {
-  width: 50px;
-  height: 50px;
-  border: 2px solid #d0d0d0;
-  border-radius: 6px;
-  object-fit: cover;
-  cursor: pointer;
-}
-
-.role-and-roll .equipment-item .item-details {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.role-and-roll .equipment-item .item-name {
-  font-size: 15px;
-  font-weight: 600;
-  color: #2b2b2b;
-}
-
-.role-and-roll .equipment-item .item-quantity {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-}
-
-.role-and-roll .equipment-item .item-quantity label {
-  margin: 0;
-  font-weight: normal;
-  color: #666;
-  min-width: auto;
-}
-
-.role-and-roll .equipment-item .item-quantity input {
-  width: 60px;
-  padding: 4px 8px;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  text-align: center;
-}
-
-/* ================= SAFE FIXES ================= */
-body:not(.role-and-roll) * {
-  box-sizing: border-box;
-}
-
-/* Simple Skills Styling */
-.role-and-roll .skill-item-simple {
-  padding: 15px;
-  margin-bottom: 10px;
-  background: #fff;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  transition: border-color 0.2s;
-}
-
-.role-and-roll .skill-item-simple:hover {
-  border-color: #8b0000;
-}
-
-.role-and-roll .skill-content {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.role-and-roll .skill-name {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.role-and-roll .skill-name:focus {
-  outline: none;
-  border-color: #8b0000;
-  box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
-}
-
-.role-and-roll .skill-description {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  font-size: 13px;
-  font-family: inherit;
-  resize: vertical;
-  min-height: 60px;
-}
-
-.role-and-roll .skill-description:focus {
-  outline: none;
-  border-color: #8b0000;
-  box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
-}
-
-.role-and-roll .skill-actions {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-}
-
-.role-and-roll .skill-show-btn {
-  padding: 6px 12px;
-  background: linear-gradient(to bottom, #8b0000, #6b0000);
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 13px;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.role-and-roll .skill-show-btn:hover {
-  background: linear-gradient(to bottom, #a00000, #7b0000);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.role-and-roll .skill-actions .item-delete {
-  padding: 6px 12px;
-  background: transparent;
-  color: #999;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.role-and-roll .skill-actions .item-delete:hover {
-  color: #d00000;
-  border-color: #d00000;
-  background: #fff;
-}
-
-/* Skill Chat Card */
-.skill-chat-card {
-  padding: 12px;
-  background: #fff;
-  border: 2px solid #8b0000;
-  border-radius: 6px;
-}
-
-.skill-chat-card h3 {
-  margin: 0 0 8px 0;
-  color: #8b0000;
-  font-weight: bold;
-  font-size: 13px;
-  min-width: auto;
-}
-
-.role-and-roll .skill-item .item-delete {
-  padding: 6px 12px;
-  background: #dc3545;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
-}
-
-.role-and-roll .skill-item .item-delete:hover {
-  background: #c82333;
-}
-
-/* Enhanced Equipment with Images */
-.role-and-roll .equipment-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: #fff;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  transition: all 0.2s;
-}
-
-.role-and-roll .equipment-item:hover {
-  border-color: #8b0000;
-  box-shadow: 0 3px 8px rgba(139, 0, 0, 0.15);
-}
-
-.role-and-roll .equipment-item .item-img {
-  width: 50px;
-  height: 50px;
-  border: 2px solid #d0d0d0;
-  border-radius: 6px;
-  object-fit: cover;
-  cursor: pointer;
-}
-
-.role-and-roll .equipment-item .item-details {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.role-and-roll .equipment-item .item-name {
-  font-size: 15px;
-  font-weight: 600;
-  color: #2b2b2b;
-}
-
-.role-and-roll .equipment-item .item-quantity {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-}
-
-.role-and-roll .equipment-item .item-quantity label {
-  margin: 0;
-  font-weight: normal;
-  color: #666;
-  min-width: auto;
-}
-
-.role-and-roll .equipment-item .item-quantity input {
-  width: 60px;
-  padding: 4px 8px;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  text-align: center;
-}
-
-/* ================= SAFE FIXES ================= */
-body:not(.role-and-roll) * {
-  box-sizing: border-box;
-}
-
-/* Simple Skills Styling */
-.role-and-roll .skill-item-simple {
-  padding: 15px;
-  margin-bottom: 10px;
-  background: #fff;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  transition: border-color 0.2s;
-}
-
-.role-and-roll .skill-item-simple:hover {
-  border-color: #8b0000;
-}
-
-.role-and-roll .skill-content {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.role-and-roll .skill-name {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.role-and-roll .skill-name:focus {
-  outline: none;
-  border-color: #8b0000;
-  box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
-}
-
-.role-and-roll .skill-description {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  font-size: 13px;
-  font-family: inherit;
-  resize: vertical;
-  min-height: 60px;
-}
-
-.role-and-roll .skill-description:focus {
-  outline: none;
-  border-color: #8b0000;
-  box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
-}
-
-.role-and-roll .skill-actions {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-}
-
-.role-and-roll .skill-show-btn {
-  padding: 6px 12px;
-  background: linear-gradient(to bottom, #8b0000, #6b0000);
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 13px;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.role-and-roll .skill-show-btn:hover {
-  background: linear-gradient(to bottom, #a00000, #7b0000);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.role-and-roll .skill-actions .item-delete {
-  padding: 6px 12px;
-  background: transparent;
-  color: #999;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.role-and-roll .skill-actions .item-delete:hover {
-  color: #d00000;
-  border-color: #d00000;
-  background: #fff;
-}
-
-/* Skill Chat Card */
-.skill-chat-card {
-  padding: 12px;
-  background: #fff;
-  border: 2px solid #8b0000;
-  border-radius: 6px;
-}
-
-.skill-chat-card h3 {
-  margin: 0 0 8px 0;
-  color: #8b0000;
-  font-size: 16px;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 6px;
-}
-
-.skill-chat-card p {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.5;
-  color: #2b2b2b;
-}
-
-/* Equipment Cards - D&D Style */
-.role-and-roll .equipment-item-card {
-  background: #fff;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  margin-bottom: 10px;
-  transition: all 0.2s;
-}
-
-.role-and-roll .equipment-item-card:hover {
-  border-color: #8b0000;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.role-and-roll .item-header {
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  gap: 12px;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.role-and-roll .equipment-item-card .item-img {
-  width: 50px;
-  height: 50px;
-  border-radius: 4px;
-  border: 2px solid #d0d0d0;
-  object-fit: cover;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-
-.role-and-roll .equipment-item-card .item-img:hover {
-  border-color: #8b0000;
-}
-
-.role-and-roll .item-title-section {
-  flex: 1;
-  min-width: 0;
-}
-
-.role-and-roll .equipment-item-card .item-name {
-  margin: 0 0 6px 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #2b2b2b;
-}
-
-.role-and-roll .item-properties {
-  display: flex;
-  gap: 15px;
-  font-size: 13px;
-  color: #666;
-}
-
-.role-and-roll .item-header-controls {
-  display: flex;
-  gap: 8px;
-}
-
-.role-and-roll .item-header-controls .item-control {
-  padding: 6px 10px;
-  background: transparent;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: #666;
-  text-decoration: none;
-}
-
-.role-and-roll .item-header-controls .item-control:hover {
-  background: #f5f5f5;
-  border-color: #8b0000;
-  color: #8b0000;
-}
-
-.role-and-roll .item-footer {
-  padding: 10px 12px;
-  background: #f9f9f9;
-  border-radius: 0 0 4px 4px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.role-and-roll .item-quantity-controls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.role-and-roll .quantity-btn {
-  width: 28px;
-  height: 28px;
-  background: linear-gradient(to bottom, #8b0000, #6b0000);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transition: all 0.15s ease;
   padding: 0;
 }
 
-.role-and-roll .quantity-btn:hover {
-  background: linear-gradient(to bottom, #a00000, #7b0000);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  transform: scale(1.1);
+.rnr-toggle-btn:hover {
+  color: var(--rnr-text-bright);
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.role-and-roll .quantity-value {
-  font-size: 15px;
-  font-weight: 600;
-  color: #2b2b2b;
-  min-width: 30px;
-  text-align: center;
-}
-
-/* Weight Input Field */
-.role-and-roll .item-weight-input {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.role-and-roll .item-weight-input label {
-  margin: 0;
-  font-weight: normal;
-  color: #666;
-}
-
-.role-and-roll .item-weight-input .weight-input {
-  width: 60px;
-  padding: 2px 6px;
-  border: 1px solid #d0d0d0;
-  border-radius: 3px;
-  font-size: 13px;
-  text-align: center;
-}
-
-.role-and-roll .item-weight-input .weight-input:focus {
-  outline: none;
-  border-color: #8b0000;
-  box-shadow: 0 0 0 2px rgba(139, 0, 0, 0.1);
-}
-
-/* Item Chat Card */
-.item-chat-card {
-  background: #fff;
-  border: 2px solid #8b0000;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.item-card-header {
-  background: linear-gradient(to bottom, #8b0000, #6b0000);
-  padding: 12px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.item-card-header img {
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.item-card-header h3 {
-  margin: 0;
+.rnr-toggle-btn.active {
   color: #fff;
-  font-size: 16px;
-  font-weight: bold;
+  background: var(--rnr-red);
+  box-shadow: 0 0 6px var(--rnr-red-glow);
 }
 
-.item-card-properties {
-  padding: 8px 12px;
+.rnr-portrait-edit {
+  position: absolute; bottom: 6px; right: 6px;
+  width: 28px; height: 28px;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+  border: none; border-radius: 50%;
+  color: #fff; font-size: 11px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s;
+  z-index: 2;
+}
+
+.rnr-portrait:hover .rnr-portrait-edit { opacity: 1; }
+.rnr-portrait-edit:hover { background: var(--rnr-red); }
+
+/* ---- Sidebar Vitals & Defense Frame ---- */
+.rnr-sidebar-frame {
   display: flex;
-  gap: 15px;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 6px;
-}
-
-.skill-chat-card p {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.5;
-  color: #2b2b2b;
-}
-
-/* Equipment Cards - D&D Style */
-.role-and-roll .equipment-item-card {
-  background: #fff;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  margin-bottom: 10px;
-  transition: all 0.2s;
-}
-
-.role-and-roll .equipment-item-card:hover {
-  border-color: #8b0000;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.role-and-roll .item-header {
-  display: flex;
-  align-items: center;
-  padding: 12px;
+  flex-direction: column;
   gap: 12px;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--rnr-red-dim);
+  border-radius: 8px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
-.role-and-roll .equipment-item-card .item-img {
-  width: 50px;
-  height: 50px;
+/* ---- Dynamic Vital Bars ---- */
+.rnr-vital-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rnr-vital-label {
+  font-size: 9px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--rnr-text-dim);
+}
+
+.rnr-bar {
+  position: relative;
   border-radius: 4px;
-  border: 2px solid #d0d0d0;
-  object-fit: cover;
-  cursor: pointer;
-  transition: border-color 0.2s;
+  overflow: hidden;
+  height: 30px;
+  background: #1a1a20;
 }
 
-.role-and-roll .equipment-item-card .item-img:hover {
-  border-color: #8b0000;
+.rnr-bar-fill {
+  position: absolute;
+  top: 0; left: 0;
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
 }
 
-.role-and-roll .item-title-section {
+.hp-fill { background: linear-gradient(90deg, #8b2020, #c0392b); }
+.mental-fill { background: linear-gradient(90deg, #1a4060, #2a6a9a); }
+.wp-fill { background: linear-gradient(90deg, #6a5a10, #9a8520); }
+
+.rnr-bar-content {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: center;
+  height: 100%; gap: 2px;
+}
+
+.rnr-bar-content input {
+  font-size: 14px; font-weight: 700;
+  width: 30px; text-align: center;
+  color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+.rnr-sep {
+  color: rgba(255,255,255,0.4); font-size: 13px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+/* ---- Defense ---- */
+.rnr-defense {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 2px; padding: 4px 0;
+}
+
+.rnr-defense-value {
+  font-size: 26px; font-weight: 800;
+  width: 50px; text-align: center;
+  color: var(--rnr-text-bright);
+}
+
+.rnr-defense-label {
+  font-size: 9px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--rnr-text-dim);
+}
+
+/* ==================== MAIN CONTENT ==================== */
+.rnr-main {
   flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
   min-width: 0;
 }
 
-.role-and-roll .equipment-item-card .item-name {
-  margin: 0 0 6px 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #2b2b2b;
-}
+.rnr-main .tab { display: none; }
+.rnr-main .tab.active { display: block; }
 
-.role-and-roll .item-properties {
+/* ==================== FLOATING TAB NAV (D&D 5e style) ==================== */
+.rnr-tabs {
+  contain: content;
+  position: absolute;
+  left: 100%;
+  top: 30px;
+  width: 36px;
   display: flex;
-  gap: 15px;
-  font-size: 13px;
-  color: #666;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  z-index: 100;
+  background: #111114;
+  border: 1px solid var(--rnr-red-dim);
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+  padding: 4px 0;
 }
 
-.role-and-roll .item-header-controls {
-  display: flex;
-  gap: 8px;
-}
-
-.role-and-roll .item-header-controls .item-control {
-  padding: 6px 10px;
-  background: transparent;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: #666;
-  text-decoration: none;
-}
-
-.role-and-roll .item-header-controls .item-control:hover {
-  background: #f5f5f5;
-  border-color: #8b0000;
-  color: #8b0000;
-}
-
-.role-and-roll .item-footer {
-  padding: 10px 12px;
-  background: #f9f9f9;
-  border-radius: 0 0 4px 4px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.role-and-roll .item-quantity-controls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.role-and-roll .quantity-btn {
-  width: 28px;
-  height: 28px;
-  background: linear-gradient(to bottom, #8b0000, #6b0000);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: all 0.2s;
+.rnr-tab {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-}
-
-.role-and-roll .quantity-btn:hover {
-  background: linear-gradient(to bottom, #a00000, #7b0000);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  transform: scale(1.1);
-}
-
-.role-and-roll .quantity-value {
-  font-size: 15px;
-  font-weight: 600;
-  color: #2b2b2b;
-  min-width: 30px;
-  text-align: center;
-}
-
-/* Weight Input Field */
-.role-and-roll .item-weight-input {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.role-and-roll .item-weight-input label {
-  margin: 0;
-  font-weight: normal;
-  color: #666;
-}
-
-.role-and-roll .item-weight-input .weight-input {
-  width: 60px;
-  padding: 2px 6px;
-  border: 1px solid #d0d0d0;
-  border-radius: 3px;
-  font-size: 13px;
-  text-align: center;
-}
-
-.role-and-roll .item-weight-input .weight-input:focus {
-  outline: none;
-  border-color: #8b0000;
-  box-shadow: 0 0 0 2px rgba(139, 0, 0, 0.1);
-}
-
-/* Item Chat Card */
-.item-chat-card {
-  background: #fff;
-  border: 2px solid #8b0000;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.item-card-header {
-  background: linear-gradient(to bottom, #8b0000, #6b0000);
-  padding: 12px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.item-card-header img {
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.item-card-header h3 {
-  margin: 0;
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.item-card-properties {
-  padding: 8px 12px;
-  display: flex;
-  gap: 15px;
-  font-size: 13px;
-  background: #f5f5f5;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.item-card-description {
-  padding: 12px;
-  font-size: 13px;
-  line-height: 1.5;
-  color: #2b2b2b;
-}
-
-/* Auto Success Indicator */
-.auto-success-indicator {
-  margin-top: 8px;
-  padding: 6px 12px;
-  background: linear-gradient(to right, #28a745, #218838);
-  color: #fff;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.role-and-roll .equipment-item-card:hover {
-  border-color: #8b0000;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.role-and-roll .item-header {
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  gap: 12px;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.role-and-roll .equipment-item-card .item-img {
-  width: 50px;
-  height: 50px;
-  border-radius: 4px;
-  border: 2px solid #d0d0d0;
-  object-fit: cover;
+  flex: 0 0 32px;
+  color: var(--rnr-text-dim);
   cursor: pointer;
-  transition: border-color 0.2s;
-}
-
-.role-and-roll .equipment-item-card .item-img:hover {
-  border-color: #8b0000;
-}
-
-.role-and-roll .item-title-section {
-  flex: 1;
-  min-width: 0;
-}
-
-.role-and-roll .equipment-item-card .item-name {
-  margin: 0 0 6px 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #2b2b2b;
-}
-
-.role-and-roll .item-properties {
-  display: flex;
-  gap: 15px;
-  font-size: 13px;
-  color: #666;
-}
-
-.role-and-roll .item-header-controls {
-  display: flex;
-  gap: 8px;
-}
-
-.role-and-roll .item-header-controls .item-control {
-  padding: 6px 10px;
-  background: transparent;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: #666;
   text-decoration: none;
-}
-
-.role-and-roll .item-header-controls .item-control:hover {
-  background: #f5f5f5;
-  border-color: #8b0000;
-  color: #8b0000;
-}
-
-.role-and-roll .item-footer {
-  padding: 10px 12px;
-  background: #f9f9f9;
-  border-radius: 0 0 4px 4px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.role-and-roll .item-quantity-controls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.role-and-roll .quantity-btn {
-  width: 28px;
-  height: 28px;
-  background: linear-gradient(to bottom, #8b0000, #6b0000);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-
-.role-and-roll .quantity-btn:hover {
-  background: linear-gradient(to bottom, #a00000, #7b0000);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  transform: scale(1.1);
-}
-
-.role-and-roll .quantity-value {
-  font-size: 15px;
-  font-weight: 600;
-  color: #2b2b2b;
-  min-width: 30px;
-  text-align: center;
-}
-
-/* Weight Input Field */
-.role-and-roll .item-weight-input {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.role-and-roll .item-weight-input label {
-  margin: 0;
-  font-weight: normal;
-  color: #666;
-}
-
-.role-and-roll .item-weight-input .weight-input {
-  width: 60px;
-  padding: 2px 6px;
-  border: 1px solid #d0d0d0;
-  border-radius: 3px;
-  font-size: 13px;
-  text-align: center;
-}
-
-.role-and-roll .item-weight-input .weight-input:focus {
-  outline: none;
-  border-color: #8b0000;
-  box-shadow: 0 0 0 2px rgba(139, 0, 0, 0.1);
-}
-
-/* Item Chat Card */
-.item-chat-card {
-  background: #fff;
-  border: 2px solid #8b0000;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.item-card-header {
-  background: linear-gradient(to bottom, #8b0000, #6b0000);
-  padding: 12px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.item-card-header img {
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.item-card-header h3 {
-  margin: 0;
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.item-card-properties {
-  padding: 8px 12px;
-  display: flex;
-  gap: 15px;
-  font-size: 13px;
-  background: #f5f5f5;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.item-card-description {
-  padding: 12px;
-  font-size: 13px;
-  line-height: 1.5;
-  color: #2b2b2b;
-}
-
-/* Auto Success Indicator */
-.auto-success-indicator {
-  margin-top: 8px;
-  padding: 6px 12px;
-  background: linear-gradient(to right, #28a745, #218838);
-  color: #fff;
-  border-radius: 4px;
-  text-align: center;
-  font-weight: bold;
   font-size: 14px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* Layout Fix */
-.role-and-roll .attribute,
-.role-and-roll .ability {
-  display: grid !important;
-  grid-template-columns: minmax(100px, 200px) 1fr minmax(80px, 120px) minmax(80px, 150px);
-  gap: 8px;
-}
-
-.role-and-roll .attribute label,
-.role-and-roll .ability label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.role-and-roll .label-main {
-  font-weight: bold;
-  color: #2b2b2b;
-}
-
-.role-and-roll .label-subtitle {
-  font-size: 10px;
-  color: #999;
-  font-weight: normal;
-  margin-top: 2px;
-}
-
-.role-and-roll .sheet-header {
-  color: #ffffff;
-}
-
-.role-and-roll .sheet-header label,
-.role-and-roll .sheet-header span {
-  color: #ffffff !important;
-}
-
-.role-and-roll .sheet-header .resource {
-  color: #ffffff;
-}
-
-.role-and-roll .sheet-header .resource label {
-  color: #ffffff !important;
-}
-
-/* Fix pencil color */
-.role-and-roll .profile-img-edit i {
-  color: #ffffff !important;
-}
-
-.role-and-roll .profile-img-edit:hover i {
-  color: #ffecec !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-}
-
-.role-and-roll .profile-img,
-.role-and-roll .profile-img-edit {
-  cursor: pointer !important;
-}
-
-.role-and-roll .profile-img:hover {
-  filter: brightness(1.08);
-  transform: scale(1.02);
-}
-
-.role-and-roll .profile-img-edit-btn {
-  width: 90px;
-  height: 28px;
+  margin: 3px 4px;
   border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  background: rgba(0, 0, 0, 0.35);
+  transition: all 0.15s;
+}
+
+.rnr-tab:hover {
+  color: var(--rnr-text-bright);
+  background: var(--rnr-surface);
+}
+
+.rnr-tab.active {
+  background: var(--rnr-red);
   color: #fff;
-  font-size: 14px;
-  cursor: pointer;
 }
 
-.role-and-roll .profile-img-edit-btn:hover {
-  background: rgba(0, 0, 0, 0.55);
+/* ==================== CATEGORY HEADERS ==================== */
+.rnr-category { margin-bottom: 8px; }
+
+.rnr-category h3 {
+  color: var(--rnr-red);
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 2px;
+  padding-bottom: 4px; margin: 0 0 6px 0;
+  border-bottom: 1px solid var(--rnr-border);
 }
 
-.role-and-roll .sheet-header .profile-img {
-  border: none !important;
-  box-shadow: none !important;
+/* ==================== ROWS ==================== */
+.rnr-row {
+  display: grid;
+  grid-template-columns: minmax(80px, 140px) 1fr auto auto;
+  gap: 8px; align-items: center;
+  padding: 5px 6px; border-radius: 4px; margin-bottom: 1px;
 }
 
-.role-and-roll .profile-img-frame {
-  box-sizing: border-box;
-  background: transparent;
+.rnr-row:hover { background: var(--rnr-surface); }
+
+.rnr-name {
+  font-weight: 500; font-size: 13px; color: var(--rnr-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-.role-and-roll .profile-img-frame {
-  overflow: hidden;
+.rnr-sub { font-size: 9px; color: var(--rnr-text-faint); }
+
+/* ==================== PIPS ==================== */
+.dice-pips { display: flex; align-items: center; gap: 4px; }
+
+.pip {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid var(--rnr-text-faint);
+  background: transparent; cursor: pointer;
+  transition: all 0.1s; padding: 0; font-size: 0; flex-shrink: 0;
 }
 
-.role-and-roll .profile-img-frame img {
-  display: block;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  margin: 0;
-  padding: 0;
+.pip:hover { border-color: var(--rnr-red); transform: scale(1.15); }
+
+.pip.filled {
+  border-color: var(--rnr-red); background: var(--rnr-red);
+  box-shadow: 0 0 6px var(--rnr-red-glow);
 }
 
-.role-and-roll .profile-img {
-  max-width: none !important;
-  max-height: none !important;
+.pip.filled:hover { background: var(--rnr-red-bright); border-color: var(--rnr-red-bright); }
+
+/* ==================== SUCCEED / ROLL ==================== */
+.rnr-succeed input[type="checkbox"] { width: 14px; height: 14px; cursor: pointer; accent-color: var(--rnr-red); }
+
+.rnr-roll {
+  width: 28px; height: 28px;
+  background: transparent; border: none; border-radius: 4px;
+  color: var(--rnr-text-dim); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; transition: all 0.12s; padding: 0;
 }
 
-.role-and-roll.item .sheet-header {
-  border-bottom: 1px solid #ccc !important;
-  padding: 10px !important;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.rnr-roll:hover { color: var(--rnr-red); background: rgba(192, 57, 43, 0.1); }
+
+/* ==================== ADD BUTTON ==================== */
+.rnr-add-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; background: transparent;
+  border: 1px dashed var(--rnr-text-faint); border-radius: 4px;
+  color: var(--rnr-text-dim); cursor: pointer;
+  font-size: 11px; font-weight: 600; transition: all 0.12s; margin-top: 4px;
 }
 
-.role-and-roll.item .profile-img {
-  width: 64px !important;
-  height: 64px !important;
-  object-fit: cover;
-  border: 2px solid #999 !important;
-  border-radius: 6px;
+.rnr-add-btn:hover { color: var(--rnr-red); border-color: var(--rnr-red-dim); }
+
+/* ==================== SKILLS ==================== */
+.rnr-skill-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+
+.rnr-skill-card { background: var(--rnr-surface); border-radius: 6px; padding: 10px 12px; }
+.rnr-skill-card:hover { background: var(--rnr-surface-hover); }
+
+.rnr-skill-name {
+  width: 100%; background: transparent; border: none;
+  border-bottom: 1px solid var(--rnr-border);
+  padding: 4px 0; color: var(--rnr-text-bright);
+  font-size: 14px; font-weight: 600; margin-bottom: 4px;
 }
 
-.role-and-roll.item .header-fields {
-  flex: 1;
+.rnr-skill-name:focus { border-color: var(--rnr-red-dim); }
+
+.rnr-skill-desc {
+  width: 100%; background: transparent; border: none;
+  padding: 4px 0; color: var(--rnr-text);
+  font-size: 12px; font-family: inherit; resize: vertical; margin-bottom: 4px;
 }
+
+.rnr-skill-actions { display: flex; gap: 4px; justify-content: flex-end; }
+
+.rnr-btn-small {
+  padding: 3px 8px; background: transparent; border: none;
+  border-radius: 4px; color: var(--rnr-text-dim); cursor: pointer;
+  font-size: 11px; transition: all 0.12s;
+}
+
+.rnr-btn-small:hover { color: var(--rnr-text); background: var(--rnr-surface-hover); }
+.rnr-btn-small.danger:hover { color: var(--rnr-red-bright); }
+
+/* ==================== EQUIPMENT ==================== */
+.rnr-equip-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+
+.rnr-equip-card {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: 6px; transition: background 0.1s;
+}
+.rnr-equip-card:hover { background: var(--rnr-surface); }
+
+.rnr-equip-img { width: 38px; height: 38px; border-radius: 4px; object-fit: cover; flex-shrink: 0; }
+
+.rnr-equip-info { flex: 1; min-width: 0; }
+.rnr-equip-info h4 { margin: 0; font-size: 13px; font-weight: 600; color: var(--rnr-text); }
+
+.rnr-equip-meta { display: flex; gap: 10px; font-size: 11px; color: var(--rnr-text-dim); margin-top: 2px; }
+.rnr-equip-meta i { margin-right: 2px; }
+
+.rnr-inline-input {
+  background: transparent; border: none;
+  border-bottom: 1px solid var(--rnr-text-faint);
+  color: var(--rnr-text); width: 36px; text-align: center; font-size: 11px;
+}
+
+.rnr-equip-controls { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.rnr-qty-controls { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
+
+.rnr-qty-btn {
+  width: 20px; height: 20px; background: transparent; border: none;
+  border-radius: 4px; color: var(--rnr-text-dim); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; padding: 0; transition: all 0.1s;
+}
+.rnr-qty-btn:hover { color: var(--rnr-red); background: var(--rnr-surface); }
+
+.rnr-equip-btns { display: flex; gap: 1px; }
+
+.rnr-icon-btn {
+  width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+  color: var(--rnr-text-faint); cursor: pointer; border-radius: 4px;
+  font-size: 11px; transition: all 0.1s; text-decoration: none;
+}
+.rnr-icon-btn:hover { color: var(--rnr-text); background: var(--rnr-surface-hover); }
+.rnr-icon-btn.danger:hover { color: var(--rnr-red-bright); }
+
+/* ==================== BIO ==================== */
+.rnr-bio-text {
+  width: 100%; background: var(--rnr-surface); border: none;
+  border-radius: 6px; padding: 10px 12px; color: var(--rnr-text);
+  font-size: 13px; font-family: inherit; resize: vertical;
+  margin-bottom: 10px; line-height: 1.6; box-sizing: border-box;
+}
+.rnr-bio-text:focus { outline: none; box-shadow: inset 0 0 0 1px var(--rnr-red-dim); }
+
+.rnr-bio-row { display: flex; gap: 8px; }
+.rnr-bio-col { flex: 1; min-width: 0; }
+
+/* ==================== CHAT CARDS ==================== */
+.role-roll-result { background: #fff; border: 2px solid #8b0000; border-radius: 8px; padding: 12px; margin: 8px 0; }
+.role-roll-result .roll-label { font-size: 14px; font-weight: bold; color: #2b2b2b; margin-bottom: 8px; }
+.role-roll-result .dice-results { margin: 10px 0; }
+.role-roll-result .rolled-label { font-size: 13px; font-weight: bold; color: #666; margin-bottom: 5px; }
+.role-roll-result .dice-pool-display { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.role-roll-result .die-box { display: flex; align-items: center; justify-content: center; width: 35px; height: 35px; border: 2px solid #ccc; border-radius: 4px; background: #fff; font-size: 18px; font-weight: bold; color: #2b2b2b; }
+.role-roll-result .success-count, .role-roll-result .critical-count { color: #8b0000; }
+
+.skill-chat-card { padding: 12px; background: #fff; border: 2px solid #8b0000; border-radius: 6px; }
+.skill-chat-card h3 { margin: 0 0 8px 0; color: #8b0000; font-size: 16px; border-bottom: 1px solid #e0e0e0; padding-bottom: 6px; }
+.skill-chat-card p { margin: 0; font-size: 13px; line-height: 1.5; color: #2b2b2b; }
+
+.item-chat-card { background: #fff; border: 2px solid #8b0000; border-radius: 6px; overflow: hidden; }
+.item-card-header { background: linear-gradient(to bottom, #8b0000, #6b0000); padding: 12px; display: flex; align-items: center; gap: 12px; }
+.item-card-header img { width: 40px; height: 40px; border-radius: 4px; border: 2px solid rgba(255,255,255,0.3); }
+.item-card-header h3 { margin: 0; color: #fff; font-size: 16px; font-weight: bold; border: none; }
+.item-card-properties { padding: 8px 12px; display: flex; gap: 15px; font-size: 13px; background: #f5f5f5; border-bottom: 1px solid #e0e0e0; }
+.item-card-description { padding: 12px; font-size: 13px; line-height: 1.5; color: #2b2b2b; }
+.auto-success-indicator { margin-top: 8px; padding: 6px 12px; background: linear-gradient(to right, #28a745, #218838); color: #fff; border-radius: 4px; text-align: center; font-weight: bold; }
+
+/* ==================== ITEM SHEET ==================== */
+.role-and-roll.sheet.item {
+  display: flex; flex-direction: column; height: 100%; overflow: hidden;
+  background: var(--rnr-bg); color: var(--rnr-text);
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.role-and-roll.sheet.item .sheet-header { padding: 10px 12px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; background: #141418; }
+.role-and-roll.sheet.item .profile-img { width: 48px; height: 48px; object-fit: cover; border-radius: 4px; }
+.role-and-roll.sheet.item .header-fields { flex: 1; }
+.role-and-roll.sheet.item .charname input { font-size: 16px; font-weight: 600; border: none; background: transparent; width: 100%; color: var(--rnr-text-bright); }
+
+.role-and-roll.sheet.item .sheet-tabs { display: flex; background: var(--rnr-surface); flex-shrink: 0; }
+.role-and-roll.sheet.item .sheet-tabs .item { flex: 1; padding: 7px; text-align: center; cursor: pointer; font-weight: 600; font-size: 12px; text-decoration: none; color: var(--rnr-text-dim); transition: color 0.12s; }
+.role-and-roll.sheet.item .sheet-tabs .item.active { color: var(--rnr-red); box-shadow: inset 0 -2px 0 var(--rnr-red); }
+
+.role-and-roll.sheet.item .sheet-body { flex: 1; overflow-y: auto; padding: 14px; }
+.role-and-roll.sheet.item .tab { display: none; }
+.role-and-roll.sheet.item .tab.active { display: block; }
+.role-and-roll.sheet.item .form-group { margin-bottom: 12px; }
+.role-and-roll.sheet.item .form-group label { display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--rnr-text-dim); margin-bottom: 4px; }
+.role-and-roll.sheet.item .form-group input,
+.role-and-roll.sheet.item .form-group textarea { width: 100%; background: var(--rnr-surface); border: none; border-radius: 4px; padding: 8px 10px; color: var(--rnr-text); font-size: 13px; font-family: inherit; box-sizing: border-box; }
+.role-and-roll.sheet.item .form-group input:focus,
+.role-and-roll.sheet.item .form-group textarea:focus { outline: none; box-shadow: inset 0 0 0 1px var(--rnr-red-dim); }

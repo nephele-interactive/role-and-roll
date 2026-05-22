@@ -1,28 +1,42 @@
 // module/dice-control-dialog.mjs
 
-export class DiceControlDialog extends FormApplication {
-    constructor(numDice, label, autoSuccess, actor, options = {}) {
-        super({}, options);
+const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
+
+export class DiceControlDialog extends HandlebarsApplicationMixin(ApplicationV2) {
+    constructor({numDice, label, autoSuccess, actor, ...options} = {}) {
+        super(options);
         this.numDice = numDice;
         this.label = label;
         this.autoSuccess = autoSuccess;
         this.actor = actor;
     }
 
-    static get defaultOptions() {
-        return foundry.utils.mergeObject(super.defaultOptions, {
-            classes: ["role-and-roll", "dice-control-dialog"],
-            template: "systems/role-and-roll/templates/dice-control-dialog.hbs",
-            width: 700,
-            height: "auto",
+    static DEFAULT_OPTIONS = {
+        classes: ["role-and-roll", "dice-control-dialog"],
+        position: { width: 700 },
+        window: {
             title: "R&R Dice Control",
-            closeOnSubmit: false,
-            submitOnChange: false
-        });
-    }
+            resizable: true
+        },
+        tag: "form",
+        form: {
+            handler: DiceControlDialog.#onSubmitForm,
+            submitOnChange: false,
+            closeOnSubmit: false
+        },
+        actions: {
+            cancel: DiceControlDialog.#onCancel
+        }
+    };
 
-    getData() {
-        const context = super.getData();
+    static PARTS = {
+        dialog: {
+            template: "systems/role-and-roll/templates/dice-control-dialog.hbs"
+        }
+    };
+
+    async _prepareContext(options) {
+        const context = await super._prepareContext(options);
 
         // Get will power from actor (wp field)
         context.currentWillPower = this.actor?.system?.wp?.value || 0;
@@ -53,30 +67,27 @@ export class DiceControlDialog extends FormApplication {
         return context;
     }
 
-    activateListeners(html) {
-        super.activateListeners(html);
-
-        html.find('.cancel-btn').click(ev => {
-            ev.preventDefault();
-            this.close();
-        });
-    }
-
-    async close(options = {}) {
+    async _onClose(options) {
         // If the dialog is being closed and there's a reject callback (from initiative),
         // and we haven't resolved yet, reject the promise
         if (this._rejectCallback && !this._resolved) {
             this._rejectCallback(new Error("Dialog was cancelled"));
         }
-        return super.close(options);
+        return super._onClose(options);
     }
 
+    static #onCancel(event, target) {
+        event.preventDefault();
+        this.close();
+    }
 
-    async _updateObject(event, formData) {
-        console.log("Dice Control Dialog - _updateObject called", formData);
+    static async #onSubmitForm(event, form, formData) {
+        console.log("Dice Control Dialog - form submitted", formData);
+
+        const data = formData.object;
 
         // Parse will power
-        const willPower = parseInt(formData.willPower) || 0;
+        const willPower = parseInt(data.willPower) || 0;
 
         // Validate will power
         const currentWP = this.actor?.system?.wp?.value || 0;
@@ -101,8 +112,8 @@ export class DiceControlDialog extends FormApplication {
             // Check each position for this die
             for (let pos = 2; pos <= 5; pos++) {
                 const fieldName = `dice${i}.pos${pos}`;
-                if (formData[fieldName]) {
-                    dieModifiers.positions[pos] = formData[fieldName];
+                if (data[fieldName]) {
+                    dieModifiers.positions[pos] = data[fieldName];
                 }
             }
 
@@ -133,4 +144,3 @@ export class DiceControlDialog extends FormApplication {
         }
     }
 }
-

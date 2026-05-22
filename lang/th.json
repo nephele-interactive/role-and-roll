@@ -1,4 +1,12 @@
 {
+    "TYPES": {
+        "Actor": {
+            "character": "Character"
+        },
+        "Item": {
+            "equipment": "Equipment"
+        }
+    },
     "ROLEANDROLL": {
         "SheetLabels": {
             "Actor": "ชีทตัวละคร Role & Roll",
