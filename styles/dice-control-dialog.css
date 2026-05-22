@@ -7,6 +7,8 @@
 .dice-control-dialog .window-content {
     background: #f8f4e6;
     padding: 0;
+    max-height: 85vh;
+    overflow-y: auto;
 }
 
 .rnr-dice-control {
@@ -79,6 +81,8 @@
     border-radius: 8px;
     padding: 15px;
     margin-top: 10px;
+    max-height: 380px;
+    overflow-y: auto;
 }
 
 .dice-row-container {
