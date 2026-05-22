@@ -55,7 +55,9 @@ export class RoleAndRollActor extends Actor {
     super.prepareData();
   }
 
-  prepareBaseData() { }
+  prepareBaseData() {
+    super.prepareBaseData();
+  }
 
   prepareDerivedData() {
     if (this.type !== "character") return;
@@ -67,7 +69,11 @@ export class RoleAndRollActor extends Actor {
     system.wp ??= { value: 0, max: 0 };
     system.attributes ??= {};
     system.abilities ??= {};
-    system.skills ??= [];
+    if (system.skills && !Array.isArray(system.skills)) {
+      system.skills = Object.values(system.skills);
+    } else {
+      system.skills ??= [];
+    }
     system.level ??= 1;
     
     const totalLevelIncrease = system.level - 1

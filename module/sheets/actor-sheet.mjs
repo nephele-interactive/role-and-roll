@@ -231,6 +231,33 @@ export class RoleAndRollActorSheet extends HandlebarsApplicationMixin(ActorSheet
     return super._onClose(options);
   }
 
+  _prepareSubmitData(event, form, formData) {
+    const submitData = super._prepareSubmitData(event, form, formData);
+
+    // If system.skills is submitted as an object (due to expanded inputs like system.skills.0.name),
+    // merge it into the existing skills array to prevent wiping other skills or fields.
+    if (submitData.system && ("skills" in submitData.system)) {
+      const skillsData = submitData.system.skills;
+      if (skillsData && typeof skillsData === "object" && !Array.isArray(skillsData)) {
+        const currentSkills = this.actor.system.skills ?? [];
+        const mergedSkills = foundry.utils.duplicate(Array.isArray(currentSkills) ? currentSkills : Object.values(currentSkills));
+
+        for (const [key, value] of Object.entries(skillsData)) {
+          const index = Number(key);
+          if (isNaN(index)) continue;
+          if (!mergedSkills[index]) {
+            mergedSkills[index] = { name: "", description: "" };
+          }
+          mergedSkills[index] = foundry.utils.mergeObject(mergedSkills[index], value);
+        }
+
+        submitData.system.skills = mergedSkills;
+      }
+    }
+
+    return submitData;
+  }
+
   /* ---- Action Handlers ---- */
 
   static async #onAttributeRoll(event, target) {
@@ -349,15 +376,18 @@ export class RoleAndRollActorSheet extends HandlebarsApplicationMixin(ActorSheet
       // Save any currently edited text (like name or description) first
       await this.submit();
 
-      const skills = Array.isArray(this.actor.system.skills)
-        ? foundry.utils.duplicate(this.actor.system.skills)
-        : [];
+      const currentSkills = this.actor.system.skills ?? [];
+      const skills = Array.isArray(currentSkills)
+        ? foundry.utils.duplicate(currentSkills)
+        : Object.values(foundry.utils.duplicate(currentSkills));
 
       skills.push({
         name: `Skill ${skills.length + 1}`,
         description: ""
       });
 
+      // Clear existing key in database to prevent merging artifacts
+      await this.actor.update({ "system.-=skills": null });
       await this.actor.update({ "system.skills": skills });
       this.render(true);
       return;
@@ -377,8 +407,15 @@ export class RoleAndRollActorSheet extends HandlebarsApplicationMixin(ActorSheet
       // Save any currently edited text (like name or description) first
       await this.submit();
 
-      const skills = Array.from(this.actor.system.skills ?? []);
+      const currentSkills = this.actor.system.skills ?? [];
+      const skills = Array.isArray(currentSkills)
+        ? foundry.utils.duplicate(currentSkills)
+        : Object.values(foundry.utils.duplicate(currentSkills));
+
       skills.splice(Number(skillIndex), 1);
+
+      // Clear existing key in database to prevent merging artifacts
+      await this.actor.update({ "system.-=skills": null });
       await this.actor.update({ "system.skills": skills });
       this.render(true);
       return;
