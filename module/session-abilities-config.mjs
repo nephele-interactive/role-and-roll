@@ -44,7 +44,7 @@ export class SessionAbilitiesConfig extends HandlebarsApplicationMixin(Applicati
     context.allOptions = this._getAllAbilitiesAndAttributes();
     context.modes = {
       single: "Single",
-      dual: "Dual",
+      dual: "Sum",
       select: "Select"
     };
 
@@ -158,7 +158,7 @@ export class SessionAbilitiesConfig extends HandlebarsApplicationMixin(Applicati
         </div>
         <select class="ability-mode">
           <option value="single">Single</option>
-          <option value="dual">Dual</option>
+          <option value="dual">Sum</option>
           <option value="select">Select</option>
         </select>
         <button type="button" class="delete-ability" data-action="deleteAbility"><i class="fas fa-trash"></i></button>

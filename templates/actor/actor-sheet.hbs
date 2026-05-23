@@ -219,25 +219,23 @@
         <div class="rnr-category">
           <h3>{{localize "ROLEANDROLL.SessionAbilities.Title"}}</h3>
           {{#each (getSessionAbilities) as |config key|}}
-          {{#with (lookup ../system.sessionAbilities key) as |value|}}
           <div class="rnr-row">
             <div class="rnr-row-label">
               <span class="rnr-name">{{config.name}}</span>
             </div>
             <div class="dice-pips">
               {{#each (range 1 6) as |pip|}}
-              <button type="button" class="pip {{#if (lte pip value.dice)}}filled{{/if}}" data-action="pipClick"
+              <button type="button" class="pip {{#if (lte pip (getSessionAbilityDice ../../sessionAbilitiesData key))}}filled{{/if}}" data-action="pipClick"
                 data-target="sessionAbilities.{{key}}.dice" data-value="{{pip}}"></button>
               {{/each}}
             </div>
             <div class="rnr-succeed">
-              <input type="checkbox" name="system.sessionAbilities.{{key}}.succeed" {{checked value.succeed}} />
+              <input type="checkbox" name="system.sessionAbilities.{{key}}.succeed" {{checked (getSessionAbilitySucceed ../sessionAbilitiesData key)}} />
             </div>
             <button type="button" class="rnr-roll" data-action="sessionAbilityRoll" data-ability="{{key}}">
               <i class="fas fa-dice-d20"></i>
             </button>
           </div>
-          {{/with}}
           {{/each}}
         </div>
       </div>

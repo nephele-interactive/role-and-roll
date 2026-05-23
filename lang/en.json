@@ -173,9 +173,9 @@
       "SelectPlaceholder": "Select...",
       "HelpKey": "Key: Unique identifier (lowercase, no spaces)",
       "HelpName": "Name: Display name shown to players",
-      "HelpMode": "Mode: Single = 1 base only | Multiple = sum all | Select = player chooses",
+      "HelpMode": "Mode: Single = 1 base only | Sum = sum all | Select = player chooses",
       "ModeSingle": "Single",
-      "ModeDual": "Multiple",
+      "ModeDual": "Sum",
       "ModeSelect": "Select"
     }
   }

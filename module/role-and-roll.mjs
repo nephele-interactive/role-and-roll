@@ -136,12 +136,20 @@ Hooks.once("init", function () {
   Handlebars.registerHelper("getSessionAbilities", () => {
     return game.settings?.get("role-and-roll", "customSessionAbilities") || {};
   });
-  Handlebars.registerHelper("getSessionAbilityDice", function(key) {
-    return this.sessionAbilitiesData?.[key]?.dice || 0;
+  Handlebars.registerHelper("getSessionAbilityDice", function(data, key) {
+    if (typeof key !== "string") {
+      key = data;
+      data = this.sessionAbilitiesData;
+    }
+    return data?.[key]?.dice || 0;
   });
 
-  Handlebars.registerHelper("getSessionAbilitySucceed", function(key) {
-    return this.sessionAbilitiesData?.[key]?.succeed || false;
+  Handlebars.registerHelper("getSessionAbilitySucceed", function(data, key) {
+    if (typeof key !== "string") {
+      key = data;
+      data = this.sessionAbilitiesData;
+    }
+    return data?.[key]?.succeed || false;
   });
   /* ------------ Settings ------------ */
   // Register Session Abilities settings

@@ -106,12 +106,6 @@ export class RoleAndRollActorSheet extends HandlebarsApplicationMixin(ActorSheet
 
     if (!this.isEditable) return;
 
-    // Listen for session ability updates and force re-render
-    this._sessionAbilityHook = Hooks.on('updateActor', (actor, changes) => {
-      if (actor.id === this.actor.id && changes.system?.sessionAbilities) {
-        this.render(false);
-      }
-    });
 
     // Right-click on pip to decrease pip value by 1
     this.element.querySelectorAll("[data-action='pipClick']").forEach(pip => {
@@ -225,9 +219,6 @@ export class RoleAndRollActorSheet extends HandlebarsApplicationMixin(ActorSheet
   }
 
   _onClose(options) {
-    if (this._sessionAbilityHook) {
-      Hooks.off('updateActor', this._sessionAbilityHook);
-    }
     return super._onClose(options);
   }
 
@@ -255,6 +246,15 @@ export class RoleAndRollActorSheet extends HandlebarsApplicationMixin(ActorSheet
       }
     }
 
+    // Merge sessionAbilities object updates to support custom dynamic keys
+    if (submitData.system && ("sessionAbilities" in submitData.system)) {
+      const currentSessionAbilities = this.actor.system.sessionAbilities || {};
+      submitData.system.sessionAbilities = foundry.utils.mergeObject(
+        foundry.utils.duplicate(currentSessionAbilities),
+        submitData.system.sessionAbilities
+      );
+    }
+
     return submitData;
   }
 
@@ -279,24 +279,27 @@ export class RoleAndRollActorSheet extends HandlebarsApplicationMixin(ActorSheet
   }
 
   static async #onDiceControl(event, target) {
+    console.log("RoleAndRoll | #onDiceControl called", { event, target });
     event.preventDefault();
     const { action, target: dataTarget, value: dataValue } = target.dataset;
-    if (!dataTarget) return;
+    if (!dataTarget) {
+      console.warn("RoleAndRoll | #onDiceControl: dataTarget is missing");
+      return;
+    }
 
     const path = dataTarget.split(".");
     let obj = this.actor.system;
 
     for (let i = 0; i < path.length - 1; i++) {
       obj = obj?.[path[i]];
-      if (!obj) return;
     }
 
     const last = path[path.length - 1];
-    let value = Number(obj[last] ?? 1);
-
-    // Check if this is an attribute dice field (minimum value is 1)
     const isAttributeDice = dataTarget.startsWith("attributes.") && last === "dice";
     const minValue = isAttributeDice ? 1 : 0;
+
+    let value = Number(obj?.[last] ?? minValue);
+    console.log("RoleAndRoll | #onDiceControl state", { path, last, minValue, value, obj });
 
     if (action === "increase" && value < 6) value++;
     if (action === "decrease" && value > minValue) value--;
@@ -305,7 +308,27 @@ export class RoleAndRollActorSheet extends HandlebarsApplicationMixin(ActorSheet
       if (value < minValue) value = minValue;
     }
 
-    await this.actor.update({ [`system.${dataTarget}`]: value });
+    console.log(`RoleAndRoll | #onDiceControl: updating system.${dataTarget} to ${value}`);
+    try {
+      if (dataTarget.startsWith("sessionAbilities.")) {
+        const abilityKey = path[1];
+        const field = path[2];
+        const sessionAbilities = foundry.utils.duplicate(this.actor.system.sessionAbilities || {});
+        if (!sessionAbilities[abilityKey]) sessionAbilities[abilityKey] = { dice: 0, succeed: false };
+        sessionAbilities[abilityKey][field] = value;
+
+        const updateData = { "system.sessionAbilities": sessionAbilities };
+        console.log("RoleAndRoll | #onDiceControl update payload (sessionAbilities):", updateData);
+        await this.actor.update(updateData);
+      } else {
+        const updateData = { [`system.${dataTarget}`]: value };
+        console.log("RoleAndRoll | #onDiceControl update payload:", updateData);
+        await this.actor.update(updateData);
+      }
+      console.log("RoleAndRoll | #onDiceControl update success");
+    } catch (err) {
+      console.error("RoleAndRoll | #onDiceControl update failed", err);
+    }
 
     // Force re-render for session abilities to update UI
     if (dataTarget.startsWith("sessionAbilities.")) {
@@ -314,19 +337,16 @@ export class RoleAndRollActorSheet extends HandlebarsApplicationMixin(ActorSheet
   }
 
   static async #onPipClick(event, target) {
+    console.log("RoleAndRoll | #onPipClick called", { event, target });
     // Pip click is the same as dice control with set-dice action
     event.preventDefault();
     const { target: dataTarget, value: dataValue } = target.dataset;
-    if (!dataTarget) return;
-
-    const path = dataTarget.split(".");
-    let obj = this.actor.system;
-
-    for (let i = 0; i < path.length - 1; i++) {
-      obj = obj?.[path[i]];
-      if (!obj) return;
+    if (!dataTarget) {
+      console.warn("RoleAndRoll | #onPipClick: dataTarget is missing");
+      return;
     }
 
+    const path = dataTarget.split(".");
     const last = path[path.length - 1];
     const isAttributeDice = dataTarget.startsWith("attributes.") && last === "dice";
     const minValue = isAttributeDice ? 1 : 0;
@@ -334,7 +354,27 @@ export class RoleAndRollActorSheet extends HandlebarsApplicationMixin(ActorSheet
     let value = Number(dataValue) || minValue;
     if (value < minValue) value = minValue;
 
-    await this.actor.update({ [`system.${dataTarget}`]: value });
+    console.log(`RoleAndRoll | #onPipClick: updating system.${dataTarget} to ${value}`);
+    try {
+      if (dataTarget.startsWith("sessionAbilities.")) {
+        const abilityKey = path[1];
+        const field = path[2];
+        const sessionAbilities = foundry.utils.duplicate(this.actor.system.sessionAbilities || {});
+        if (!sessionAbilities[abilityKey]) sessionAbilities[abilityKey] = { dice: 0, succeed: false };
+        sessionAbilities[abilityKey][field] = value;
+
+        const updateData = { "system.sessionAbilities": sessionAbilities };
+        console.log("RoleAndRoll | #onPipClick update payload (sessionAbilities):", updateData);
+        await this.actor.update(updateData);
+      } else {
+        const updateData = { [`system.${dataTarget}`]: value };
+        console.log("RoleAndRoll | #onPipClick update payload:", updateData);
+        await this.actor.update(updateData);
+      }
+      console.log("RoleAndRoll | #onPipClick update success");
+    } catch (err) {
+      console.error("RoleAndRoll | #onPipClick update failed", err);
+    }
 
     // Force re-render for session abilities to update UI
     if (dataTarget.startsWith("sessionAbilities.")) {
@@ -343,29 +383,53 @@ export class RoleAndRollActorSheet extends HandlebarsApplicationMixin(ActorSheet
   }
 
   async _onPipContextMenu(event) {
+    console.log("RoleAndRoll | _onPipContextMenu called", { event });
     event.preventDefault();
     const { target: dataTarget, value: dataValue } = event.currentTarget.dataset;
-    if (!dataTarget) return;
+    if (!dataTarget) {
+      console.warn("RoleAndRoll | _onPipContextMenu: dataTarget is missing");
+      return;
+    }
 
     const path = dataTarget.split(".");
     let obj = this.actor.system;
 
     for (let i = 0; i < path.length - 1; i++) {
       obj = obj?.[path[i]];
-      if (!obj) return;
     }
 
     const last = path[path.length - 1];
-    let currentValue = Number(obj[last] ?? 1);
-    const pipValue = Number(dataValue) || 0;
-
-    // Check if this is an attribute dice field (minimum value is 1)
     const isAttributeDice = dataTarget.startsWith("attributes.") && last === "dice";
     const minValue = isAttributeDice ? 1 : 0;
 
+    let currentValue = Number(obj?.[last] ?? minValue);
+    const pipValue = Number(dataValue) || 0;
+    console.log("RoleAndRoll | _onPipContextMenu state", { path, last, minValue, currentValue, pipValue });
+
     // Only decrease if right-clicking on a filled pip and value is above minimum
     if (pipValue <= currentValue && currentValue > minValue) {
-      await this.actor.update({ [`system.${dataTarget}`]: currentValue - 1 });
+      const targetValue = currentValue - 1;
+      console.log(`RoleAndRoll | _onPipContextMenu: updating system.${dataTarget} to ${targetValue}`);
+      try {
+        if (dataTarget.startsWith("sessionAbilities.")) {
+          const abilityKey = path[1];
+          const field = path[2];
+          const sessionAbilities = foundry.utils.duplicate(this.actor.system.sessionAbilities || {});
+          if (!sessionAbilities[abilityKey]) sessionAbilities[abilityKey] = { dice: 0, succeed: false };
+          sessionAbilities[abilityKey][field] = targetValue;
+
+          const updateData = { "system.sessionAbilities": sessionAbilities };
+          console.log("RoleAndRoll | _onPipContextMenu update payload (sessionAbilities):", updateData);
+          await this.actor.update(updateData);
+        } else {
+          const updateData = { [`system.${dataTarget}`]: targetValue };
+          console.log("RoleAndRoll | _onPipContextMenu update payload:", updateData);
+          await this.actor.update(updateData);
+        }
+        console.log("RoleAndRoll | _onPipContextMenu update success");
+      } catch (err) {
+        console.error("RoleAndRoll | _onPipContextMenu update failed", err);
+      }
     }
   }
 
